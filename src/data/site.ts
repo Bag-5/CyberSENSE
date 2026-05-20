@@ -8,7 +8,7 @@ export const siteDescription =
 export const navLinks: NavLink[] = [
   { label: "Home", href: "/" },
   { label: "Threat Academy", href: "/threats" },
-  { label: "Games", href: "/#games" },
+  { label: "Spot the Red Flags", href: "/games/red-flags" },
   { label: "Simulations", href: "/#simulations" },
   { label: "Training", href: "/#training" },
 ];
