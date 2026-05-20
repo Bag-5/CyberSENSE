@@ -1,6 +1,14 @@
+function requireEnv(name: string) {
+  const value = process.env[name];
+  if (!value) {
+    throw new Error(`${name} is not configured`);
+  }
+  return value;
+}
+
 export const OPENROUTER_MODELS = {
-  primary: "mistralai/mistral-small-3.2-24b-instruct",
-  fallback: "google/gemma-4-26b-a4b-it:free",
+  primary: requireEnv("OPENROUTER_MODEL"),
+  fallback: requireEnv("OPENROUTER_FALLBACK_MODEL"),
 } as const;
 
 export const OPENROUTER_AI_ANALYZER_MODELS = [
@@ -21,4 +29,3 @@ export const OPENROUTER_RETRYABLE_STATUSES = new Set([
   502,
   503,
 ]);
-
