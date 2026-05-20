@@ -13,6 +13,7 @@ CyberSENSE is an interactive cybersecurity awareness platform built to help ever
 
 - Immersive cyberpunk homepage
 - Threat Academy with dynamic detail pages
+- AI Scam Analyzer powered by OpenRouter
 - `Spot the Red Flags` mini-game
 - Reusable modular component structure
 - Responsive dark theme with neon glow effects
@@ -21,6 +22,7 @@ CyberSENSE is an interactive cybersecurity awareness platform built to help ever
 
 - `/` - Homepage
 - `/threats` - Threat Academy landing page
+- `/threats/analyzer` - AI Scam Analyzer
 - `/threats/[slug]` - Individual threat detail pages
 - `/games/red-flags` - Spot the Red Flags mini-game
 
@@ -32,8 +34,15 @@ CyberSENSE is an interactive cybersecurity awareness platform built to help ever
 - `src/components/games/redflags` - Mini-game UI
 - `src/data` - Shared structured content
 - `src/types` - Shared TypeScript types
+- `src/lib/ai` - OpenRouter service and prompts
 
 ## Getting Started
+
+Create `.env.local` and add your OpenRouter key:
+
+```bash
+OPENROUTER_API_KEY=your_key_here
+```
 
 Install dependencies:
 
@@ -69,4 +78,4 @@ npm run lint
 
 - The app uses a stable Webpack-based dev/build flow in this Windows environment.
 - Turbopack is still available through `npm run dev:turbopack`, but this machine may fall back to Webpack for reliability.
-
+- The AI analyzer calls OpenRouter only from the server-side API route.
