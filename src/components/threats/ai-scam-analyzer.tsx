@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { useMemo, useState } from "react";
 
+import { cyberButtonClasses, cyberPanelClasses, LoadingSkeleton, SectionHeader } from "@/components/ui/cyber";
 import { cn } from "@/utils/cn";
 import type { ScamAnalysis, ScamAnalysisRiskLevel } from "@/types/ai";
 
@@ -118,23 +119,21 @@ export function AiScamAnalyzer() {
           initial={{ opacity: 0, x: -16 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5 }}
-          className="cyber-panel rounded-[2rem] p-6 sm:p-8"
+          className={cyberPanelClasses("p-6 sm:p-8")}
         >
-          <div className="space-y-4">
-            <p className="text-sm font-semibold tracking-[0.24em] text-cyan-200 uppercase">
-              AI Scam Analyzer
-            </p>
-            <h2 className="text-3xl font-black tracking-[-0.05em] text-white">
-              Paste suspicious content and get a safe explanation.
-            </h2>
-            <p className="text-sm leading-6 text-slate-300 sm:text-base">
-              The analyzer looks for phishing, impersonation, urgency traps,
-              fake links, and other scam signals. It stays educational and
-              beginner-friendly.
-            </p>
-          </div>
+          <SectionHeader
+            eyebrow="AI Scam Analyzer"
+            title="Paste suspicious content and get a safe explanation."
+            description="The analyzer looks for phishing, impersonation, urgency traps, fake links, and other scam signals. It stays educational and beginner-friendly."
+          />
 
-          <div className="mt-6 space-y-3">
+          <form
+            className="mt-6 space-y-3"
+            onSubmit={(event) => {
+              event.preventDefault();
+              void handleAnalyze();
+            }}
+          >
             <label className="text-sm font-semibold text-slate-200" htmlFor="scam-content">
               Paste a message, email, or link
             </label>
@@ -146,7 +145,7 @@ export function AiScamAnalyzer() {
               className="w-full rounded-[1.5rem] border border-white/10 bg-slate-950/80 px-4 py-4 text-sm leading-6 text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-300/40 focus:ring-2 focus:ring-cyan-200/20"
               placeholder="Paste the suspicious text here..."
             />
-          </div>
+          </form>
 
           <div className="mt-4 flex flex-wrap gap-2">
             {samplePrompts.map((prompt) => (
@@ -166,7 +165,7 @@ export function AiScamAnalyzer() {
               type="button"
               onClick={() => handleAnalyze()}
               disabled={loading}
-              className="inline-flex items-center justify-center rounded-full bg-cyan-400 px-6 py-3 text-sm font-semibold text-slate-950 shadow-[0_0_30px_rgba(34,211,238,0.35)] transition duration-300 hover:-translate-y-0.5 hover:bg-cyan-300 disabled:cursor-not-allowed disabled:opacity-60"
+              className={cyberButtonClasses("primary", "lg", "disabled:translate-y-0")}
             >
               {loading ? "Analyzing..." : "Analyze"}
             </button>
@@ -174,7 +173,7 @@ export function AiScamAnalyzer() {
               <button
                 type="button"
                 onClick={() => handleAnalyze(lastSubmitted || content)}
-                className="inline-flex items-center justify-center rounded-full border border-fuchsia-300/30 bg-white/5 px-6 py-3 text-sm font-semibold text-white transition duration-300 hover:-translate-y-0.5 hover:bg-white/10"
+                className={cyberButtonClasses("secondary", "lg")}
               >
                 Retry
               </button>
@@ -199,10 +198,7 @@ export function AiScamAnalyzer() {
                   Running AI analysis...
                 </p>
               </div>
-              <p className="mt-3 text-sm leading-6 text-slate-300">
-                The model is checking for scam language, fake links, identity
-                tricks, and urgent pressure cues.
-              </p>
+              <LoadingSkeleton className="mt-4" lines={3} />
             </motion.div>
           ) : null}
         </motion.div>
@@ -213,7 +209,7 @@ export function AiScamAnalyzer() {
           transition={{ duration: 0.5 }}
           className="space-y-6"
         >
-          <div className="rounded-[2rem] border border-white/10 bg-white/5 p-6 backdrop-blur-xl">
+          <div className={cyberPanelClasses("p-6 backdrop-blur-xl")}>
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="text-sm font-semibold tracking-[0.24em] text-fuchsia-200 uppercase">
@@ -246,7 +242,7 @@ export function AiScamAnalyzer() {
           </div>
 
           {hasResults && analysis ? (
-            <div className="grid gap-4">
+            <div className="grid gap-4" aria-live="polite">
               <AnalysisList title="Red flags" items={analysis.redFlags} />
               <AnalysisList
                 title="Recommendations"

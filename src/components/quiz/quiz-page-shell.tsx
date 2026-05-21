@@ -6,30 +6,29 @@ import { LeaderboardBoard } from "@/components/leaderboard/leaderboard-board";
 import { QuizCategoryGrid } from "@/components/quiz/quiz-category-grid";
 import { QuizEngine } from "@/components/quiz/quiz-engine";
 import { QuizProgressSummary } from "@/components/quiz/quiz-progress-summary";
-import { quizAchievementPreview, quizCategories, quizLeaderboardEntries } from "@/data/quizzes";
-import type { QuizCategory } from "@/types/quiz";
+import { quizAchievementPreview, quizCategories } from "@/data/quizzes";
+import type { LeaderboardEntry, QuizCategory } from "@/types/quiz";
+import { SectionHeader, cyberPanelClasses } from "@/components/ui/cyber";
 
 type QuizPageShellProps = {
   quiz?: QuizCategory;
 };
 
 export function QuizPageShell({ quiz }: QuizPageShellProps) {
+  const leaderboardEntries: LeaderboardEntry[] = [];
+
   if (quiz) {
     const related = quizCategories.filter((item) => item.slug !== quiz.slug).slice(0, 3);
 
     return (
       <div className="space-y-8 pb-10 pt-10">
         <AnimatedSection className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="cyber-panel rounded-[2rem] p-6 sm:p-8">
-            <p className="text-sm font-semibold tracking-[0.24em] text-cyan-200 uppercase">
-              Quiz Engine
-            </p>
-            <h1 className="mt-3 text-4xl font-black tracking-[-0.06em] text-white sm:text-5xl">
-              {quiz.title}
-            </h1>
-            <p className="mt-4 max-w-3xl text-base leading-7 text-slate-300 sm:text-lg">
-              {quiz.description}
-            </p>
+          <div className={cyberPanelClasses("p-6 sm:p-8")}>
+            <SectionHeader
+              eyebrow="Quiz Engine"
+              title={quiz.title}
+              description={quiz.description}
+            />
           </div>
         </AnimatedSection>
 
@@ -38,12 +37,12 @@ export function QuizPageShell({ quiz }: QuizPageShellProps) {
 
           <div className="space-y-6">
             <QuizProgressSummary />
-            <LeaderboardBoard entries={quizLeaderboardEntries} />
+            <LeaderboardBoard entries={leaderboardEntries} />
           </div>
         </div>
 
         <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-          <section className="rounded-[2rem] border border-white/10 bg-white/5 p-5 backdrop-blur-xl">
+          <section className={cyberPanelClasses("p-5 backdrop-blur-xl")}>
             <div className="flex flex-col gap-3 border-b border-white/10 pb-4 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <p className="text-sm font-semibold tracking-[0.22em] text-fuchsia-200 uppercase">
@@ -106,7 +105,7 @@ export function QuizPageShell({ quiz }: QuizPageShellProps) {
 
       <div className="mx-auto grid w-full max-w-7xl gap-6 px-4 lg:grid-cols-[1fr_0.92fr] lg:px-8">
         <div className="space-y-6">
-          <section className="rounded-[2rem] border border-white/10 bg-white/5 p-5 backdrop-blur-xl">
+          <section className={cyberPanelClasses("p-5 backdrop-blur-xl")}>
             <p className="text-sm font-semibold tracking-[0.22em] text-fuchsia-200 uppercase">
               Select a quiz
             </p>
@@ -123,8 +122,8 @@ export function QuizPageShell({ quiz }: QuizPageShellProps) {
         </div>
 
         <div className="space-y-6">
-          <LeaderboardBoard entries={quizLeaderboardEntries} />
-          <section className="rounded-[2rem] border border-white/10 bg-white/5 p-5 backdrop-blur-xl">
+          <LeaderboardBoard entries={leaderboardEntries} />
+          <section className={cyberPanelClasses("p-5 backdrop-blur-xl")}>
             <p className="text-sm font-semibold tracking-[0.22em] text-fuchsia-200 uppercase">
               Achievement roadmap
             </p>

@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 import { QuizResults } from "@/components/quiz/quiz-results";
@@ -9,12 +10,14 @@ import { recordQuizCompletion } from "@/lib/progress/quiz-progress";
 import { scoreQuiz } from "@/lib/quiz/scoring";
 import type { QuizAchievement, QuizCategory } from "@/types/quiz";
 import { cn } from "@/utils/cn";
+import { cyberButtonClasses, cyberPanelClasses } from "@/components/ui/cyber";
 
 type QuizEngineProps = {
   quiz: QuizCategory;
 };
 
 export function QuizEngine({ quiz }: QuizEngineProps) {
+  const router = useRouter();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [submittedAnswers, setSubmittedAnswers] = useState<Record<string, string>>({});
@@ -52,6 +55,16 @@ export function QuizEngine({ quiz }: QuizEngineProps) {
       const { newAchievements } = recordQuizCompletion(quiz, nextSummary);
       setSummary(nextSummary);
       setUnlockedAchievements(newAchievements);
+      void fetch("/api/quiz/complete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          quizSlug: quiz.slug,
+          score: nextSummary.score,
+        }),
+      }).finally(() => {
+        router.refresh();
+      });
     }
   }
 
@@ -80,7 +93,7 @@ export function QuizEngine({ quiz }: QuizEngineProps) {
 
   if (!currentQuestion) {
     return (
-      <div className="rounded-[1.75rem] border border-white/10 bg-white/5 p-5 text-sm text-slate-300">
+      <div className={cyberPanelClasses("p-5 text-sm text-slate-300")}>
         This quiz does not have any questions yet.
       </div>
     );
@@ -100,7 +113,7 @@ export function QuizEngine({ quiz }: QuizEngineProps) {
 
   return (
     <section className="space-y-5">
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-[1.75rem] border border-white/10 bg-white/5 px-5 py-4">
+      <div className={cyberPanelClasses("flex flex-wrap items-center justify-between gap-3 px-5 py-4")}>
         <div>
           <p className="text-xs font-semibold tracking-[0.22em] text-fuchsia-200 uppercase">
             Question {currentIndex + 1} of {quiz.questions.length}
@@ -119,7 +132,7 @@ export function QuizEngine({ quiz }: QuizEngineProps) {
         </div>
       </div>
 
-      <div className="rounded-[1.75rem] border border-white/10 bg-slate-950/75 p-5">
+      <div className={cyberPanelClasses("bg-slate-950/75 p-5")}>
         <div className="flex items-center justify-between gap-4">
           <p className="text-sm font-semibold tracking-[0.22em] text-cyan-200 uppercase">
             Cyber question
@@ -185,7 +198,7 @@ export function QuizEngine({ quiz }: QuizEngineProps) {
               type="button"
               onClick={handleSubmitAnswer}
               disabled={!selectedAnswer}
-              className="inline-flex flex-1 items-center justify-center rounded-full bg-cyan-400 px-5 py-3 text-sm font-semibold text-slate-950 shadow-[0_0_28px_rgba(34,211,238,0.25)] transition hover:-translate-y-0.5 hover:bg-cyan-300 disabled:cursor-not-allowed disabled:opacity-50"
+              className={cyberButtonClasses("primary", "md", "flex-1")}
             >
               Check answer
             </button>
@@ -193,7 +206,7 @@ export function QuizEngine({ quiz }: QuizEngineProps) {
             <button
               type="button"
               onClick={handleNextQuestion}
-              className="inline-flex flex-1 items-center justify-center rounded-full bg-cyan-400 px-5 py-3 text-sm font-semibold text-slate-950 shadow-[0_0_28px_rgba(34,211,238,0.25)] transition hover:-translate-y-0.5 hover:bg-cyan-300"
+              className={cyberButtonClasses("primary", "md", "flex-1")}
             >
               {isFinalQuestion ? "Finish quiz" : "Next question"}
             </button>
@@ -202,7 +215,7 @@ export function QuizEngine({ quiz }: QuizEngineProps) {
           <button
             type="button"
             onClick={handleRetry}
-            className="inline-flex flex-1 items-center justify-center rounded-full border border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold text-slate-200 transition hover:bg-white/10 hover:text-white"
+            className={cyberButtonClasses("ghost", "md", "flex-1")}
           >
             Restart
           </button>

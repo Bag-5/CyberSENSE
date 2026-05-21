@@ -13,6 +13,7 @@ import { PasswordVisualizer } from "@/components/lab/simulations/password-visual
 import { RansomwareAwareness } from "@/components/lab/simulations/ransomware-awareness";
 import { PublicWifiVisualizer } from "@/components/lab/simulations/public-wifi-visualizer";
 import { FakeAppPermissions } from "@/components/lab/simulations/fake-app-permissions";
+import { cyberPanelClasses } from "@/components/ui/cyber";
 
 const simulationMap: Record<
   LabSimulationId,
@@ -74,7 +75,7 @@ export function LabDashboard() {
     <div className="mx-auto w-full max-w-7xl px-4 pb-12 sm:px-6 lg:px-8">
       <div className="grid gap-6 lg:grid-cols-[0.78fr_1.22fr]">
         <section className="space-y-6">
-          <div className="cyber-panel rounded-[2rem] p-5 sm:p-6">
+          <div className={cyberPanelClasses("p-5 sm:p-6")}>
             <p className="text-sm font-semibold tracking-[0.24em] text-cyan-200 uppercase">
               Lab console
             </p>
@@ -82,7 +83,7 @@ export function LabDashboard() {
               {metrics.map((metric) => (
                 <div
                   key={metric.label}
-                  className="rounded-2xl border border-white/10 bg-white/5 p-4"
+                  className={cyberPanelClasses("p-4")}
                 >
                   <p className="text-xs tracking-[0.18em] text-slate-500 uppercase">
                     {metric.label}
@@ -137,7 +138,7 @@ export function LabDashboard() {
           </div>
         </section>
 
-        <section className="rounded-[2rem] border border-white/10 bg-white/5 p-5 sm:p-6">
+        <section className={cyberPanelClasses("p-5 sm:p-6")}>
           <div className="flex flex-col gap-4 border-b border-white/10 pb-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <p className="text-sm font-semibold tracking-[0.24em] text-fuchsia-200 uppercase">

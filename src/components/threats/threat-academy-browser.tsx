@@ -5,6 +5,8 @@ import { useState } from "react";
 import { ThreatCard } from "@/components/threats/threat-card";
 import { threatCategories } from "@/data/threats";
 import type { ThreatCard as ThreatCardData } from "@/types/site";
+import { cyberButtonClasses, cyberPanelClasses, SectionHeader } from "@/components/ui/cyber";
+import { cn } from "@/utils/cn";
 
 type ThreatAcademyBrowserProps = {
   threats: ThreatCardData[];
@@ -28,17 +30,14 @@ export function ThreatAcademyBrowser({ threats }: ThreatAcademyBrowserProps) {
 
   return (
     <div className="space-y-6">
-      <div className="cyber-panel rounded-[2rem] p-5 sm:p-6">
+      <div className={cyberPanelClasses("p-5 sm:p-6")}>
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          <div className="space-y-2">
-            <p className="text-sm font-semibold tracking-[0.24em] text-cyan-200 uppercase">
-              Search / filter
-            </p>
-            <p className="text-sm leading-6 text-slate-300">
-              Type to explore threats or narrow the list by category. The filter
-              is lightweight and ready to grow into a fuller academy search.
-            </p>
-          </div>
+          <SectionHeader
+            eyebrow="Search / filter"
+            title="Type to explore threats or narrow the list by category."
+            description="The filter is lightweight and ready to grow into a fuller academy search."
+            className="max-w-2xl"
+          />
 
           <div className="w-full max-w-xl">
             <label className="sr-only" htmlFor="threat-search">
@@ -60,11 +59,13 @@ export function ThreatAcademyBrowser({ threats }: ThreatAcademyBrowserProps) {
               key={category}
               type="button"
               onClick={() => setActiveCategory(category)}
-              className={`rounded-full px-4 py-2 text-sm transition ${
-                activeCategory === category
-                  ? "bg-cyan-400 text-slate-950 shadow-[0_0_22px_rgba(34,211,238,0.28)]"
-                  : "border border-white/10 bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white"
-              }`}
+              className={cn(
+                cyberButtonClasses(
+                  activeCategory === category ? "primary" : "ghost",
+                  "sm",
+                ),
+                "rounded-full",
+              )}
             >
               {category}
             </button>
@@ -90,4 +91,3 @@ export function ThreatAcademyBrowser({ threats }: ThreatAcademyBrowserProps) {
     </div>
   );
 }
-

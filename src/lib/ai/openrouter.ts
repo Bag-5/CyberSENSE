@@ -1,9 +1,10 @@
 import {
-  OPENROUTER_AI_ANALYZER_MODELS,
   OPENROUTER_API_URL,
   OPENROUTER_MAX_TOKENS,
   OPENROUTER_REQUEST_TIMEOUT_MS,
   OPENROUTER_RETRYABLE_STATUSES,
+  getOpenRouterModels,
+  isOpenRouterFailoverEnabled,
 } from "@/lib/ai/models";
 import {
   scamAnalysisSchema,
@@ -195,8 +196,12 @@ export async function analyzeScamContent(content: string) {
   }
 
   let lastError: unknown = null;
+  const { primary, fallback } = getOpenRouterModels();
+  const models = isOpenRouterFailoverEnabled()
+    ? [primary, fallback]
+    : [primary];
 
-  for (const model of OPENROUTER_AI_ANALYZER_MODELS) {
+  for (const model of models) {
     try {
       const analysis = await requestOpenRouter(model, sanitizedContent);
       return {

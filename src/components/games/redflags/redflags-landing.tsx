@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 
 import { redFlagDifficultyLevels } from "@/data/redFlags";
 import type { RedFlagDifficulty } from "@/types/redflags";
+import { cyberButtonClasses, cyberPanelClasses } from "@/components/ui/cyber";
 
 type RedFlagsLandingProps = {
   difficulty: RedFlagDifficulty;
@@ -22,7 +23,7 @@ export function RedFlagsLanding({
         initial={{ opacity: 0, y: 18 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.55 }}
-        className="cyber-panel overflow-hidden rounded-[2rem] p-6 sm:p-8"
+        className={cyberPanelClasses("overflow-hidden p-6 sm:p-8")}
       >
         <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
           <div className="space-y-6">
@@ -48,11 +49,11 @@ export function RedFlagsLanding({
               <button
                 type="button"
                 onClick={onStart}
-                className="inline-flex items-center justify-center rounded-full bg-cyan-400 px-6 py-3 text-sm font-semibold text-slate-950 shadow-[0_0_30px_rgba(34,211,238,0.35)] transition duration-300 hover:-translate-y-0.5 hover:bg-cyan-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-200 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
+                className={cyberButtonClasses("primary", "lg")}
               >
                 Start Game
               </button>
-              <div className="inline-flex items-center justify-center rounded-full border border-fuchsia-300/30 bg-white/5 px-6 py-3 text-sm font-semibold text-white">
+              <div className={cyberButtonClasses("ghost", "lg")}>
                 Difficulty placeholder
               </div>
             </div>
@@ -95,4 +96,3 @@ export function RedFlagsLanding({
     </section>
   );
 }
-

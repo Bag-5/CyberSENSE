@@ -4,6 +4,8 @@ import { AnimatedSection } from "@/components/animated-section";
 import { RedFlagsGame } from "@/components/games/redflags/redflags-game";
 import { siteName } from "@/data/site";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Spot the Red Flags",
   description:
@@ -33,4 +35,3 @@ export default function RedFlagsPage() {
     </div>
   );
 }
-

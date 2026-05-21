@@ -1,6 +1,13 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
+
+const cardOffsets = [
+  "left-2 top-4 sm:left-8 sm:top-6",
+  "right-0 top-24 sm:right-6 sm:top-24",
+  "left-0 bottom-28 sm:left-4 sm:bottom-32",
+  "right-6 bottom-4 sm:right-10 sm:bottom-8",
+];
 
 const alerts = [
   {
@@ -26,30 +33,29 @@ const alerts = [
 ];
 
 export function FloatingAlertCards() {
+  const prefersReducedMotion = useReducedMotion();
+
   return (
     <div className="relative mx-auto h-[28rem] w-full max-w-[36rem]">
       {alerts.map((alert, index) => {
-        const offsets = [
-          "left-2 top-4 sm:left-8 sm:top-6",
-          "right-0 top-24 sm:right-6 sm:top-24",
-          "left-0 bottom-28 sm:left-4 sm:bottom-32",
-          "right-6 bottom-4 sm:right-10 sm:bottom-8",
-        ];
-
         return (
           <motion.article
             key={alert.title}
-            className={`absolute w-[15rem] rounded-3xl border bg-slate-950/80 p-4 shadow-[0_0_40px_rgba(15,23,42,0.42)] backdrop-blur-xl sm:w-[17rem] ${offsets[index]} ${alert.tone}`}
-            initial={{ opacity: 0, y: 24, scale: 0.96 }}
-            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            className={`absolute w-[15rem] rounded-3xl border bg-slate-950/80 p-4 shadow-[0_0_40px_rgba(15,23,42,0.42)] backdrop-blur-xl sm:w-[17rem] ${cardOffsets[index]} ${alert.tone}`}
+            initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 24, scale: 0.96 }}
+            whileInView={prefersReducedMotion ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 }}
             viewport={{ once: true, amount: 0.2 }}
-            animate={{ y: [0, -8, 0] }}
-            transition={{
-              duration: 5.5 + index,
-              repeat: Infinity,
-              repeatType: "mirror",
-              ease: "easeInOut",
-            }}
+            animate={prefersReducedMotion ? undefined : { y: [0, -8, 0] }}
+            transition={
+              prefersReducedMotion
+                ? undefined
+                : {
+                    duration: 5.5 + index,
+                    repeat: Infinity,
+                    repeatType: "mirror",
+                    ease: "easeInOut",
+                  }
+            }
           >
             <div className="flex items-start justify-between gap-3">
               <div>
@@ -69,4 +75,3 @@ export function FloatingAlertCards() {
     </div>
   );
 }
-

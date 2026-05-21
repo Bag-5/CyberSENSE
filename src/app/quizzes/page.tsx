@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 
 import { QuizPageShell } from "@/components/quiz/quiz-page-shell";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Quizzes",
   description:

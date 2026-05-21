@@ -1,11 +1,3 @@
-function requireEnv(name: string) {
-  const value = process.env[name];
-  if (!value) {
-    throw new Error(`${name} is not configured`);
-  }
-  return value;
-}
-
 function readBooleanEnv(name: string, defaultValue = false) {
   const value = process.env[name];
   if (value == null || value.trim() === "") {
@@ -15,19 +7,24 @@ function readBooleanEnv(name: string, defaultValue = false) {
   return ["1", "true", "yes", "on"].includes(value.trim().toLowerCase());
 }
 
-export const OPENROUTER_MODELS = {
-  primary: requireEnv("OPENROUTER_MODEL"),
-  fallback: requireEnv("OPENROUTER_FALLBACK_MODEL"),
-} as const;
+export function getOpenRouterModels() {
+  const primary = process.env.OPENROUTER_MODEL?.trim();
+  const fallback = process.env.OPENROUTER_FALLBACK_MODEL?.trim();
 
-export const OPENROUTER_FAILOVER_ENABLED = readBooleanEnv(
-  "OPENROUTER_FAILOVER_ENABLED",
-  true,
-);
+  if (!primary) {
+    throw new Error("OPENROUTER_MODEL is not configured");
+  }
 
-export const OPENROUTER_AI_ANALYZER_MODELS = OPENROUTER_FAILOVER_ENABLED
-  ? ([OPENROUTER_MODELS.primary, OPENROUTER_MODELS.fallback] as const)
-  : ([OPENROUTER_MODELS.primary] as const);
+  if (!fallback) {
+    throw new Error("OPENROUTER_FALLBACK_MODEL is not configured");
+  }
+
+  return { primary, fallback } as const;
+}
+
+export function isOpenRouterFailoverEnabled() {
+  return readBooleanEnv("OPENROUTER_FAILOVER_ENABLED", true);
+}
 
 export const OPENROUTER_API_URL =
   "https://openrouter.ai/api/v1/chat/completions";

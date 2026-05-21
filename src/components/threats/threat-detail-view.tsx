@@ -5,6 +5,7 @@ import { ThreatRelatedThreats } from "@/components/threats/threat-related-threat
 import { ThreatQuizPlaceholder } from "@/components/threats/threat-quiz-placeholder";
 import { threatLevels } from "@/data/threats";
 import type { ThreatDetail } from "@/types/site";
+import { cyberButtonClasses, cyberPanelClasses } from "@/components/ui/cyber";
 import { cn } from "@/utils/cn";
 
 type ThreatDetailViewProps = {
@@ -31,7 +32,7 @@ export function ThreatDetailView({ threat, relatedThreats }: ThreatDetailViewPro
   return (
     <div className="space-y-8 pb-10">
       <section className="mx-auto w-full max-w-7xl px-4 pt-10 sm:px-6 lg:px-8">
-        <div className="cyber-panel relative overflow-hidden rounded-[2rem] p-6 sm:p-8">
+        <div className={cyberPanelClasses("relative overflow-hidden p-6 sm:p-8")}>
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(34,211,238,0.18),transparent_28%),radial-gradient(circle_at_bottom_left,rgba(217,70,239,0.14),transparent_30%)]" />
           <div className="relative flex flex-col gap-8 lg:flex-row lg:items-start lg:justify-between">
             <div className="max-w-3xl space-y-5">
@@ -48,12 +49,12 @@ export function ThreatDetailView({ threat, relatedThreats }: ThreatDetailViewPro
                   </h1>
                 </div>
               </div>
-              <p className="max-w-2xl text-lg leading-8 text-slate-300">
+              <p className="max-w-3xl text-lg leading-8 text-slate-300">
                 {threat.intro}
               </p>
             </div>
 
-            <div className="rounded-3xl border border-white/10 bg-slate-950/70 p-5">
+            <div className={cyberPanelClasses("p-5")}>
               <p className="text-xs font-semibold tracking-[0.24em] text-cyan-200 uppercase">
                 Severity
               </p>
@@ -130,7 +131,7 @@ export function ThreatDetailView({ threat, relatedThreats }: ThreatDetailViewPro
       </ThreatSection>
 
       <section className="mx-auto w-full max-w-7xl px-4 pb-10 sm:px-6 lg:px-8">
-        <div className="rounded-[2rem] border border-fuchsia-400/15 bg-white/5 px-6 py-8 sm:px-8">
+        <div className={cyberPanelClasses("border-fuchsia-400/15 px-6 py-8 sm:px-8")}>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="max-w-2xl space-y-2">
               <p className="text-sm font-semibold tracking-[0.24em] text-fuchsia-200 uppercase">
@@ -143,7 +144,7 @@ export function ThreatDetailView({ threat, relatedThreats }: ThreatDetailViewPro
             </div>
             <Link
               href="/threats"
-              className="inline-flex items-center justify-center rounded-full bg-cyan-400 px-6 py-3 text-sm font-semibold text-slate-950 shadow-[0_0_30px_rgba(34,211,238,0.28)] transition duration-300 hover:-translate-y-0.5 hover:bg-cyan-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-200 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
+              className={cyberButtonClasses("primary", "lg")}
             >
               Back to Threat Academy
             </Link>
@@ -153,4 +154,3 @@ export function ThreatDetailView({ threat, relatedThreats }: ThreatDetailViewPro
     </div>
   );
 }
-

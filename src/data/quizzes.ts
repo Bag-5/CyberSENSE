@@ -1,5 +1,4 @@
 import type {
-  LeaderboardEntry,
   QuizAchievement,
   QuizCategory,
   QuizCategorySlug,
@@ -899,14 +898,6 @@ export const quizCategories: QuizCategory[] = [
     ],
     templates: ransomwareTemplates,
   }),
-];
-
-export const quizLeaderboardEntries: LeaderboardEntry[] = [
-  { name: "Kojo Firewall", score: 980, streak: 12, badge: "Firewall Master" },
-  { name: "Ama Byte", score: 945, streak: 9, badge: "Digital Defender" },
-  { name: "Esi Shield", score: 910, streak: 7, badge: "Threat Hunter" },
-  { name: "Kwame Patch", score: 870, streak: 6, badge: "Cyber Rookie" },
-  { name: "Yaa Secure", score: 840, streak: 5, badge: "Scam Spotter" },
 ];
 
 export const quizAchievementPreview: QuizAchievement[] = [

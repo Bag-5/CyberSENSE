@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { cn } from "@/utils/cn";
 import type { ThreatCard as ThreatCardData } from "@/types/site";
 import { threatLevels } from "@/data/threats";
+import { cyberButtonClasses, cyberPanelClasses } from "@/components/ui/cyber";
 
 type ThreatCardProps = {
   threat: ThreatCardData;
@@ -16,7 +17,7 @@ export function ThreatCard({ threat }: ThreatCardProps) {
     <motion.article
       whileHover={{ y: -6, scale: 1.01 }}
       transition={{ type: "spring", stiffness: 240, damping: 18 }}
-      className="group relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-6 shadow-[0_0_40px_rgba(15,23,42,0.35)] backdrop-blur-xl"
+      className={cyberPanelClasses("group relative overflow-hidden p-6 shadow-[0_0_40px_rgba(15,23,42,0.35)]")}
     >
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(34,211,238,0.14),transparent_28%),radial-gradient(circle_at_bottom_left,rgba(217,70,239,0.12),transparent_30%)] opacity-0 transition duration-300 group-hover:opacity-100" />
       <div className="relative flex h-full flex-col">
@@ -52,7 +53,7 @@ export function ThreatCard({ threat }: ThreatCardProps) {
           <span className="text-xs text-slate-400">{threat.accent}</span>
           <Link
             href={`/threats/${threat.slug}`}
-            className="inline-flex items-center justify-center rounded-full border border-cyan-300/20 bg-cyan-400/10 px-4 py-2 text-sm font-semibold text-cyan-100 transition duration-300 hover:bg-cyan-400/20 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-200 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
+            className={cyberButtonClasses("primary", "sm")}
           >
             Learn More
           </Link>
@@ -61,4 +62,3 @@ export function ThreatCard({ threat }: ThreatCardProps) {
     </motion.article>
   );
 }
-

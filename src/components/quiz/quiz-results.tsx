@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { AchievementBadge } from "@/components/achievements/achievement-badge";
 import type { QuizAchievement, QuizCategory, QuizResultSummary } from "@/types/quiz";
 import { getCyberFeedback, getCyberRankLabel, getQuizSuggestions, getQuizStrengths } from "@/lib/quiz/scoring";
+import { cyberButtonClasses, cyberPanelClasses } from "@/components/ui/cyber";
 
 type QuizResultsProps = {
   quiz: QuizCategory;
@@ -33,7 +34,7 @@ export function QuizResults({
       animate={{ opacity: 1, y: 0 }}
       className="space-y-5"
     >
-      <div className="rounded-[1.75rem] border border-cyan-300/20 bg-cyan-400/10 p-5">
+      <div className={cyberPanelClasses("border-cyan-300/20 bg-cyan-400/10 p-5")}>
         <p className="text-xs font-semibold tracking-[0.24em] text-cyan-100 uppercase">
           Final score
         </p>
@@ -59,7 +60,7 @@ export function QuizResults({
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <div className="rounded-[1.75rem] border border-white/10 bg-white/5 p-5">
+        <div className={cyberPanelClasses("p-5")}>
           <p className="text-xs font-semibold tracking-[0.24em] text-fuchsia-200 uppercase">
             Strengths
           </p>
@@ -70,7 +71,7 @@ export function QuizResults({
           </ul>
         </div>
 
-        <div className="rounded-[1.75rem] border border-white/10 bg-white/5 p-5">
+        <div className={cyberPanelClasses("p-5")}>
           <p className="text-xs font-semibold tracking-[0.24em] text-fuchsia-200 uppercase">
             Improve next
           </p>
@@ -82,7 +83,7 @@ export function QuizResults({
         </div>
       </div>
 
-      <div className="rounded-[1.75rem] border border-white/10 bg-white/5 p-5">
+      <div className={cyberPanelClasses("p-5")}>
         <p className="text-xs font-semibold tracking-[0.24em] text-fuchsia-200 uppercase">
           Unlocks
         </p>
@@ -107,14 +108,14 @@ export function QuizResults({
         <button
           type="button"
           onClick={onRetry}
-          className="inline-flex flex-1 items-center justify-center rounded-full bg-cyan-400 px-5 py-3 text-sm font-semibold text-slate-950 shadow-[0_0_28px_rgba(34,211,238,0.25)] transition hover:-translate-y-0.5 hover:bg-cyan-300"
+          className={cyberButtonClasses("primary", "md", "flex-1")}
         >
           Retry quiz
         </button>
         <button
           type="button"
           onClick={onPickAnotherQuiz}
-          className="inline-flex flex-1 items-center justify-center rounded-full border border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold text-slate-200 transition hover:bg-white/10 hover:text-white"
+          className={cyberButtonClasses("ghost", "md", "flex-1")}
         >
           Pick another quiz
         </button>

@@ -2,16 +2,14 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { ThreatDetailView } from "@/components/threats/threat-detail-view";
-import { threats, threatsBySlug } from "@/data/threats";
+import { threatsBySlug } from "@/data/threats";
 import type { ThreatDetail } from "@/types/site";
+
+export const dynamic = "force-dynamic";
 
 type ThreatPageProps = {
   params: Promise<{ slug: string }>;
 };
-
-export function generateStaticParams() {
-  return threats.map((threat) => ({ slug: threat.slug }));
-}
 
 export async function generateMetadata({
   params,

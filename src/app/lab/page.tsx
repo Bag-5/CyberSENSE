@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 
 import { LabPageShell } from "@/components/lab/lab-page-shell";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Simulated Attack Lab",
   description:

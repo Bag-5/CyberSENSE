@@ -2,15 +2,13 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { QuizPageShell } from "@/components/quiz/quiz-page-shell";
-import { getQuizBySlug, quizCategories } from "@/data/quizzes";
+import { getQuizBySlug } from "@/data/quizzes";
+
+export const dynamic = "force-dynamic";
 
 type QuizPageProps = {
   params: Promise<{ slug: string }>;
 };
-
-export function generateStaticParams() {
-  return quizCategories.map((quiz) => ({ slug: quiz.slug }));
-}
 
 export async function generateMetadata({ params }: QuizPageProps): Promise<Metadata> {
   const { slug } = await params;

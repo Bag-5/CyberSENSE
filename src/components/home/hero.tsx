@@ -1,11 +1,17 @@
+"use client";
+
 import Link from "next/link";
+import { useReducedMotion, motion } from "framer-motion";
 
 import { AnimatedSection } from "@/components/animated-section";
 import { AnimatedBackground } from "@/components/home/animated-background";
 import { FloatingAlertCards } from "@/components/home/floating-alert-cards";
 import { siteName } from "@/data/site";
+import { cyberButtonClasses } from "@/components/ui/cyber";
 
 export function Hero() {
+  const prefersReducedMotion = useReducedMotion();
+
   return (
     <AnimatedSection className="relative overflow-hidden">
       <AnimatedBackground />
@@ -37,13 +43,13 @@ export function Hero() {
           <div className="flex flex-col gap-3 sm:flex-row">
             <Link
               href="#training"
-              className="inline-flex items-center justify-center rounded-full bg-cyan-400 px-6 py-3 text-sm font-semibold text-slate-950 shadow-[0_0_30px_rgba(34,211,238,0.35)] transition duration-300 hover:-translate-y-0.5 hover:bg-cyan-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-200 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
+              className={cyberButtonClasses("primary", "lg")}
             >
               Start Training
             </Link>
             <Link
               href="/threats"
-              className="inline-flex items-center justify-center rounded-full border border-fuchsia-300/30 bg-white/5 px-6 py-3 text-sm font-semibold text-white transition duration-300 hover:-translate-y-0.5 hover:border-fuchsia-300/60 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fuchsia-200 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
+              className={cyberButtonClasses("secondary", "lg")}
             >
               Explore Threats
             </Link>
@@ -52,7 +58,18 @@ export function Hero() {
 
         <div className="relative z-10">
           <div className="absolute inset-6 rounded-[2rem] bg-gradient-to-br from-cyan-400/20 via-fuchsia-500/14 to-transparent blur-3xl" />
-          <FloatingAlertCards />
+          <motion.div
+            animate={
+              prefersReducedMotion ? undefined : { y: [0, -4, 0] }
+            }
+            transition={
+              prefersReducedMotion
+                ? undefined
+                : { duration: 10, repeat: Infinity, ease: "easeInOut" }
+            }
+          >
+            <FloatingAlertCards />
+          </motion.div>
         </div>
       </div>
     </AnimatedSection>
