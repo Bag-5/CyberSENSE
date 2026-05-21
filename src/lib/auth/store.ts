@@ -206,6 +206,17 @@ export async function consumePendingOtp(email: string) {
   return row ? mapPendingOtpRow(row) : null;
 }
 
+export async function deletePendingOtp(email: string) {
+  await ensureDatabaseReady();
+  const db = getDatabase();
+  const normalizedEmail = email.toLowerCase().trim();
+
+  await db`
+    delete from cybersense_pending_otps
+    where email = ${normalizedEmail}
+  `;
+}
+
 export async function getPendingOtp(email: string) {
   await ensureDatabaseReady();
   const db = getDatabase();

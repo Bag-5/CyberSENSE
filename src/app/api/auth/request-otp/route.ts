@@ -1,11 +1,15 @@
 import { NextResponse } from "next/server";
 
 import {
+  deletePendingOtp,
   getPendingOtp,
   maskEmail,
   setPendingOtp,
 } from "@/lib/auth/store";
 import { generateOtpCode, hashOtpCode } from "@/lib/auth/crypto";
+import { sendOtpEmail } from "@/lib/email";
+
+export const runtime = "nodejs";
 
 function normalizeEmail(value: unknown) {
   return typeof value === "string" ? value.trim().toLowerCase() : "";
@@ -52,6 +56,26 @@ export async function POST(request: Request) {
       expiresAt,
       attempts: existing?.attempts ?? 0,
     });
+
+    try {
+      await sendOtpEmail({
+        to: email,
+        username,
+        otp: code,
+        expiresInMinutes: 10,
+      });
+    } catch (mailError) {
+      await deletePendingOtp(email);
+      return NextResponse.json(
+        {
+          error:
+            mailError instanceof Error
+              ? mailError.message
+              : "OTP email could not be sent. Please check the mail configuration.",
+        },
+        { status: 500 },
+      );
+    }
 
     const devRevealOtp =
       process.env.NODE_ENV !== "production" &&
