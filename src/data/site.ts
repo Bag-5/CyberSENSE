@@ -9,6 +9,7 @@ export const navLinks: NavLink[] = [
   { label: "Home", href: "/" },
   { label: "Threat Academy", href: "/threats" },
   { label: "AI Analyzer", href: "/threats/analyzer" },
+  { label: "Attack Lab", href: "/lab" },
   { label: "Spot the Red Flags", href: "/games/red-flags" },
   { label: "Simulations", href: "/#simulations" },
   { label: "Training", href: "/#training" },
