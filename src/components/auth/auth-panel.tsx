@@ -87,23 +87,9 @@ export function AuthPanel() {
           code to unlock the full platform, progress tracking, and non-demo rankings.
         </p>
 
-        <div className="mt-6 grid gap-3 sm:grid-cols-2">
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-            <p className="text-xs tracking-[0.18em] text-slate-500 uppercase">
-              What you get
-            </p>
-            <p className="mt-2 text-sm text-slate-200">
-              Real saved account state, quiz progress, and ranking access.
-            </p>
-          </div>
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-            <p className="text-xs tracking-[0.18em] text-slate-500 uppercase">
-              Cross-device ready
-            </p>
-            <p className="mt-2 text-sm text-slate-200">
-              Works in the browser on phones, tablets, iPads, Linux, iOS, and Android.
-            </p>
-          </div>
+        <div className="mt-6 inline-flex max-w-xl rounded-full border border-cyan-300/15 bg-cyan-400/10 px-4 py-2 text-sm text-cyan-100">
+          Works smoothly in the browser on phones, tablets, iPads, Linux, iOS,
+          and Android.
         </div>
       </motion.section>
 
