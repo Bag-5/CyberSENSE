@@ -98,10 +98,10 @@ export function AuthPanel() {
           </div>
           <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
             <p className="text-xs tracking-[0.18em] text-slate-500 uppercase">
-              Admin dashboard
+              Cross-device ready
             </p>
             <p className="mt-2 text-sm text-slate-200">
-              Hidden for now and reserved for later expansion.
+              Works in the browser on phones, tablets, iPads, Linux, iOS, and Android.
             </p>
           </div>
         </div>
@@ -172,64 +172,65 @@ export function AuthPanel() {
               />
             </label>
           ) : null}
-        {message ? (
-          <div className="mt-4 rounded-2xl border border-emerald-300/20 bg-emerald-400/10 p-4 text-sm text-emerald-100">
-            {message}
-          </div>
-        ) : null}
 
-        {error ? (
-          <div className="mt-4 rounded-2xl border border-rose-300/20 bg-rose-400/10 p-4 text-sm text-rose-100">
-            {error}
-          </div>
-        ) : null}
-
-        {devOtp ? (
-          <div className="mt-4 rounded-2xl border border-cyan-300/20 bg-cyan-400/10 p-4 text-sm text-cyan-100">
-            Development OTP: <span className="font-semibold tracking-[0.3em]">{devOtp}</span>
-          </div>
-        ) : null}
-
-        <div className="mt-5 flex flex-col gap-3 sm:flex-row">
-          {step === "request" ? (
-            <button
-              type="submit"
-              disabled={loading}
-              className={cn(
-                cyberButtonClasses("primary", "md", "flex-1"),
-                loading && "cursor-not-allowed opacity-70",
-              )}
-            >
-              {loading ? "Sending OTP..." : "Send OTP"}
-            </button>
-          ) : (
-            <button
-              type="submit"
-              disabled={loading}
-              className={cn(
-                cyberButtonClasses("primary", "md", "flex-1"),
-                loading && "cursor-not-allowed opacity-70",
-              )}
-            >
-              {loading ? "Verifying..." : "Verify OTP"}
-            </button>
-          )}
-
-          {step === "verify" ? (
-            <button
-              type="button"
-              onClick={() => {
-                setStep("request");
-                setOtp("");
-                setMessage(null);
-                setError(null);
-              }}
-              className={cyberButtonClasses("ghost", "md", "flex-1")}
-            >
-              Edit details
-            </button>
+          {message ? (
+            <div className="rounded-2xl border border-emerald-300/20 bg-emerald-400/10 p-4 text-sm text-emerald-100">
+              {message}
+            </div>
           ) : null}
-        </div>
+
+          {error ? (
+            <div className="rounded-2xl border border-rose-300/20 bg-rose-400/10 p-4 text-sm text-rose-100">
+              {error}
+            </div>
+          ) : null}
+
+          {devOtp ? (
+            <div className="rounded-2xl border border-cyan-300/20 bg-cyan-400/10 p-4 text-sm text-cyan-100">
+              Development OTP: <span className="font-semibold tracking-[0.3em]">{devOtp}</span>
+            </div>
+          ) : null}
+
+          <div className="flex flex-col gap-3 sm:flex-row">
+            {step === "request" ? (
+              <button
+                type="submit"
+                disabled={loading}
+                className={cn(
+                  cyberButtonClasses("primary", "md", "flex-1"),
+                  loading && "cursor-not-allowed opacity-70",
+                )}
+              >
+                {loading ? "Sending OTP..." : "Send OTP"}
+              </button>
+            ) : (
+              <button
+                type="submit"
+                disabled={loading}
+                className={cn(
+                  cyberButtonClasses("primary", "md", "flex-1"),
+                  loading && "cursor-not-allowed opacity-70",
+                )}
+              >
+                {loading ? "Verifying..." : "Verify OTP"}
+              </button>
+            )}
+
+            {step === "verify" ? (
+              <button
+                type="button"
+                onClick={() => {
+                  setStep("request");
+                  setOtp("");
+                  setMessage(null);
+                  setError(null);
+                }}
+                className={cyberButtonClasses("ghost", "md", "flex-1")}
+              >
+                Edit details
+              </button>
+            ) : null}
+          </div>
         </form>
       </motion.section>
     </div>
