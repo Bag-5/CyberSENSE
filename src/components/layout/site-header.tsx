@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { SignOutButton } from "@/components/auth/sign-out-button";
-import { navLinks, siteName } from "@/data/site";
+import { authenticatedNavLinks, publicNavLinks, siteName } from "@/data/site";
 import type { PublicSessionUser } from "@/lib/auth/types";
 import { cyberButtonClasses } from "@/components/ui/cyber";
 import { cn } from "@/utils/cn";
@@ -53,6 +53,9 @@ export function SiteHeader() {
     return pathname === href || pathname.startsWith(`${href}/`);
   }
 
+  const isAuthenticated = Boolean(user);
+  const visibleLinks = isAuthenticated ? authenticatedNavLinks : publicNavLinks;
+
   return (
     <header className="sticky top-0 z-50 border-b border-cyan-400/10 bg-slate-950/70 backdrop-blur-xl">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-4 py-4 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
@@ -71,40 +74,44 @@ export function SiteHeader() {
             </div>
           </Link>
 
-          <Link
-            href="/auth"
-            className={cn(
-              cyberButtonClasses("secondary", "sm", "lg:hidden"),
-              "shadow-[0_0_28px_rgba(217,70,239,0.16)]",
-            )}
-          >
-            {user ? "Open Dashboard" : "Sign in"}
-          </Link>
-        </div>
+          <div className="flex items-center gap-3 lg:hidden">
+            {isAuthenticated ? (
+              <button
+                type="button"
+                aria-expanded={menuOpen}
+                aria-controls="primary-navigation"
+                onClick={() => setMenuOpen((value) => !value)}
+                className={cyberButtonClasses("ghost", "sm")}
+              >
+                {menuOpen ? "Close" : "Menu"}
+              </button>
+            ) : null}
 
-        <div className="flex items-center gap-3 lg:hidden">
-          <button
-            type="button"
-            aria-expanded={menuOpen}
-            aria-controls="primary-navigation"
-            onClick={() => setMenuOpen((value) => !value)}
-            className={cyberButtonClasses("ghost", "sm")}
-          >
-            {menuOpen ? "Close" : "Menu"}
-          </button>
+            <Link
+              href="/auth"
+              className={cn(
+                cyberButtonClasses("secondary", "sm"),
+                "shadow-[0_0_28px_rgba(217,70,239,0.16)]",
+              )}
+            >
+              {isAuthenticated ? "Open Dashboard" : "Sign in"}
+            </Link>
+          </div>
         </div>
 
         <nav
           id="primary-navigation"
           aria-label="Primary"
           className={cn(
-            "flex flex-col gap-3 rounded-[1.75rem] border border-white/10 bg-slate-950/90 p-3 text-sm shadow-[0_0_30px_rgba(15,23,42,0.45)] transition lg:flex lg:flex-1 lg:flex-row lg:items-center lg:justify-center lg:gap-2 lg:border-0 lg:bg-transparent lg:p-0 lg:shadow-none",
-            menuOpen
-              ? "max-h-[32rem] opacity-100"
-              : "pointer-events-none max-h-0 overflow-hidden opacity-0 lg:pointer-events-auto lg:max-h-none lg:overflow-visible lg:opacity-100",
+            "flex flex-wrap items-center gap-2 rounded-[1.5rem] border border-white/10 bg-slate-950/90 p-2 text-sm shadow-[0_0_30px_rgba(15,23,42,0.45)] transition lg:flex-1 lg:justify-center lg:border-0 lg:bg-transparent lg:p-0 lg:shadow-none",
+            isAuthenticated
+              ? menuOpen
+                ? "max-h-[32rem] opacity-100 lg:max-h-none"
+                : "pointer-events-none max-h-0 overflow-hidden opacity-0 lg:pointer-events-auto lg:max-h-none lg:overflow-visible lg:opacity-100"
+              : "justify-start",
           )}
         >
-          {navLinks.map((link) => {
+          {visibleLinks.map((link) => {
             const active = isActive(link.href);
             return (
               <Link
@@ -117,6 +124,7 @@ export function SiteHeader() {
                   active
                     ? "bg-cyan-400/15 text-cyan-100 ring-1 ring-cyan-300/20"
                     : "text-slate-300 hover:bg-white/5 hover:text-cyan-100",
+                  !isAuthenticated && "font-medium",
                 )}
               >
                 {link.label}
@@ -124,31 +132,21 @@ export function SiteHeader() {
             );
           })}
 
-          <div className="mt-2 flex flex-col gap-3 pt-2 lg:hidden">
-            {user ? (
-              <>
-                <div className="rounded-2xl border border-cyan-300/20 bg-cyan-400/10 px-4 py-3 text-sm text-cyan-100">
-                  {user.username}
-                </div>
-                <SignOutButton />
-              </>
-            ) : (
-              <Link
-                href="/auth"
-                onClick={() => setMenuOpen(false)}
-                className={cyberButtonClasses("secondary", "md")}
-              >
-                Sign in
-              </Link>
-            )}
-          </div>
+          {isAuthenticated ? (
+            <div className="mt-2 flex flex-col gap-3 pt-2 lg:hidden">
+              <div className="rounded-2xl border border-cyan-300/20 bg-cyan-400/10 px-4 py-3 text-sm text-cyan-100">
+                {user?.username}
+              </div>
+              <SignOutButton />
+            </div>
+          ) : null}
         </nav>
 
         <div className="hidden items-center gap-3 lg:flex">
-          {user ? (
+          {isAuthenticated ? (
             <>
               <div className="rounded-full border border-cyan-300/20 bg-cyan-400/10 px-4 py-2 text-sm text-cyan-100">
-                {user.username}
+                {user?.username}
               </div>
               <SignOutButton />
             </>

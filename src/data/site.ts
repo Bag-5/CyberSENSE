@@ -5,7 +5,11 @@ export const siteTagline = "Learn Cybersecurity Before Hackers Learn You";
 export const siteDescription =
   "CyberSENSE is an interactive cybersecurity awareness platform with simulations, games, storytelling, and quizzes wrapped in a cyberpunk interface.";
 
-export const navLinks: NavLink[] = [
+export const publicNavLinks: NavLink[] = [
+  { label: "Home", href: "/" },
+];
+
+export const authenticatedNavLinks: NavLink[] = [
   { label: "Home", href: "/" },
   { label: "Threat Academy", href: "/threats" },
   { label: "AI Analyzer", href: "/threats/analyzer" },

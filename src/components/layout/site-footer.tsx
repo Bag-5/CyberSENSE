@@ -1,9 +1,12 @@
 import Link from "next/link";
 
-import { navLinks, siteName } from "@/data/site";
+import { getCurrentSessionUser } from "@/lib/auth/context";
+import { authenticatedNavLinks, publicNavLinks, siteName } from "@/data/site";
 
-export function SiteFooter() {
+export async function SiteFooter() {
+  const user = await getCurrentSessionUser();
   const currentYear = new Date().getFullYear();
+  const navItems = user ? authenticatedNavLinks : [...publicNavLinks, { label: "Sign in", href: "/auth" }];
 
   return (
     <footer className="border-t border-cyan-400/10 bg-slate-950/80">
@@ -22,11 +25,13 @@ export function SiteFooter() {
           </p>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid gap-6 sm:grid-cols-2">
           <div>
-            <p className="mb-3 text-sm font-medium text-slate-200">Navigate</p>
+            <p className="mb-3 text-sm font-medium text-slate-200">
+              {user ? "Quick links" : "Get started"}
+            </p>
             <ul className="space-y-2 text-sm text-slate-400">
-              {navLinks.map((link) => (
+              {navItems.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
@@ -38,6 +43,7 @@ export function SiteFooter() {
               ))}
             </ul>
           </div>
+
           <div>
             <p className="mb-3 text-sm font-medium text-slate-200">Focus</p>
             <p className="text-sm leading-6 text-slate-400">
