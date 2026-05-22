@@ -1,7 +1,8 @@
 import Link from "next/link";
 
 import { getCurrentSessionUser } from "@/lib/auth/context";
-import { authenticatedNavLinks, siteName } from "@/data/site";
+import { authenticatedNavLinks } from "@/data/site";
+import { SiteLogo } from "@/components/layout/site-logo";
 
 export async function SiteFooter() {
   const user = await getCurrentSessionUser();
@@ -11,16 +12,13 @@ export async function SiteFooter() {
     <footer className="border-t border-cyan-400/10 bg-slate-950/80">
       <div className="mx-auto grid w-full max-w-7xl gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:px-8">
         <div className="space-y-4">
-          <p className="text-sm font-semibold tracking-[0.2em] text-cyan-200 uppercase">
-            {siteName}
-          </p>
+          <SiteLogo className="h-12 w-[8.5rem]" />
           <p className="max-w-xl text-sm leading-6 text-slate-400">
-            CyberSENSE turns everyday cyber safety into a guided practice
-            arena, with playful missions, sharp visuals, and beginner-friendly
-            training.
+            An interactive cybersecurity awareness platform with playful
+            missions, sharp visuals, and beginner-friendly training.
           </p>
           <p className="text-xs tracking-[0.18em] text-slate-500 uppercase">
-            © {currentYear} {siteName}. Built for cyber awareness.
+            © {currentYear}. Built for cyber awareness.
           </p>
         </div>
 

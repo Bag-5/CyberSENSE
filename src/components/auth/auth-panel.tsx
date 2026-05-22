@@ -80,7 +80,7 @@ export function AuthPanel() {
           Sign in or sign up
         </p>
         <h1 className="mt-3 text-4xl font-black tracking-[-0.06em] text-white sm:text-5xl">
-          Secure access for CyberSENSE
+          Secure access
         </h1>
         <p className="mt-4 max-w-xl text-base leading-7 text-slate-300">
           Create your profile with a username and email, then verify a one-time

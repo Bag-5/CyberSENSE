@@ -1,16 +1,45 @@
 "use client";
 
 import Link from "next/link";
-import { useReducedMotion, motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
+import { useEffect, useState } from "react";
 
 import { AnimatedSection } from "@/components/animated-section";
 import { AnimatedBackground } from "@/components/home/animated-background";
 import { FloatingAlertCards } from "@/components/home/floating-alert-cards";
-import { siteName } from "@/data/site";
 import { cyberButtonClasses } from "@/components/ui/cyber";
 
 export function Hero() {
   const prefersReducedMotion = useReducedMotion();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadUser() {
+      try {
+        const response = await fetch("/api/auth/me", { cache: "no-store" });
+        const payload = (await response.json()) as { user: unknown };
+        if (active) {
+          setIsAuthenticated(Boolean(payload.user));
+        }
+      } catch {
+        if (active) {
+          setIsAuthenticated(false);
+        }
+      }
+    }
+
+    void loadUser();
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const trainingHref = isAuthenticated
+    ? "#training"
+    : "/auth?returnTo=%2F%23training";
 
   return (
     <AnimatedSection className="relative overflow-hidden">
@@ -18,22 +47,11 @@ export function Hero() {
 
       <div className="relative mx-auto grid w-full max-w-7xl gap-10 px-4 py-16 sm:px-6 sm:py-20 lg:grid-cols-[1fr_0.95fr] lg:items-center lg:px-8 lg:py-28">
         <div className="relative z-10 space-y-8">
-          <div className="inline-flex items-center gap-2 rounded-full border border-amber-300/18 bg-[linear-gradient(135deg,rgba(239,68,68,0.08),rgba(234,179,8,0.08),rgba(16,185,129,0.08))] px-4 py-2 text-xs font-medium text-amber-100">
-            <span className="h-2 w-2 rounded-full bg-amber-300 shadow-[0_0_12px_rgba(234,179,8,0.8)]" />
-            Cyberpunk training lab
-          </div>
-
           <div className="space-y-5">
-            <p className="text-sm font-semibold tracking-[0.28em] text-amber-100 uppercase">
-              {siteName}
-            </p>
-            <div className="h-1.5 w-28 rounded-full bg-gradient-to-r from-rose-400 via-amber-300 to-emerald-400" />
+            <div className="h-1.5 w-36 rounded-full bg-gradient-to-r from-rose-500 via-amber-300 to-emerald-500" />
             <h1 className="max-w-3xl text-5xl font-black tracking-[-0.08em] text-white drop-shadow-[0_0_28px_rgba(34,211,238,0.14)] sm:text-6xl lg:text-7xl">
-              CyberSENSE
-            </h1>
-            <p className="max-w-2xl text-xl font-medium tracking-[-0.03em] text-cyan-100 sm:text-2xl">
               Learn Cybersecurity Before Hackers Learn You
-            </p>
+            </h1>
             <p className="max-w-2xl text-base leading-7 text-slate-300 sm:text-lg">
               Step into an interactive training space where simulations, games,
               storytelling, and quizzes turn everyday cyber safety into a vivid,
@@ -43,7 +61,7 @@ export function Hero() {
 
           <div className="flex flex-col gap-3 sm:flex-row">
             <Link
-              href="#training"
+              href={trainingHref}
               className={cyberButtonClasses("primary", "lg")}
             >
               Start Training

@@ -43,7 +43,7 @@ export function FeatureGrid() {
               <SectionHeader
                 eyebrow="Training loop"
                 title="A simple path that keeps beginners moving."
-                description="CyberSENSE stays approachable: one lesson, one challenge, one reward at a time. That keeps the experience friendly without watering down the security lessons."
+                description="This training loop stays approachable: one lesson, one challenge, one reward at a time. That keeps the experience friendly without watering down the security lessons."
               />
             </article>
 

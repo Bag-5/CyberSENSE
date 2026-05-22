@@ -5,10 +5,11 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { SignOutButton } from "@/components/auth/sign-out-button";
-import { authenticatedNavLinks, siteName } from "@/data/site";
+import { authenticatedNavLinks } from "@/data/site";
 import type { PublicSessionUser } from "@/lib/auth/types";
 import { cyberButtonClasses } from "@/components/ui/cyber";
 import { cn } from "@/utils/cn";
+import { SiteLogo } from "@/components/layout/site-logo";
 
 type AuthResponse = {
   user: PublicSessionUser | null;
@@ -60,19 +61,7 @@ export function SiteHeader() {
     <header className="sticky top-0 z-50 border-b border-cyan-400/10 bg-slate-950/70 backdrop-blur-xl">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-4 py-4 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
         <div className="flex items-center justify-between gap-4">
-          <Link href="/" className="group flex items-center gap-3">
-            <span className="flex h-10 w-10 items-center justify-center rounded-2xl border border-amber-300/30 bg-[linear-gradient(135deg,rgba(239,68,68,0.12),rgba(234,179,8,0.12),rgba(16,185,129,0.12))] text-sm font-semibold text-amber-100 shadow-[0_0_24px_rgba(234,179,8,0.12)] transition duration-300 group-hover:scale-105 group-hover:border-amber-200/55">
-              CS
-            </span>
-            <div className="leading-tight">
-              <p className="text-sm font-semibold tracking-[0.22em] text-cyan-100 uppercase">
-                {siteName}
-              </p>
-              <p className="text-xs text-slate-400">
-                Cyber awareness, but make it vivid.
-              </p>
-            </div>
-          </Link>
+          <SiteLogo className="h-12 w-[8.5rem] sm:h-14 sm:w-[10rem]" />
 
           <div className="flex items-center gap-3 lg:hidden">
             {isAuthenticated ? (
