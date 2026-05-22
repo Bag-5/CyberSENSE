@@ -1,5 +1,7 @@
 import { createHmac, randomBytes, timingSafeEqual } from "crypto";
 
+import type { AuthRole } from "@/lib/auth/types";
+
 const SESSION_SEPARATOR = ".";
 
 export function getAuthSecret() {
@@ -48,7 +50,7 @@ export function verifySessionToken(token: string) {
       userId: string;
       email: string;
       username: string;
-      role: "user" | "admin";
+      role: AuthRole;
     };
   } catch {
     return null;

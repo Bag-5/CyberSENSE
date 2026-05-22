@@ -1,5 +1,6 @@
 import { generateId } from "@/lib/auth/crypto";
 import { ensureDatabaseReady, getDatabase } from "@/lib/db/postgres";
+import type { AuthRole } from "@/lib/auth/types";
 import type {
   AuthStore,
   LeaderboardUser,
@@ -12,7 +13,7 @@ type UserRow = {
   id: string;
   username: string;
   email: string;
-  role: "user" | "admin";
+  role: AuthRole;
   created_at: string;
   last_login_at: string;
   total_score: number;
@@ -465,7 +466,7 @@ export function buildSessionUser(user: UserRecord): PublicSessionUser {
   };
 }
 
-export function createUserRecord(username: string, email: string, role: "user" | "admin" = "user"): UserRecord {
+export function createUserRecord(username: string, email: string, role: AuthRole = "user"): UserRecord {
   const now = new Date().toISOString();
   return {
     id: generateId(),

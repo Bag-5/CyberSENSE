@@ -27,7 +27,6 @@ export const metadata: Metadata = {
     apple: "/favicon.ico",
   },
   applicationName: siteName,
-  themeColor: "#050816",
   title: {
     default: siteName,
     template: `%s | ${siteName}`,
@@ -58,6 +57,10 @@ export const metadata: Metadata = {
     email: false,
     address: false,
   },
+};
+
+export const viewport = {
+  themeColor: "#050816",
 };
 
 export default function RootLayout({

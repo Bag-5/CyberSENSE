@@ -55,6 +55,7 @@ export function SiteHeader() {
   }
 
   const isAuthenticated = Boolean(user);
+  const isSuperAdmin = user?.role === "superadmin";
   const visibleLinks = isAuthenticated ? authenticatedNavLinks : [];
 
   return (
@@ -120,6 +121,18 @@ export function SiteHeader() {
             })}
 
             <div className="mt-2 flex flex-col gap-3 pt-2 lg:hidden">
+              {isSuperAdmin ? (
+                <Link
+                  href="/superadmin"
+                  onClick={() => setMenuOpen(false)}
+                  className={cn(
+                    cyberButtonClasses("secondary", "sm"),
+                    "border-amber-300/25 bg-amber-400/10 text-amber-50 hover:border-amber-200/45 hover:bg-amber-400/15",
+                  )}
+                >
+                  Open Super Admin
+                </Link>
+              ) : null}
               <div className="rounded-2xl border border-cyan-300/20 bg-cyan-400/10 px-4 py-3 text-sm text-cyan-100">
                 {user?.username}
               </div>
@@ -131,6 +144,17 @@ export function SiteHeader() {
         <div className="hidden items-center gap-3 lg:flex">
           {isAuthenticated ? (
             <>
+              {isSuperAdmin ? (
+                <Link
+                  href="/superadmin"
+                  className={cn(
+                    cyberButtonClasses("secondary", "sm"),
+                    "border-amber-300/25 bg-amber-400/10 text-amber-50 hover:border-amber-200/45 hover:bg-amber-400/15",
+                  )}
+                >
+                  Super Admin
+                </Link>
+              ) : null}
               <div className="rounded-full border border-cyan-300/20 bg-cyan-400/10 px-4 py-2 text-sm text-cyan-100">
                 {user?.username}
               </div>

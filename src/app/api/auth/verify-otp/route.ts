@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { createSessionToken, hashOtpCode } from "@/lib/auth/crypto";
+import { resolveAuthRole } from "@/lib/auth/roles";
 import {
   buildSessionUser,
   consumePendingOtp,
@@ -9,8 +10,6 @@ import {
   upsertUserFromSession,
 } from "@/lib/auth/store";
 import { sessionCookieName } from "@/lib/auth/constants";
-import type { AuthRole } from "@/lib/auth/types";
-
 function normalizeEmail(value: unknown) {
   return typeof value === "string" ? value.trim().toLowerCase() : "";
 }
@@ -83,13 +82,7 @@ export async function POST(request: Request) {
 
     await consumePendingOtp(email);
 
-    const role: AuthRole =
-      process.env.CYBERSENSE_ADMIN_EMAILS?.split(",")
-        .map((entry) => entry.trim().toLowerCase())
-        .filter(Boolean)
-        .includes(email)
-      ? "admin"
-      : "user";
+    const role = resolveAuthRole(email);
 
     const existingUser = await upsertUserFromSession({
       id: "",

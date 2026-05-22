@@ -7,8 +7,11 @@ type OtpEmailInput = {
   expiresInMinutes: number;
 };
 
-function requireEnv(name: string) {
-  const value = process.env[name]?.trim();
+function requireEnv(name: string, options?: { stripWhitespace?: boolean }) {
+  const rawValue = process.env[name];
+  const value = options?.stripWhitespace
+    ? rawValue?.replace(/\s+/g, "")
+    : rawValue?.trim();
   if (!value) {
     throw new Error(`${name} is not configured`);
   }
@@ -17,7 +20,7 @@ function requireEnv(name: string) {
 
 function createTransport() {
   const user = requireEnv("GMAIL_USER_EMAIL");
-  const pass = requireEnv("GMAIL_APP_PASSWORD");
+  const pass = requireEnv("GMAIL_APP_PASSWORD", { stripWhitespace: true });
 
   return nodemailer.createTransport({
     service: "gmail",

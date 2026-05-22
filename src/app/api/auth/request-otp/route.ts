@@ -65,13 +65,29 @@ export async function POST(request: Request) {
         expiresInMinutes: 10,
       });
     } catch (mailError) {
+      console.error("OTP email send failed:", mailError);
+      const allowDevFallback =
+        process.env.NODE_ENV !== "production" &&
+        process.env.CYBERSENSE_DEV_REVEAL_OTP !== "false";
+
+      if (allowDevFallback) {
+        return NextResponse.json({
+          ok: true,
+          email: maskEmail(email),
+          expiresAt,
+          devOtp: code,
+          message: "OTP prepared. Use the code to complete signup or sign-in.",
+        });
+      }
+
       await deletePendingOtp(email);
+      const message =
+        mailError instanceof Error && mailError.message.trim()
+          ? mailError.message
+          : "OTP email could not be sent. Please check the mail configuration.";
       return NextResponse.json(
         {
-          error:
-            mailError instanceof Error
-              ? mailError.message
-              : "OTP email could not be sent. Please check the mail configuration.",
+          error: message,
         },
         { status: 500 },
       );

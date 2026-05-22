@@ -7,6 +7,7 @@ import { SiteLogo } from "@/components/layout/site-logo";
 export async function SiteFooter() {
   const user = await getCurrentSessionUser();
   const currentYear = new Date().getFullYear();
+  const isSuperAdmin = user?.role === "superadmin";
 
   return (
     <footer className="border-t border-cyan-400/10 bg-slate-950/80">
@@ -29,6 +30,16 @@ export async function SiteFooter() {
             </p>
             {user ? (
               <ul className="space-y-2 text-sm text-slate-400">
+                {isSuperAdmin ? (
+                  <li>
+                    <Link
+                      href="/superadmin"
+                      className="transition hover:text-amber-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-200 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
+                    >
+                      Super Admin
+                    </Link>
+                  </li>
+                ) : null}
                 {authenticatedNavLinks.map((link) => (
                   <li key={link.href}>
                     <Link

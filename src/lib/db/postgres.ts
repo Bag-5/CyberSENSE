@@ -29,7 +29,7 @@ async function createTables() {
       id text primary key,
       username text not null,
       email text not null unique,
-      role text not null check (role in ('user', 'admin')),
+      role text not null check (role in ('user', 'admin', 'superadmin')),
       created_at text not null,
       last_login_at text not null,
       total_score integer not null default 0,
@@ -60,6 +60,17 @@ async function createTables() {
   await db`
     create index if not exists cybersense_pending_otps_expires_at_idx
     on cybersense_pending_otps (expires_at)
+  `;
+
+  await db`
+    alter table cybersense_users
+    drop constraint if exists cybersense_users_role_check
+  `;
+
+  await db`
+    alter table cybersense_users
+    add constraint cybersense_users_role_check
+    check (role in ('user', 'admin', 'superadmin'))
   `;
 }
 

@@ -61,7 +61,11 @@ export function AuthPanel() {
       }
       setMessage(payload.message || "Signed in.");
       router.refresh();
-      router.replace(returnTo);
+      const destination =
+        payload.user?.role === "superadmin" && returnTo === "/"
+          ? "/superadmin"
+          : returnTo;
+      router.replace(destination);
     } catch (verifyError) {
       setError(verifyError instanceof Error ? verifyError.message : "Unable to verify OTP.");
     } finally {

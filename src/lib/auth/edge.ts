@@ -1,3 +1,5 @@
+import type { AuthRole } from "@/lib/auth/types";
+
 const textEncoder = new TextEncoder();
 
 function base64UrlToUint8Array(value: string) {
@@ -58,7 +60,7 @@ export async function verifySessionTokenEdge(token: string) {
       userId: string;
       email: string;
       username: string;
-      role: "user" | "admin";
+      role: AuthRole;
     };
   } catch {
     return null;

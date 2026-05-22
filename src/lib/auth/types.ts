@@ -1,4 +1,4 @@
-export type AuthRole = "user" | "admin";
+export type AuthRole = "user" | "admin" | "superadmin";
 
 export type PublicSessionUser = {
   id: string;
