@@ -61,7 +61,7 @@ export function SiteHeader() {
     <header className="sticky top-0 z-50 border-b border-cyan-400/10 bg-slate-950/70 backdrop-blur-xl">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-4 py-4 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
         <div className="flex items-center justify-between gap-4">
-          <SiteLogo className="h-16 w-[12.5rem] sm:h-[4.75rem] sm:w-[15rem]" />
+          <SiteLogo className="w-[15.5rem] sm:w-[18rem]" />
 
           <div className="flex items-center gap-3 lg:hidden">
             {isAuthenticated ? (

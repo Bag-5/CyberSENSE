@@ -52,12 +52,13 @@ export function Hero() {
           <div className="space-y-5">
             <div className="h-1.5 w-36 rounded-full bg-gradient-to-r from-rose-500 via-amber-300 to-emerald-500" />
             <h1 className="sr-only">Learn Cybersecurity Before Hackers Learn You</h1>
-            <div className="relative max-w-[42rem] overflow-hidden rounded-[2rem] border border-white/10 bg-slate-950/60 p-4 shadow-[0_0_40px_rgba(15,23,42,0.35)] sm:p-5">
+            <div className="relative aspect-[11/6] w-full max-w-[42rem] overflow-hidden rounded-[2rem] border border-white/10 bg-slate-950/60 shadow-[0_0_40px_rgba(15,23,42,0.35)]">
               <Image
                 src={heroImage}
                 alt="CyberSENSE hero visual"
                 priority
-                className="h-auto w-full rounded-[1.25rem] object-cover"
+                fill
+                className="rounded-[2rem] object-contain p-0"
                 sizes="(max-width: 1024px) 100vw, 42rem"
               />
             </div>
