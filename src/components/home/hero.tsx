@@ -18,15 +18,16 @@ export function Hero() {
 
       <div className="relative mx-auto grid w-full max-w-7xl gap-10 px-4 py-16 sm:px-6 sm:py-20 lg:grid-cols-[1fr_0.95fr] lg:items-center lg:px-8 lg:py-28">
         <div className="relative z-10 space-y-8">
-          <div className="inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-400/10 px-4 py-2 text-xs font-medium text-cyan-100">
-            <span className="h-2 w-2 rounded-full bg-cyan-300 shadow-[0_0_12px_rgba(103,232,249,0.8)]" />
+          <div className="inline-flex items-center gap-2 rounded-full border border-amber-300/18 bg-[linear-gradient(135deg,rgba(239,68,68,0.08),rgba(234,179,8,0.08),rgba(16,185,129,0.08))] px-4 py-2 text-xs font-medium text-amber-100">
+            <span className="h-2 w-2 rounded-full bg-amber-300 shadow-[0_0_12px_rgba(234,179,8,0.8)]" />
             Cyberpunk training lab
           </div>
 
           <div className="space-y-5">
-            <p className="text-sm font-semibold tracking-[0.28em] text-fuchsia-200 uppercase">
+            <p className="text-sm font-semibold tracking-[0.28em] text-amber-100 uppercase">
               {siteName}
             </p>
+            <div className="h-1.5 w-28 rounded-full bg-gradient-to-r from-rose-400 via-amber-300 to-emerald-400" />
             <h1 className="max-w-3xl text-5xl font-black tracking-[-0.08em] text-white drop-shadow-[0_0_28px_rgba(34,211,238,0.14)] sm:text-6xl lg:text-7xl">
               CyberSENSE
             </h1>

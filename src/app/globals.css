@@ -9,6 +9,9 @@
   --border: rgba(148, 163, 184, 0.18);
   --cyan-glow: rgba(34, 211, 238, 0.16);
   --fuchsia-glow: rgba(217, 70, 239, 0.18);
+  --ghana-red: rgba(239, 68, 68, 0.12);
+  --ghana-gold: rgba(234, 179, 8, 0.14);
+  --ghana-green: rgba(16, 185, 129, 0.12);
 }
 
 @theme inline {
@@ -33,8 +36,10 @@ html:focus-within {
 body {
   min-height: 100vh;
   background:
-    radial-gradient(circle at top, rgba(34, 211, 238, 0.15), transparent 28%),
-    radial-gradient(circle at right, rgba(217, 70, 239, 0.14), transparent 24%),
+    radial-gradient(circle at top left, var(--ghana-red), transparent 24%),
+    radial-gradient(circle at top, rgba(34, 211, 238, 0.14), transparent 28%),
+    radial-gradient(circle at top right, var(--ghana-gold), transparent 22%),
+    radial-gradient(circle at bottom right, var(--ghana-green), transparent 24%),
     linear-gradient(180deg, #060816 0%, #050816 38%, #04060f 100%);
   color: var(--foreground);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
@@ -102,7 +107,8 @@ select {
     background: rgba(15, 23, 42, 0.66);
     box-shadow:
       0 0 0 1px rgba(255, 255, 255, 0.02) inset,
-      0 0 40px var(--cyan-glow);
+      0 0 40px var(--cyan-glow),
+      0 0 18px rgba(234, 179, 8, 0.05);
     backdrop-filter: blur(24px);
   }
 

@@ -7,7 +7,7 @@ const buttonVariants: Record<CyberButtonVariant, string> = {
   primary:
     "bg-cyan-400 text-slate-950 shadow-[0_0_30px_rgba(34,211,238,0.28)] hover:bg-cyan-300",
   secondary:
-    "border border-fuchsia-300/30 bg-white/5 text-white hover:border-fuchsia-300/55 hover:bg-white/10",
+    "border border-amber-300/22 bg-white/5 text-white hover:border-amber-200/45 hover:bg-white/10",
   ghost:
     "border border-white/10 bg-transparent text-slate-200 hover:border-white/20 hover:bg-white/5 hover:text-white",
   danger:

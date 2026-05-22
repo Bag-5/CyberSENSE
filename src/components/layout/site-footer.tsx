@@ -1,12 +1,11 @@
 import Link from "next/link";
 
 import { getCurrentSessionUser } from "@/lib/auth/context";
-import { authenticatedNavLinks, publicNavLinks, siteName } from "@/data/site";
+import { authenticatedNavLinks, siteName } from "@/data/site";
 
 export async function SiteFooter() {
   const user = await getCurrentSessionUser();
   const currentYear = new Date().getFullYear();
-  const navItems = user ? authenticatedNavLinks : [...publicNavLinks, { label: "Sign in", href: "/auth" }];
 
   return (
     <footer className="border-t border-cyan-400/10 bg-slate-950/80">
@@ -26,29 +25,44 @@ export async function SiteFooter() {
         </div>
 
         <div className="grid gap-6 sm:grid-cols-2">
-          <div>
+          <div className="rounded-[1.5rem] border border-white/10 bg-white/5 p-5">
             <p className="mb-3 text-sm font-medium text-slate-200">
-              {user ? "Quick links" : "Get started"}
+              {user ? "Quick links" : "Access"}
             </p>
-            <ul className="space-y-2 text-sm text-slate-400">
-              {navItems.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="transition hover:text-cyan-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-200 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            {user ? (
+              <ul className="space-y-2 text-sm text-slate-400">
+                {authenticatedNavLinks.map((link) => (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      className="transition hover:text-cyan-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-200 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div className="space-y-4">
+                <p className="text-sm leading-6 text-slate-400">
+                  Sign in to unlock the academy, quizzes, lab, and training
+                  routes.
+                </p>
+                <Link
+                  href="/auth"
+                  className="inline-flex rounded-full border border-amber-300/20 bg-amber-400/10 px-4 py-2 text-sm font-semibold text-amber-100 transition hover:bg-amber-400/15 hover:text-amber-50"
+                >
+                  Sign in
+                </Link>
+              </div>
+            )}
           </div>
 
-          <div>
+          <div className="rounded-[1.5rem] border border-white/10 bg-white/5 p-5">
             <p className="mb-3 text-sm font-medium text-slate-200">Focus</p>
             <p className="text-sm leading-6 text-slate-400">
-              Dark mode, neon glow, responsive layout, and modular components
-              ready for future simulations and games.
+              Dark mode, neon glow, subtle Ghana-inspired accent tones, and
+              modular components ready for future simulations and games.
             </p>
           </div>
         </div>

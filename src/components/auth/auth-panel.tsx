@@ -87,10 +87,6 @@ export function AuthPanel() {
           code to unlock the full platform, progress tracking, and non-demo rankings.
         </p>
 
-        <div className="mt-6 inline-flex max-w-xl rounded-full border border-cyan-300/15 bg-cyan-400/10 px-4 py-2 text-sm text-cyan-100">
-          Works smoothly in the browser on phones, tablets, iPads, Linux, iOS,
-          and Android.
-        </div>
       </motion.section>
 
       <motion.section

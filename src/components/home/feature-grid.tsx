@@ -18,10 +18,10 @@ export function FeatureGrid() {
               <article
                 key={card.title}
                 className={cyberPanelClasses(
-                  "p-6 transition duration-300 hover:-translate-y-1 hover:border-cyan-300/30 hover:bg-white/10",
+                  "p-6 transition duration-300 hover:-translate-y-1 hover:border-amber-300/25 hover:bg-white/10",
                 )}
               >
-                <p className="text-xs font-semibold tracking-[0.22em] text-fuchsia-200 uppercase">
+                <p className="text-xs font-semibold tracking-[0.22em] text-amber-100 uppercase">
                   {card.accent}
                 </p>
                 <h3 className="mt-4 text-xl font-semibold text-white">
@@ -39,7 +39,7 @@ export function FeatureGrid() {
       <AnimatedSection id="training" delay={0.08}>
         <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
-            <article className={cyberPanelClasses("border-cyan-400/15 bg-gradient-to-br from-cyan-400/10 via-slate-900 to-fuchsia-500/10 p-8")}>
+            <article className={cyberPanelClasses("border-amber-300/15 bg-gradient-to-br from-rose-400/10 via-slate-900 to-emerald-400/10 p-8")}>
               <SectionHeader
                 eyebrow="Training loop"
                 title="A simple path that keeps beginners moving."
@@ -71,10 +71,10 @@ export function FeatureGrid() {
 
       <AnimatedSection id="games" delay={0.16}>
         <div className="mx-auto w-full max-w-7xl px-4 pb-10 sm:px-6 lg:px-8">
-          <div className={cyberPanelClasses("border-fuchsia-400/15 bg-white/5 px-6 py-8 sm:px-8")}>
+          <div className={cyberPanelClasses("border-amber-300/15 bg-white/5 px-6 py-8 sm:px-8")}>
             <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
               <div className="max-w-2xl space-y-3">
-                <p className="text-sm font-semibold tracking-[0.24em] text-fuchsia-200 uppercase">
+                <p className="text-sm font-semibold tracking-[0.24em] text-amber-100 uppercase">
                   Gameplay-ready foundation
                 </p>
                 <h2 className="text-2xl font-semibold tracking-[-0.04em] text-white sm:text-3xl">
