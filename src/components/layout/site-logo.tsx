@@ -30,7 +30,7 @@ export function SiteLogo({ href = "/", className }: SiteLogoProps) {
           priority
           fill
           sizes="(max-width: 640px) 140px, 160px"
-          className="object-contain p-1.5"
+          className="object-cover scale-[1.04]"
         />
       </motion.div>
     </Link>

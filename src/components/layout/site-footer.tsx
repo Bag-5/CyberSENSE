@@ -12,7 +12,7 @@ export async function SiteFooter() {
     <footer className="border-t border-cyan-400/10 bg-slate-950/80">
       <div className="mx-auto grid w-full max-w-7xl gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:px-8">
         <div className="space-y-4">
-          <SiteLogo className="h-12 w-[8.5rem]" />
+          <SiteLogo className="h-16 w-[12.5rem]" />
           <p className="max-w-xl text-sm leading-6 text-slate-400">
             An interactive cybersecurity awareness platform with playful
             missions, sharp visuals, and beginner-friendly training.
