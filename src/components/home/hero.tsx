@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { useEffect, useState } from "react";
@@ -8,6 +9,7 @@ import { AnimatedSection } from "@/components/animated-section";
 import { AnimatedBackground } from "@/components/home/animated-background";
 import { FloatingAlertCards } from "@/components/home/floating-alert-cards";
 import { cyberButtonClasses } from "@/components/ui/cyber";
+import heroImage from "../../../Logo/CyberSENSE-image.png";
 
 export function Hero() {
   const prefersReducedMotion = useReducedMotion();
@@ -49,9 +51,16 @@ export function Hero() {
         <div className="relative z-10 space-y-8">
           <div className="space-y-5">
             <div className="h-1.5 w-36 rounded-full bg-gradient-to-r from-rose-500 via-amber-300 to-emerald-500" />
-            <h1 className="max-w-3xl text-5xl font-black tracking-[-0.08em] text-white drop-shadow-[0_0_28px_rgba(34,211,238,0.14)] sm:text-6xl lg:text-7xl">
-              Learn Cybersecurity Before Hackers Learn You
-            </h1>
+            <h1 className="sr-only">Learn Cybersecurity Before Hackers Learn You</h1>
+            <div className="relative max-w-[42rem] overflow-hidden rounded-[2rem] border border-white/10 bg-slate-950/60 p-4 shadow-[0_0_40px_rgba(15,23,42,0.35)] sm:p-5">
+              <Image
+                src={heroImage}
+                alt="CyberSENSE hero visual"
+                priority
+                className="h-auto w-full rounded-[1.25rem] object-cover"
+                sizes="(max-width: 1024px) 100vw, 42rem"
+              />
+            </div>
             <p className="max-w-2xl text-base leading-7 text-slate-300 sm:text-lg">
               Step into an interactive training space where simulations, games,
               storytelling, and quizzes turn everyday cyber safety into a vivid,
