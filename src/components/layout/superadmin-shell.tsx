@@ -22,7 +22,7 @@ export function SuperAdminShell({ children }: SuperAdminShellProps) {
             <motion.div
               animate={{ boxShadow: ["0 0 0 rgba(234,179,8,0.0)", "0 0 28px rgba(234,179,8,0.18)", "0 0 0 rgba(234,179,8,0.0)"] }}
               transition={{ duration: 4.5, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
-              className="rounded-[1.2rem] border border-amber-300/20 bg-amber-400/10 px-4 py-3 text-center"
+              className="superadmin-shell-badge rounded-[1.2rem] border border-amber-300/20 bg-amber-400/10 px-4 py-3 text-center"
             >
               <p className="text-xs font-semibold tracking-[0.32em] text-amber-100 uppercase">
                 Super Admin
@@ -44,7 +44,7 @@ export function SuperAdminShell({ children }: SuperAdminShellProps) {
 
           <div className="flex flex-wrap items-center gap-3">
             <ThemeToggle />
-            <span className="rounded-full border border-emerald-300/20 bg-emerald-400/10 px-4 py-2 text-sm font-semibold text-emerald-100">
+            <span className="superadmin-shell-status rounded-full border border-emerald-300/20 bg-emerald-400/10 px-4 py-2 text-sm font-semibold text-emerald-100">
               Allowlisted
             </span>
             <SignOutButton

@@ -338,6 +338,27 @@ select {
     background: rgba(34, 211, 238, 0.22) !important;
   }
 
+  :root[data-cybersense-theme="light"] .superadmin-shell-badge {
+    background: rgba(245, 158, 11, 0.14) !important;
+    border-color: rgba(245, 158, 11, 0.22) !important;
+  }
+
+  :root[data-cybersense-theme="light"] .superadmin-shell-badge .text-amber-100,
+  :root[data-cybersense-theme="light"] .superadmin-shell-badge .text-amber-50 {
+    color: #78350f !important;
+  }
+
+  :root[data-cybersense-theme="light"] .superadmin-shell-status {
+    background: rgba(16, 185, 129, 0.14) !important;
+    border-color: rgba(16, 185, 129, 0.22) !important;
+    color: #065f46 !important;
+  }
+
+  :root[data-cybersense-theme="light"] .superadmin-shell-status,
+  :root[data-cybersense-theme="light"] .superadmin-shell-status * {
+    text-shadow: none !important;
+  }
+
   :root[data-cybersense-theme="light"] [class*="bg-slate-950"],
   :root[data-cybersense-theme="light"] [class*="bg-slate-900"],
   :root[data-cybersense-theme="light"] [class*="bg-slate-800"] {
