@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 
 import { SuperAdminDashboard } from "@/components/superadmin/superadmin-dashboard";
 import { getCurrentSessionUser } from "@/lib/auth/context";
+import { getPlatformSettings } from "@/lib/superadmin/settings";
 
 export const dynamic = "force-dynamic";
 
@@ -22,5 +23,7 @@ export default async function SuperAdminPage() {
     redirect("/");
   }
 
-  return <SuperAdminDashboard user={user} />;
+  const initialSettings = await getPlatformSettings();
+
+  return <SuperAdminDashboard user={user} initialSettings={initialSettings} />;
 }

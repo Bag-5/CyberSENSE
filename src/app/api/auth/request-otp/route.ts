@@ -27,6 +27,18 @@ function isValidUsername(username: string) {
   return username.length >= 2 && username.length <= 32;
 }
 
+function describeError(error: unknown, fallback: string) {
+  if (error instanceof Error && error.message.trim()) {
+    return error.message;
+  }
+
+  if (typeof error === "string" && error.trim()) {
+    return error;
+  }
+
+  return fallback;
+}
+
 export async function POST(request: Request) {
   try {
     const body = (await request.json()) as {
@@ -81,10 +93,10 @@ export async function POST(request: Request) {
       }
 
       await deletePendingOtp(email);
-      const message =
-        mailError instanceof Error && mailError.message.trim()
-          ? mailError.message
-          : "OTP email could not be sent. Please check the mail configuration.";
+      const message = describeError(
+        mailError,
+        "OTP email could not be sent. Please check the mail configuration.",
+      );
       return NextResponse.json(
         {
           error: message,
@@ -109,10 +121,10 @@ export async function POST(request: Request) {
   } catch (error) {
     return NextResponse.json(
       {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Could not create the OTP right now.",
+        error: describeError(
+          error,
+          "Could not create the OTP right now. Check DATABASE_URL and local Postgres.",
+        ),
       },
       { status: 500 },
     );

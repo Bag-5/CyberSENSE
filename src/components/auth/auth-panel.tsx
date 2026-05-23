@@ -5,6 +5,10 @@ import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import { cyberButtonClasses, cyberPanelClasses } from "@/components/ui/cyber";
+import {
+  notifyAuthSessionChanged,
+  writeStoredSessionUser,
+} from "@/lib/auth/session-client";
 import { cn } from "@/utils/cn";
 
 export function AuthPanel() {
@@ -60,6 +64,10 @@ export function AuthPanel() {
         throw new Error(payload.error || "Unable to verify OTP.");
       }
       setMessage(payload.message || "Signed in.");
+      if (payload.user) {
+        writeStoredSessionUser(payload.user);
+        notifyAuthSessionChanged();
+      }
       router.refresh();
       const destination =
         payload.user?.role === "superadmin" && returnTo === "/"

@@ -48,6 +48,14 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+body.superadmin-mode {
+  background:
+    radial-gradient(circle at top left, rgba(234, 179, 8, 0.18), transparent 22%),
+    radial-gradient(circle at top right, rgba(34, 211, 238, 0.12), transparent 24%),
+    radial-gradient(circle at bottom left, rgba(16, 185, 129, 0.08), transparent 24%),
+    linear-gradient(180deg, #030406 0%, #020308 45%, #010205 100%);
+}
+
 body::before {
   content: "";
   position: fixed;
@@ -58,6 +66,14 @@ body::before {
     linear-gradient(90deg, rgba(148, 163, 184, 0.04) 1px, transparent 1px);
   background-size: 64px 64px;
   mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.3), transparent 80%);
+}
+
+body.superadmin-mode::before {
+  background-image:
+    linear-gradient(rgba(234, 179, 8, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34, 211, 238, 0.04) 1px, transparent 1px);
+  background-size: 88px 88px;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.5), transparent 84%);
 }
 
 * {
@@ -114,5 +130,9 @@ select {
 
   .cyber-glow-text {
     text-shadow: 0 0 24px rgba(34, 211, 238, 0.2);
+  }
+
+  body.superadmin-mode .cyber-glow-text {
+    text-shadow: 0 0 24px rgba(234, 179, 8, 0.22);
   }
 }

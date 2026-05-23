@@ -22,6 +22,18 @@ function isValidOtp(value: unknown) {
   return typeof value === "string" && /^\d{6}$/.test(value);
 }
 
+function describeError(error: unknown, fallback: string) {
+  if (error instanceof Error && error.message.trim()) {
+    return error.message;
+  }
+
+  if (typeof error === "string" && error.trim()) {
+    return error;
+  }
+
+  return fallback;
+}
+
 export async function POST(request: Request) {
   try {
     const body = (await request.json()) as {
@@ -116,10 +128,10 @@ export async function POST(request: Request) {
   } catch (error) {
     return NextResponse.json(
       {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Could not verify the OTP right now.",
+        error: describeError(
+          error,
+          "Could not verify the OTP right now. Check DATABASE_URL and local Postgres.",
+        ),
       },
       { status: 500 },
     );

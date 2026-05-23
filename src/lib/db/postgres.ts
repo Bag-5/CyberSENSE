@@ -53,6 +53,14 @@ async function createTables() {
   `;
 
   await db`
+    create table if not exists cybersense_platform_settings (
+      id text primary key,
+      settings jsonb not null,
+      updated_at text not null
+    )
+  `;
+
+  await db`
     create index if not exists cybersense_users_total_score_idx
     on cybersense_users (total_score desc, quizzes_completed desc, last_login_at desc)
   `;
@@ -60,6 +68,11 @@ async function createTables() {
   await db`
     create index if not exists cybersense_pending_otps_expires_at_idx
     on cybersense_pending_otps (expires_at)
+  `;
+
+  await db`
+    create index if not exists cybersense_platform_settings_updated_at_idx
+    on cybersense_platform_settings (updated_at desc)
   `;
 
   await db`

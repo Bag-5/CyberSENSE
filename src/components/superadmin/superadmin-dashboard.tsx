@@ -14,10 +14,13 @@ import {
   superAdminSections,
   type SuperAdminSectionKey,
 } from "@/data/superadmin";
+import { PlatformControls } from "@/components/superadmin/platform-controls";
+import type { PlatformSettings } from "@/lib/superadmin/settings";
 import { cn } from "@/utils/cn";
 
 type SuperAdminDashboardProps = {
   user: PublicSessionUser;
+  initialSettings: PlatformSettings;
 };
 
 const sectionOrder: SuperAdminSectionKey[] = ["overview", "access", "content", "security"];
@@ -35,7 +38,7 @@ function metricToneClass(tone: string) {
   }
 }
 
-export function SuperAdminDashboard({ user }: SuperAdminDashboardProps) {
+export function SuperAdminDashboard({ user, initialSettings }: SuperAdminDashboardProps) {
   const greeting = buildSuperAdminGreeting(user);
   const [activeSection, setActiveSection] = useState<SuperAdminSectionKey>("overview");
 
@@ -270,6 +273,8 @@ export function SuperAdminDashboard({ user }: SuperAdminDashboardProps) {
             </div>
           </div>
         </section>
+
+        <PlatformControls initialSettings={initialSettings} />
       </div>
     </div>
   );

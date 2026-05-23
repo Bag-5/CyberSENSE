@@ -3,9 +3,51 @@ import Link from "next/link";
 import { getCurrentSessionUser } from "@/lib/auth/context";
 import { authenticatedNavLinks } from "@/data/site";
 import { SiteLogo } from "@/components/layout/site-logo";
+import { getPlatformSettings } from "@/lib/superadmin/settings";
+
+function isLinkEnabled(href: string, platformSettings: Awaited<ReturnType<typeof getPlatformSettings>> | null) {
+  if (!platformSettings) {
+    return true;
+  }
+
+  if (href === "/") {
+    return true;
+  }
+
+  if (href === "/threats" || href.startsWith("/threats/")) {
+    return platformSettings.modules.threatAcademy;
+  }
+
+  if (href === "/quizzes" || href.startsWith("/quizzes/")) {
+    return platformSettings.modules.quizzes;
+  }
+
+  if (href === "/lab") {
+    return platformSettings.modules.attackLab;
+  }
+
+  if (href === "/games/red-flags") {
+    return platformSettings.modules.redFlags;
+  }
+
+  if (href === "/#simulations") {
+    return platformSettings.modules.simulations;
+  }
+
+  if (href === "/#training") {
+    return platformSettings.modules.simulations || platformSettings.modules.attackLab;
+  }
+
+  if (href === "/threats/analyzer") {
+    return platformSettings.modules.aiAnalyzer;
+  }
+
+  return true;
+}
 
 export async function SiteFooter() {
   const user = await getCurrentSessionUser();
+  const platformSettings = await getPlatformSettings().catch(() => null);
   const currentYear = new Date().getFullYear();
   const isSuperAdmin = user?.role === "superadmin";
 
@@ -40,7 +82,7 @@ export async function SiteFooter() {
                     </Link>
                   </li>
                 ) : null}
-                {authenticatedNavLinks.map((link) => (
+                {authenticatedNavLinks.filter((link) => isLinkEnabled(link.href, platformSettings)).map((link) => (
                   <li key={link.href}>
                     <Link
                       href={link.href}

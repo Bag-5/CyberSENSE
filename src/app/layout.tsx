@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { Geist, Geist_Mono } from "next/font/google";
 
+import { SuperAdminShell } from "@/components/layout/superadmin-shell";
 import { SiteShell } from "@/components/layout/site-shell";
 import { siteDescription, siteName } from "@/data/site";
 import "./globals.css";
@@ -63,18 +65,31 @@ export const viewport = {
   themeColor: "#050816",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const requestHeaders = await headers();
+  const shellVariant = requestHeaders.get("x-cybersense-shell");
+  const isSuperAdminShell = shellVariant === "superadmin";
+
   return (
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full scroll-smooth antialiased`}
     >
-      <body className="min-h-full bg-background text-foreground">
-        <SiteShell>{children}</SiteShell>
+      <body
+        className={[
+          "min-h-full bg-background text-foreground",
+          isSuperAdminShell ? "superadmin-mode" : "",
+        ].join(" ")}
+      >
+        {isSuperAdminShell ? (
+          <SuperAdminShell>{children}</SuperAdminShell>
+        ) : (
+          <SiteShell>{children}</SiteShell>
+        )}
       </body>
     </html>
   );

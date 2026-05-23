@@ -10,20 +10,75 @@ import type { PublicSessionUser } from "@/lib/auth/types";
 import { cyberButtonClasses } from "@/components/ui/cyber";
 import { cn } from "@/utils/cn";
 import { SiteLogo } from "@/components/layout/site-logo";
+import {
+  readStoredSessionUser,
+  subscribeToAuthSessionChanges,
+} from "@/lib/auth/session-client";
+import type { PlatformSettings } from "@/lib/superadmin/settings";
 
 type AuthResponse = {
   user: PublicSessionUser | null;
 };
 
-export function SiteHeader() {
+type SiteHeaderProps = {
+  platformSettings?: PlatformSettings | null;
+  initialUser?: PublicSessionUser | null;
+};
+
+function isLinkEnabled(href: string, settings?: PlatformSettings | null) {
+  if (!settings) {
+    return true;
+  }
+
+  if (href === "/") {
+    return true;
+  }
+
+  if (href === "/threats" || href.startsWith("/threats/")) {
+    return settings.modules.threatAcademy;
+  }
+
+  if (href === "/quizzes" || href.startsWith("/quizzes/")) {
+    return settings.modules.quizzes;
+  }
+
+  if (href === "/lab") {
+    return settings.modules.attackLab;
+  }
+
+  if (href === "/games/red-flags") {
+    return settings.modules.redFlags;
+  }
+
+  if (href === "/#simulations") {
+    return settings.modules.simulations;
+  }
+
+  if (href === "/#training") {
+    return settings.modules.simulations || settings.modules.attackLab;
+  }
+
+  if (href === "/threats/analyzer") {
+    return settings.modules.aiAnalyzer;
+  }
+
+  return true;
+}
+
+export function SiteHeader({ platformSettings, initialUser = null }: SiteHeaderProps) {
   const pathname = usePathname();
-  const [user, setUser] = useState<PublicSessionUser | null>(null);
+  const [user, setUser] = useState<PublicSessionUser | null>(initialUser);
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     let active = true;
 
     async function loadUser() {
+      const cachedUser = readStoredSessionUser();
+      if (cachedUser && active) {
+        setUser(cachedUser);
+      }
+
       try {
         const response = await fetch("/api/auth/me", {
           cache: "no-store",
@@ -41,8 +96,13 @@ export function SiteHeader() {
 
     void loadUser();
 
+    const unsubscribe = subscribeToAuthSessionChanges(() => {
+      void loadUser();
+    });
+
     return () => {
       active = false;
+      unsubscribe();
     };
   }, []);
 
@@ -56,7 +116,9 @@ export function SiteHeader() {
 
   const isAuthenticated = Boolean(user);
   const isSuperAdmin = user?.role === "superadmin";
-  const visibleLinks = isAuthenticated ? authenticatedNavLinks : [];
+  const visibleLinks = isAuthenticated
+    ? authenticatedNavLinks.filter((link) => isLinkEnabled(link.href, platformSettings))
+    : [];
 
   return (
     <header className="sticky top-0 z-50 border-b border-cyan-400/10 bg-slate-950/70 backdrop-blur-xl">
