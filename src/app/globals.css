@@ -302,6 +302,42 @@ select {
     color: var(--muted) !important;
   }
 
+  :root[data-cybersense-theme="light"] .text-amber-50,
+  :root[data-cybersense-theme="light"] .text-amber-100 {
+    color: #78350f !important;
+  }
+
+  :root[data-cybersense-theme="light"] .text-emerald-50,
+  :root[data-cybersense-theme="light"] .text-emerald-100 {
+    color: #064e3b !important;
+  }
+
+  :root[data-cybersense-theme="light"] .text-cyan-50,
+  :root[data-cybersense-theme="light"] .text-cyan-100,
+  :root[data-cybersense-theme="light"] .text-cyan-200 {
+    color: #0f766e !important;
+  }
+
+  :root[data-cybersense-theme="light"] .text-fuchsia-50,
+  :root[data-cybersense-theme="light"] .text-fuchsia-100 {
+    color: #7e22ce !important;
+  }
+
+  :root[data-cybersense-theme="light"] .text-rose-50,
+  :root[data-cybersense-theme="light"] .text-rose-100 {
+    color: #be123c !important;
+  }
+
+  :root[data-cybersense-theme="light"] .theme-toggle {
+    background: rgba(15, 23, 42, 0.04);
+    border-color: rgba(15, 23, 42, 0.08);
+  }
+
+  :root[data-cybersense-theme="light"] .theme-toggle-option[aria-pressed="true"] {
+    color: #0f172a !important;
+    background: rgba(34, 211, 238, 0.22) !important;
+  }
+
   :root[data-cybersense-theme="light"] [class*="bg-slate-950"],
   :root[data-cybersense-theme="light"] [class*="bg-slate-900"],
   :root[data-cybersense-theme="light"] [class*="bg-slate-800"] {

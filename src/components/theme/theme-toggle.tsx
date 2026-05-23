@@ -12,7 +12,7 @@ const themeModes = [
 ] as const;
 
 export function ThemeToggle({ className }: { className?: string }) {
-  const { mode, setThemeMode } = useThemeMode();
+  const { mode, resolvedTheme, setThemeMode } = useThemeMode();
 
   const modeLabel = useMemo(
     () => themeModes.find((entry) => entry.value === mode)?.label ?? "System",
@@ -22,7 +22,7 @@ export function ThemeToggle({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/5 p-1 shadow-[0_0_24px_rgba(15,23,42,0.2)] backdrop-blur-xl",
+        "theme-toggle inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/5 p-1 shadow-[0_0_24px_rgba(15,23,42,0.2)] backdrop-blur-xl",
         className,
       )}
       role="group"
@@ -37,9 +37,11 @@ export function ThemeToggle({ className }: { className?: string }) {
             aria-pressed={active}
             onClick={() => setThemeMode(entry.value)}
             className={cn(
-              "rounded-full px-3 py-2 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-200 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950",
+              "theme-toggle-option rounded-full px-3 py-2 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-200 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950",
               active
-                ? "bg-cyan-400/15 text-cyan-100 ring-1 ring-cyan-300/20"
+                ? resolvedTheme === "light"
+                  ? "bg-cyan-400/18 text-slate-900 ring-1 ring-cyan-300/20"
+                  : "bg-cyan-400/15 text-cyan-100 ring-1 ring-cyan-300/20"
                 : "text-slate-300 hover:bg-white/5 hover:text-white",
             )}
           >
