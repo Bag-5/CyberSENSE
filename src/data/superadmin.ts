@@ -48,8 +48,8 @@ export const superAdminMetrics: SuperAdminMetric[] = [
   },
   {
     label: "Trusted seats",
-    value: "1 / 3",
-    detail: "Two superadmin slots remain reserved for later.",
+    value: "2 / 3",
+    detail: "One superadmin slot remains reserved for later.",
     tone: "amber",
   },
   {
@@ -74,10 +74,10 @@ export const superAdminRoster: SuperAdminRosterEntry[] = [
     note: "Founding superadmin slot",
   },
   {
-    name: "Reserved seat",
-    email: "Pending email",
-    status: "Reserved",
-    note: "Slot opens when the next trusted superadmin joins",
+    name: "Tecxe",
+    email: "tecxeghana@gmail.com",
+    status: "Active",
+    note: "Second trusted superadmin seat",
   },
   {
     name: "Reserved seat",
@@ -214,6 +214,12 @@ export const superAdminAuditTrail: SuperAdminAuditEntry[] = [
     severity: "Low",
   },
   {
+    title: "Second superadmin enrolled",
+    detail: "Tecxe was added to the trusted superadmin roster and allowlist.",
+    when: "Today",
+    severity: "Low",
+  },
+  {
     title: "OTP delivery guard enabled",
     detail: "Email verification remains required before any privileged session starts.",
     when: "Today",
@@ -229,7 +235,7 @@ export const superAdminAuditTrail: SuperAdminAuditEntry[] = [
 
 export const superAdminCallouts = [
   "Keep this route out of the public nav.",
-  "Add the next two superadmin emails to the env allowlist when they are ready.",
+  "Add the last superadmin email to the env allowlist when it is ready.",
   "Log every privileged action once the admin actions are wired.",
 ];
 
