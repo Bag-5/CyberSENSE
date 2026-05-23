@@ -19,23 +19,23 @@ const controlLabels: Record<ToggleKey, { title: string; description: string }> =
   },
   aiAnalyzer: {
     title: "AI Analyzer",
-    description: "Allow the scam analyzer to stay publicly available.",
+    description: "Keep scam analysis exposed or hide it from public users.",
   },
   quizzes: {
     title: "Quizzes",
-    description: "Keep the quiz engine visible and interactive.",
+    description: "Keep the quiz engine visible to authenticated learners.",
   },
   attackLab: {
     title: "Attack Lab",
-    description: "Expose the simulation lab to learners.",
+    description: "Expose the simulation lab to learners or pause it.",
   },
   redFlags: {
     title: "Red Flags Game",
-    description: "Keep the spotting game active for practice.",
+    description: "Keep the spotting game active for practice sessions.",
   },
   simulations: {
     title: "Simulations",
-    description: "Surface the scenario-driven training modules.",
+    description: "Surface scenario-driven training modules on the shell.",
   },
 };
 
@@ -115,18 +115,18 @@ export function PlatformControls({ initialSettings }: PlatformControlsProps) {
   }
 
   return (
-    <section className={cyberPanelClasses("p-5 sm:p-6")}>
+    <section className={cyberPanelClasses("border border-white/10 p-5 sm:p-6")}>
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <p className="text-sm font-semibold tracking-[0.24em] text-amber-100 uppercase">
-            Live controls
+          <p className="text-sm font-semibold tracking-[0.24em] text-cyan-200 uppercase">
+            System controls
           </p>
           <h2 className="mt-2 text-2xl font-bold tracking-[-0.04em] text-white">
-            Platform switches
+            Visibility matrix
           </h2>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">
-            These are the first real superadmin controls. They persist in Postgres and can be used
-            to throttle visibility or maintenance state without redeploying the app.
+            These controls persist in Postgres and let the superadmin throttle public modules,
+            maintenance mode, and homepage messaging without a redeploy.
           </p>
         </div>
 
@@ -135,11 +135,12 @@ export function PlatformControls({ initialSettings }: PlatformControlsProps) {
         </div>
       </div>
 
-      <div className="mt-5 flex flex-wrap items-center justify-between gap-4 rounded-[1.5rem] border border-white/10 bg-white/5 p-4">
+      <div className="mt-5 flex flex-wrap items-center justify-between gap-4 rounded-[1.5rem] border border-white/10 bg-slate-950/50 p-4">
         <div>
           <p className="text-sm font-semibold text-white">Maintenance mode</p>
           <p className="mt-1 text-sm leading-6 text-slate-300">
-            Pause the public learning shell and show a maintenance notice while you make changes.
+            Pause the public learning shell and show a maintenance notice while changes are in
+            flight.
           </p>
         </div>
         <button
@@ -188,12 +189,12 @@ export function PlatformControls({ initialSettings }: PlatformControlsProps) {
                 "rounded-[1.5rem] border p-5 text-left transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-70",
                 enabled
                   ? "border-emerald-300/20 bg-emerald-400/10"
-                  : "border-white/10 bg-white/5",
+                  : "border-white/10 bg-slate-950/55",
               )}
             >
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <h3 className="text-lg font-semibold text-white">{meta.title}</h3>
+                  <h3 className="text-base font-semibold text-white">{meta.title}</h3>
                   <p className="mt-2 text-sm leading-6 text-slate-300">{meta.description}</p>
                 </div>
                 <span
@@ -214,7 +215,9 @@ export function PlatformControls({ initialSettings }: PlatformControlsProps) {
 
       <div className="mt-6 grid gap-4 lg:grid-cols-[1fr_auto] lg:items-end">
         <label className="block">
-          <span className="mb-2 block text-sm font-semibold text-slate-200">Homepage announcement</span>
+          <span className="mb-2 block text-sm font-semibold text-slate-200">
+            Homepage banner message
+          </span>
           <textarea
             value={settings.announcement}
             onChange={(event) => updateAnnouncement(event.target.value)}
