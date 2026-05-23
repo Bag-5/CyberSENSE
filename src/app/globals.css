@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
 :root {
+  color-scheme: dark;
   --background: #050816;
   --foreground: #e8f2ff;
   --surface: #0c1120;
@@ -12,6 +13,82 @@
   --ghana-red: rgba(239, 68, 68, 0.12);
   --ghana-gold: rgba(234, 179, 8, 0.14);
   --ghana-green: rgba(16, 185, 129, 0.12);
+  --page-background:
+    radial-gradient(circle at top left, var(--ghana-red), transparent 24%),
+    radial-gradient(circle at top, rgba(34, 211, 238, 0.14), transparent 28%),
+    radial-gradient(circle at top right, var(--ghana-gold), transparent 22%),
+    radial-gradient(circle at bottom right, var(--ghana-green), transparent 24%),
+    linear-gradient(180deg, #060816 0%, #050816 38%, #04060f 100%);
+  --page-grid:
+    linear-gradient(rgba(148, 163, 184, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.04) 1px, transparent 1px);
+  --page-grid-size: 64px 64px;
+  --page-grid-mask: linear-gradient(180deg, rgba(0, 0, 0, 0.3), transparent 80%);
+  --panel-background: rgba(15, 23, 42, 0.66);
+  --panel-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.02) inset,
+    0 0 40px var(--cyan-glow),
+    0 0 18px rgba(234, 179, 8, 0.05);
+  --button-primary-bg: linear-gradient(135deg, #22d3ee 0%, #67e8f9 100%);
+  --button-primary-fg: #04111b;
+  --button-primary-shadow: 0 0 30px rgba(34, 211, 238, 0.28);
+  --button-secondary-bg: rgba(255, 255, 255, 0.05);
+  --button-secondary-border: rgba(255, 255, 255, 0.1);
+  --button-secondary-fg: #ffffff;
+  --button-ghost-bg: transparent;
+  --button-ghost-border: rgba(255, 255, 255, 0.1);
+  --button-ghost-fg: #dbe7ff;
+  --button-danger-bg: rgba(244, 63, 94, 0.1);
+  --button-danger-border: rgba(244, 63, 94, 0.25);
+  --button-danger-fg: #ffe4e6;
+  --title-color: #ffffff;
+  --body-color: #cbd5e1;
+  --eyebrow-color: #a5f3fc;
+}
+
+:root[data-cybersense-theme="light"] {
+  color-scheme: light;
+  --background: #f5f7fb;
+  --foreground: #0f172a;
+  --surface: #ffffff;
+  --surface-elevated: #f8fafc;
+  --muted: #51607a;
+  --border: rgba(15, 23, 42, 0.12);
+  --cyan-glow: rgba(14, 165, 233, 0.08);
+  --fuchsia-glow: rgba(192, 132, 252, 0.08);
+  --ghana-red: rgba(239, 68, 68, 0.08);
+  --ghana-gold: rgba(234, 179, 8, 0.09);
+  --ghana-green: rgba(16, 185, 129, 0.08);
+  --page-background:
+    radial-gradient(circle at top left, rgba(239, 68, 68, 0.08), transparent 24%),
+    radial-gradient(circle at top, rgba(14, 165, 233, 0.08), transparent 28%),
+    radial-gradient(circle at top right, rgba(234, 179, 8, 0.09), transparent 22%),
+    radial-gradient(circle at bottom right, rgba(16, 185, 129, 0.07), transparent 24%),
+    linear-gradient(180deg, #ffffff 0%, #eef3fb 40%, #f8fbff 100%);
+  --page-grid:
+    linear-gradient(rgba(15, 23, 42, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15, 23, 42, 0.03) 1px, transparent 1px);
+  --page-grid-size: 72px 72px;
+  --page-grid-mask: linear-gradient(180deg, rgba(0, 0, 0, 0.18), transparent 84%);
+  --panel-background: rgba(255, 255, 255, 0.86);
+  --panel-shadow:
+    0 16px 36px rgba(15, 23, 42, 0.08),
+    0 0 0 1px rgba(255, 255, 255, 0.7) inset;
+  --button-primary-bg: linear-gradient(135deg, #0ea5e9 0%, #22d3ee 100%);
+  --button-primary-fg: #f8fbff;
+  --button-primary-shadow: 0 0 24px rgba(14, 165, 233, 0.24);
+  --button-secondary-bg: rgba(15, 23, 42, 0.03);
+  --button-secondary-border: rgba(15, 23, 42, 0.12);
+  --button-secondary-fg: #0f172a;
+  --button-ghost-bg: rgba(15, 23, 42, 0.02);
+  --button-ghost-border: rgba(15, 23, 42, 0.12);
+  --button-ghost-fg: #0f172a;
+  --button-danger-bg: rgba(244, 63, 94, 0.08);
+  --button-danger-border: rgba(244, 63, 94, 0.18);
+  --button-danger-fg: #7f1d1d;
+  --title-color: #0f172a;
+  --body-color: #334155;
+  --eyebrow-color: #0e7490;
 }
 
 @theme inline {
@@ -35,12 +112,7 @@ html:focus-within {
 
 body {
   min-height: 100vh;
-  background:
-    radial-gradient(circle at top left, var(--ghana-red), transparent 24%),
-    radial-gradient(circle at top, rgba(34, 211, 238, 0.14), transparent 28%),
-    radial-gradient(circle at top right, var(--ghana-gold), transparent 22%),
-    radial-gradient(circle at bottom right, var(--ghana-green), transparent 24%),
-    linear-gradient(180deg, #060816 0%, #050816 38%, #04060f 100%);
+  background: var(--page-background);
   color: var(--foreground);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
   text-rendering: optimizeLegibility;
@@ -49,11 +121,52 @@ body {
 }
 
 body.superadmin-mode {
-  background:
+  --page-background:
     radial-gradient(circle at top left, rgba(234, 179, 8, 0.18), transparent 22%),
     radial-gradient(circle at top right, rgba(34, 211, 238, 0.12), transparent 24%),
     radial-gradient(circle at bottom left, rgba(16, 185, 129, 0.08), transparent 24%),
     linear-gradient(180deg, #030406 0%, #020308 45%, #010205 100%);
+  --page-grid:
+    linear-gradient(rgba(234, 179, 8, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34, 211, 238, 0.04) 1px, transparent 1px);
+  --page-grid-size: 88px 88px;
+  --page-grid-mask: linear-gradient(180deg, rgba(0, 0, 0, 0.5), transparent 84%);
+  --panel-background: rgba(8, 12, 24, 0.72);
+  --panel-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.03) inset,
+    0 0 36px rgba(234, 179, 8, 0.08),
+    0 0 20px rgba(34, 211, 238, 0.08);
+  --button-secondary-border: rgba(234, 179, 8, 0.2);
+  --button-secondary-fg: #f8fafc;
+  --button-ghost-border: rgba(255, 255, 255, 0.12);
+  --button-ghost-fg: #e2e8f0;
+  --title-color: #ffffff;
+  --body-color: #cbd5e1;
+  --eyebrow-color: #fde68a;
+}
+
+:root[data-cybersense-theme="light"] body.superadmin-mode {
+  --page-background:
+    radial-gradient(circle at top left, rgba(245, 158, 11, 0.08), transparent 22%),
+    radial-gradient(circle at top right, rgba(14, 165, 233, 0.08), transparent 24%),
+    radial-gradient(circle at bottom left, rgba(16, 185, 129, 0.06), transparent 24%),
+    linear-gradient(180deg, #fefefe 0%, #eef2f7 44%, #f8fafc 100%);
+  --page-grid:
+    linear-gradient(rgba(15, 23, 42, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15, 23, 42, 0.03) 1px, transparent 1px);
+  --page-grid-size: 88px 88px;
+  --page-grid-mask: linear-gradient(180deg, rgba(0, 0, 0, 0.2), transparent 84%);
+  --panel-background: rgba(255, 255, 255, 0.88);
+  --panel-shadow:
+    0 16px 36px rgba(15, 23, 42, 0.08),
+    0 0 0 1px rgba(255, 255, 255, 0.72) inset;
+  --button-secondary-border: rgba(15, 23, 42, 0.12);
+  --button-secondary-fg: #0f172a;
+  --button-ghost-border: rgba(15, 23, 42, 0.12);
+  --button-ghost-fg: #0f172a;
+  --title-color: #0f172a;
+  --body-color: #334155;
+  --eyebrow-color: #0f766e;
 }
 
 body::before {
@@ -61,19 +174,9 @@ body::before {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  background-image:
-    linear-gradient(rgba(148, 163, 184, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(148, 163, 184, 0.04) 1px, transparent 1px);
-  background-size: 64px 64px;
-  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.3), transparent 80%);
-}
-
-body.superadmin-mode::before {
-  background-image:
-    linear-gradient(rgba(234, 179, 8, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(34, 211, 238, 0.04) 1px, transparent 1px);
-  background-size: 88px 88px;
-  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.5), transparent 84%);
+  background-image: var(--page-grid);
+  background-size: var(--page-grid-size);
+  mask-image: var(--page-grid-mask);
 }
 
 * {
@@ -118,13 +221,49 @@ select {
 }
 
 @layer utilities {
+  .cyber-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    font-weight: 600;
+    transition:
+      color 300ms ease-out,
+      background-color 300ms ease-out,
+      border-color 300ms ease-out,
+      box-shadow 300ms ease-out,
+      transform 300ms ease-out;
+    outline: none;
+  }
+
+  .cyber-button-primary {
+    background: var(--button-primary-bg);
+    color: var(--button-primary-fg);
+    box-shadow: var(--button-primary-shadow);
+  }
+
+  .cyber-button-secondary {
+    border: 1px solid var(--button-secondary-border);
+    background: var(--button-secondary-bg);
+    color: var(--button-secondary-fg);
+  }
+
+  .cyber-button-ghost {
+    border: 1px solid var(--button-ghost-border);
+    background: var(--button-ghost-bg);
+    color: var(--button-ghost-fg);
+  }
+
+  .cyber-button-danger {
+    border: 1px solid var(--button-danger-border);
+    background: var(--button-danger-bg);
+    color: var(--button-danger-fg);
+  }
+
   .cyber-panel {
     border: 1px solid var(--border);
-    background: rgba(15, 23, 42, 0.66);
-    box-shadow:
-      0 0 0 1px rgba(255, 255, 255, 0.02) inset,
-      0 0 40px var(--cyan-glow),
-      0 0 18px rgba(234, 179, 8, 0.05);
+    background: var(--panel-background);
+    box-shadow: var(--panel-shadow);
     backdrop-filter: blur(24px);
   }
 
@@ -134,5 +273,51 @@ select {
 
   body.superadmin-mode .cyber-glow-text {
     text-shadow: 0 0 24px rgba(234, 179, 8, 0.22);
+  }
+
+  .cyber-eyebrow {
+    color: var(--eyebrow-color);
+  }
+
+  .cyber-title {
+    color: var(--title-color);
+  }
+
+  .cyber-body {
+    color: var(--body-color);
+  }
+
+  :root[data-cybersense-theme="light"] .text-white,
+  :root[data-cybersense-theme="light"] .text-slate-50 {
+    color: var(--title-color) !important;
+  }
+
+  :root[data-cybersense-theme="light"] .text-slate-200,
+  :root[data-cybersense-theme="light"] .text-slate-300 {
+    color: var(--body-color) !important;
+  }
+
+  :root[data-cybersense-theme="light"] .text-slate-400,
+  :root[data-cybersense-theme="light"] .text-slate-500 {
+    color: var(--muted) !important;
+  }
+
+  :root[data-cybersense-theme="light"] [class*="bg-slate-950"],
+  :root[data-cybersense-theme="light"] [class*="bg-slate-900"],
+  :root[data-cybersense-theme="light"] [class*="bg-slate-800"] {
+    background-color: var(--surface) !important;
+  }
+
+  :root[data-cybersense-theme="light"] [class*="bg-white/5"] {
+    background-color: rgba(15, 23, 42, 0.03) !important;
+  }
+
+  :root[data-cybersense-theme="light"] [class*="bg-white/10"] {
+    background-color: rgba(15, 23, 42, 0.05) !important;
+  }
+
+  :root[data-cybersense-theme="light"] [class*="border-white/10"],
+  :root[data-cybersense-theme="light"] [class*="border-white/5"] {
+    border-color: var(--border) !important;
   }
 }

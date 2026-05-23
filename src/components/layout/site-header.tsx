@@ -10,6 +10,7 @@ import type { PublicSessionUser } from "@/lib/auth/types";
 import { cyberButtonClasses } from "@/components/ui/cyber";
 import { cn } from "@/utils/cn";
 import { SiteLogo } from "@/components/layout/site-logo";
+import { ThemeToggle } from "@/components/theme/theme-toggle";
 import {
   readStoredSessionUser,
   subscribeToAuthSessionChanges,
@@ -126,7 +127,8 @@ export function SiteHeader({ platformSettings, initialUser = null }: SiteHeaderP
         <div className="flex items-center justify-between gap-4">
           <SiteLogo className="w-[15.5rem] sm:w-[18rem]" />
 
-          <div className="flex items-center gap-3 lg:hidden">
+          <div className="flex flex-wrap items-center gap-3 lg:hidden">
+            <ThemeToggle className="shrink-0" />
             {isAuthenticated ? (
               <button
                 type="button"
@@ -203,7 +205,8 @@ export function SiteHeader({ platformSettings, initialUser = null }: SiteHeaderP
           </nav>
         ) : null}
 
-        <div className="hidden items-center gap-3 lg:flex">
+        <div className="hidden flex-wrap items-center gap-3 lg:flex">
+          <ThemeToggle />
           {isAuthenticated ? (
             <>
               {isSuperAdmin ? (

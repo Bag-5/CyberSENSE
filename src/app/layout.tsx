@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { Geist, Geist_Mono } from "next/font/google";
+import Script from "next/script";
 
 import { SuperAdminShell } from "@/components/layout/superadmin-shell";
 import { SiteShell } from "@/components/layout/site-shell";
+import { ThemeProvider } from "@/components/theme/theme-provider";
 import { siteDescription, siteName } from "@/data/site";
+import { buildThemeInitScript } from "@/lib/theme";
 import "./globals.css";
 
 export const dynamic = "force-dynamic";
@@ -78,18 +81,24 @@ export default async function RootLayout({
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full scroll-smooth antialiased`}
+      suppressHydrationWarning
     >
+      <Script id="cybersense-theme-init" strategy="beforeInteractive">
+        {buildThemeInitScript()}
+      </Script>
       <body
         className={[
           "min-h-full bg-background text-foreground",
           isSuperAdminShell ? "superadmin-mode" : "",
         ].join(" ")}
       >
-        {isSuperAdminShell ? (
-          <SuperAdminShell>{children}</SuperAdminShell>
-        ) : (
-          <SiteShell>{children}</SiteShell>
-        )}
+        <ThemeProvider>
+          {isSuperAdminShell ? (
+            <SuperAdminShell>{children}</SuperAdminShell>
+          ) : (
+            <SiteShell>{children}</SiteShell>
+          )}
+        </ThemeProvider>
       </body>
     </html>
   );
