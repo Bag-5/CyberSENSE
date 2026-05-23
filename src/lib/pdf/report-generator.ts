@@ -233,7 +233,7 @@ function addTwoColumnList(doc: PDFKit.PDFDocument, items: ReportMetric[]) {
   });
 }
 
-const certificateLogoPath = join(process.cwd(), "Logo", "CyberSENSE-image.png");
+const certificateLogoPath = join(process.cwd(), "Logo", "CyberSENSE-logo.png");
 
 export async function generateCertificatePdf(input: CertificatePdfInput) {
   const doc = createDocument();
@@ -266,40 +266,36 @@ export async function generateCertificatePdf(input: CertificatePdfInput) {
     .restore();
 
   doc.save();
-  doc.roundedRect(centerX - 110, panelY + 20, 220, 84, 20).fill("#132238");
+  doc.roundedRect(centerX - 132, panelY + 20, 264, 86, 20).fill("#132238");
   doc.restore();
 
-  doc.save();
-  doc.roundedRect(centerX - 110, panelY + 20, 220, 84, 20);
-  doc.clip();
   if (certificateLogoPath) {
-    doc.image(certificateLogoPath, centerX - 110, panelY + 20, {
-      cover: [220, 84],
+    doc.image(certificateLogoPath, centerX - 124, panelY + 24, {
+      width: 248,
       align: "center",
       valign: "center",
     });
   }
-  doc.restore();
 
   doc
     .save()
-    .roundedRect(centerX - 110, panelY + 20, 220, 84, 20)
+    .roundedRect(centerX - 132, panelY + 20, 264, 86, 20)
     .lineWidth(1.2)
     .stroke("#f5d98b")
     .restore();
 
   doc
     .font("Helvetica-Bold")
-    .fontSize(24)
+    .fontSize(26)
     .fillColor("#ffffff")
-    .text(input.certificateTitle, 92, panelY + 118, {
+    .text(input.certificateTitle, 92, panelY + 116, {
       width: doc.page.width - 184,
       align: "center",
     });
 
   doc
     .font("Helvetica")
-    .fontSize(10.5)
+    .fontSize(11)
     .fillColor("#c6d1e2")
     .text("This certifies that", 92, panelY + 162, {
       width: doc.page.width - 184,
@@ -308,16 +304,16 @@ export async function generateCertificatePdf(input: CertificatePdfInput) {
 
   doc
     .font("Helvetica-Bold")
-    .fontSize(26)
+    .fontSize(28)
     .fillColor("#f5e7b8")
-    .text(input.fullName, 92, panelY + 188, {
+    .text(input.fullName, 92, panelY + 186, {
       width: doc.page.width - 184,
       align: "center",
     });
 
   const ribbonText = input.achievementTitle;
   doc.font("Helvetica-Bold").fontSize(11);
-  const ribbonWidth = Math.min(Math.max(doc.widthOfString(ribbonText) + 58, 240), panelW - 120);
+  const ribbonWidth = Math.min(Math.max(doc.widthOfString(ribbonText) + 58, 240), panelW - 140);
   doc
     .save()
     .roundedRect(centerX - ribbonWidth / 2, panelY + 246, ribbonWidth, 34, 17)
@@ -334,7 +330,7 @@ export async function generateCertificatePdf(input: CertificatePdfInput) {
 
   doc
     .font("Helvetica")
-    .fontSize(11)
+    .fontSize(11.2)
     .fillColor("#d9e5f2")
     .text(input.description, 104, panelY + 304, {
       width: doc.page.width - 208,
@@ -342,37 +338,48 @@ export async function generateCertificatePdf(input: CertificatePdfInput) {
       lineGap: 4,
     });
 
-  const detailLineY = panelY + 360;
-  const detailLineText = input.details
-    .filter((metric) => metric.label !== "Issued to")
-    .map((metric) => `${metric.label}: ${metric.value}`)
-    .join("  ·  ");
+  const footerTopY = panelY + 356;
+  const footerColumns = input.details.filter((metric) => metric.label !== "Issued to").slice(0, 2);
+  const footerColumnWidth = 188;
+  const footerLeftX = panelX + 94;
+  const footerRightX = doc.page.width - panelX - 94 - footerColumnWidth;
 
   doc
     .save()
-    .moveTo(panelX + 104, detailLineY - 12)
-    .lineTo(doc.page.width - panelX - 104, detailLineY - 12)
+    .moveTo(centerX - 248, footerTopY - 12)
+    .lineTo(centerX + 248, footerTopY - 12)
     .lineWidth(1)
     .strokeColor("#f5d98b")
     .stroke()
     .restore();
 
-  doc
-    .font("Helvetica")
-    .fontSize(10)
-    .fillColor("#dff2df")
-    .text(detailLineText, 96, detailLineY, {
-      width: doc.page.width - 192,
-      align: "center",
-      lineBreak: false,
-      height: 14,
-    });
+  footerColumns.forEach((metric, index) => {
+    const x = index === 0 ? footerLeftX : footerRightX;
+    const align = index === 0 ? "left" : "right";
+    doc
+      .font("Helvetica-Bold")
+      .fontSize(9.4)
+      .fillColor("#f5d98b")
+      .text(metric.label.toUpperCase(), x, footerTopY, {
+        width: footerColumnWidth,
+        align,
+        characterSpacing: 1.25,
+      });
+    doc
+      .font("Helvetica")
+      .fontSize(12.2)
+      .fillColor("#f6f0da")
+      .text(metric.value, x, footerTopY + 14, {
+        width: footerColumnWidth,
+        align,
+      });
+  });
 
   doc
     .font("Helvetica")
     .fontSize(8.8)
     .fillColor("#f5d98b")
-    .text("CyberSENSE verified certificate · generated from live learning progress", 42, doc.page.height - 48, {
+    .text("CyberSENSE verified certificate · generated from live learning progress", 42, doc.page.height - 40, {
       width: doc.page.width - 84,
       align: "center",
       lineBreak: false,

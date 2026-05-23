@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 
 import { cyberButtonClasses, cyberPanelClasses, SectionHeader } from "@/components/ui/cyber";
 import type {
@@ -177,6 +177,7 @@ export function ReportCenter({
   achievements,
   superadminPreview,
 }: ReportCenterProps) {
+  const reduceMotion = useReducedMotion();
   const [fullName, setFullName] = useState("");
   const [certificateKind, setCertificateKind] = useState<(typeof certificateKinds)[number]["value"]>(
     completedQuizzes.length ? "quiz" : "training",
@@ -475,9 +476,107 @@ export function ReportCenter({
               <motion.div
                 initial={{ opacity: 0, scale: 0.98 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="relative overflow-hidden rounded-[2rem] border border-amber-300/20 bg-[radial-gradient(circle_at_top_left,rgba(250,204,21,0.25),transparent_35%),linear-gradient(180deg,rgba(2,6,23,0.95),rgba(15,23,42,0.95))] p-5 shadow-[0_0_30px_rgba(245,158,11,0.12)]"
+                transition={
+                  reduceMotion
+                    ? { duration: 0.01 }
+                    : {
+                        duration: 0.8,
+                        ease: "easeOut",
+                      }
+                }
+                whileHover={reduceMotion ? undefined : { y: -4, scale: 1.01 }}
+                className="relative overflow-hidden rounded-[2rem] border border-amber-300/20 bg-[radial-gradient(circle_at_top_left,rgba(206,17,38,0.22),transparent_32%),radial-gradient(circle_at_top_right,rgba(0,107,63,0.18),transparent_30%),linear-gradient(180deg,rgba(2,6,23,0.95),rgba(15,23,42,0.95))] p-5 shadow-[0_0_30px_rgba(245,158,11,0.12)]"
               >
-                <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.08)_0%,transparent_28%,transparent_72%,rgba(255,255,255,0.08)_100%)] opacity-70" />
+                <motion.div
+                  aria-hidden="true"
+                  className="absolute inset-[-3px] rounded-[2.1rem] bg-[conic-gradient(from_0deg,rgba(206,17,38,0.9),rgba(252,209,22,0.95),rgba(0,107,63,0.9),rgba(206,17,38,0.9))] opacity-45 blur-xl"
+                  animate={
+                    reduceMotion
+                      ? undefined
+                      : {
+                          rotate: 360,
+                        }
+                  }
+                  transition={
+                    reduceMotion
+                      ? undefined
+                      : {
+                          duration: 16,
+                          repeat: Number.POSITIVE_INFINITY,
+                          ease: "linear",
+                        }
+                  }
+                />
+                <motion.div
+                  aria-hidden="true"
+                  className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.08)_0%,transparent_28%,transparent_72%,rgba(255,255,255,0.08)_100%)] opacity-70"
+                  animate={
+                    reduceMotion
+                      ? undefined
+                      : {
+                          x: ["-10%", "10%", "-10%"],
+                          opacity: [0.55, 0.85, 0.55],
+                        }
+                  }
+                  transition={
+                    reduceMotion
+                      ? undefined
+                      : {
+                          duration: 12,
+                          repeat: Number.POSITIVE_INFINITY,
+                          ease: "easeInOut",
+                        }
+                  }
+                />
+                <motion.div
+                  aria-hidden="true"
+                  className="absolute left-8 top-8 h-20 w-20 rounded-full bg-[#ce1126]/25 blur-3xl"
+                  animate={reduceMotion ? undefined : { scale: [1, 1.18, 1], opacity: [0.4, 0.8, 0.4] }}
+                  transition={
+                    reduceMotion
+                      ? undefined
+                      : {
+                          duration: 8,
+                          repeat: Number.POSITIVE_INFINITY,
+                          ease: "easeInOut",
+                        }
+                  }
+                />
+                <motion.div
+                  aria-hidden="true"
+                  className="absolute right-8 bottom-8 h-24 w-24 rounded-full bg-[#006b3f]/20 blur-3xl"
+                  animate={reduceMotion ? undefined : { scale: [1, 1.12, 1], opacity: [0.35, 0.68, 0.35] }}
+                  transition={
+                    reduceMotion
+                      ? undefined
+                      : {
+                          duration: 10,
+                          repeat: Number.POSITIVE_INFINITY,
+                          ease: "easeInOut",
+                        }
+                  }
+                />
+                <motion.div
+                  aria-hidden="true"
+                  className="absolute inset-x-10 top-10 h-24 rounded-full bg-[linear-gradient(90deg,rgba(206,17,38,0.22),rgba(252,209,22,0.22),rgba(0,107,63,0.22))] blur-2xl"
+                  animate={
+                    reduceMotion
+                      ? undefined
+                      : {
+                          x: ["-2%", "2%", "-2%"],
+                          opacity: [0.55, 0.9, 0.55],
+                        }
+                  }
+                  transition={
+                    reduceMotion
+                      ? undefined
+                      : {
+                          duration: 9,
+                          repeat: Number.POSITIVE_INFINITY,
+                          ease: "easeInOut",
+                        }
+                  }
+                />
                 <div className="relative z-10 space-y-5">
                   <div className="flex items-center justify-between gap-4">
                     <div>
@@ -493,41 +592,63 @@ export function ReportCenter({
                     </span>
                   </div>
 
-                  <div className="rounded-[1.6rem] border border-white/10 bg-slate-950/55 p-5 shadow-[0_0_28px_rgba(245,158,11,0.08)]">
-                    <p className="text-xs font-semibold tracking-[0.24em] text-slate-400 uppercase">
-                      Presented to
-                    </p>
-                    <p className="mt-2 text-3xl font-black tracking-[-0.06em] text-fuchsia-100">
-                      {certificatePreview.name || "Your full name"}
-                    </p>
-                    <p className="mt-3 text-sm leading-6 text-slate-300">
-                      {certificatePreview.subtitle}
-                    </p>
-                    <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                      <div className="rounded-2xl border border-cyan-300/20 bg-cyan-400/10 p-3">
-                        <p className="text-[11px] font-semibold tracking-[0.2em] text-cyan-100 uppercase">
-                          Account
-                        </p>
-                        <p className="mt-2 text-sm font-semibold text-cyan-50">{currentUsername}</p>
-                        <p className="mt-1 text-xs text-cyan-100/80">{currentEmail}</p>
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={`${certificatePreview.badge}-${certificatePreview.title}-${certificatePreview.name}-${certificatePreview.subtitle}`}
+                      initial={reduceMotion ? { opacity: 1 } : { opacity: 0, y: 12, scale: 0.985 }}
+                      animate={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 }}
+                      exit={reduceMotion ? { opacity: 1 } : { opacity: 0, y: -8, scale: 0.985 }}
+                      transition={
+                        reduceMotion
+                          ? { duration: 0.01 }
+                          : {
+                              duration: 0.45,
+                              ease: "easeOut",
+                            }
+                      }
+                      className="rounded-[1.6rem] border border-white/10 bg-slate-950/55 p-5 shadow-[0_0_28px_rgba(245,158,11,0.08)]"
+                    >
+                      <p className="text-xs font-semibold tracking-[0.24em] text-slate-400 uppercase">
+                        Presented to
+                      </p>
+                      <p className="mt-2 text-3xl font-black tracking-[-0.06em] text-fuchsia-100">
+                        {certificatePreview.name || "Your full name"}
+                      </p>
+                      <p className="mt-3 text-sm leading-6 text-slate-300">
+                        {certificatePreview.subtitle}
+                      </p>
+                      <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                        <motion.div
+                          whileHover={reduceMotion ? undefined : { y: -2, scale: 1.01 }}
+                          className="rounded-2xl border border-cyan-300/20 bg-cyan-400/10 p-3"
+                        >
+                          <p className="text-[11px] font-semibold tracking-[0.2em] text-cyan-100 uppercase">
+                            Account
+                          </p>
+                          <p className="mt-2 text-sm font-semibold text-cyan-50">{currentUsername}</p>
+                          <p className="mt-1 text-xs text-cyan-100/80">{currentEmail}</p>
+                        </motion.div>
+                        <motion.div
+                          whileHover={reduceMotion ? undefined : { y: -2, scale: 1.01 }}
+                          className="rounded-2xl border border-amber-300/20 bg-amber-400/10 p-3"
+                        >
+                          <p className="text-[11px] font-semibold tracking-[0.2em] text-amber-100 uppercase">
+                            Role
+                          </p>
+                          <p className="mt-2 text-sm font-semibold text-amber-50">
+                            {currentRole === "superadmin"
+                              ? "Super Admin"
+                              : currentRole === "admin"
+                                ? "Admin"
+                                : "Learner"}
+                          </p>
+                          <p className="mt-1 text-xs text-amber-100/80">
+                            Rank {leaderboardRank ? `#${leaderboardRank}` : "pending"}
+                          </p>
+                        </motion.div>
                       </div>
-                      <div className="rounded-2xl border border-amber-300/20 bg-amber-400/10 p-3">
-                        <p className="text-[11px] font-semibold tracking-[0.2em] text-amber-100 uppercase">
-                          Role
-                        </p>
-                        <p className="mt-2 text-sm font-semibold text-amber-50">
-                          {currentRole === "superadmin"
-                            ? "Super Admin"
-                            : currentRole === "admin"
-                              ? "Admin"
-                              : "Learner"}
-                        </p>
-                        <p className="mt-1 text-xs text-amber-100/80">
-                          Rank {leaderboardRank ? `#${leaderboardRank}` : "pending"}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
+                    </motion.div>
+                  </AnimatePresence>
                 </div>
               </motion.div>
             </div>
