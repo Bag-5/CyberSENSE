@@ -31,10 +31,6 @@ function isLinkEnabled(href: string, settings?: PlatformSettings | null) {
     return true;
   }
 
-  if (href === "/") {
-    return true;
-  }
-
   if (href === "/threats" || href.startsWith("/threats/")) {
     return settings.modules.threatAcademy;
   }
@@ -53,10 +49,6 @@ function isLinkEnabled(href: string, settings?: PlatformSettings | null) {
 
   if (href === "/#simulations") {
     return settings.modules.simulations;
-  }
-
-  if (href === "/#training") {
-    return settings.modules.simulations || settings.modules.attackLab;
   }
 
   if (href === "/threats/analyzer") {
@@ -108,10 +100,6 @@ export function SiteHeader({ platformSettings, initialUser = null }: SiteHeaderP
   }, []);
 
   function isActive(href: string) {
-    if (href === "/") {
-      return pathname === "/";
-    }
-
     return pathname === href || pathname.startsWith(`${href}/`);
   }
 

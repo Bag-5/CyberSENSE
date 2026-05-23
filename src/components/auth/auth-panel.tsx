@@ -15,7 +15,7 @@ import { cn } from "@/utils/cn";
 export function AuthPanel() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const returnTo = searchParams.get("redirect") || searchParams.get("returnTo") || "/";
+  const returnTo = searchParams.get("redirect") || searchParams.get("returnTo") || "/threats";
   const authPortal: AuthPortal = returnTo.startsWith("/superadmin") ? "superadmin" : "user";
 
   const [username, setUsername] = useState("");

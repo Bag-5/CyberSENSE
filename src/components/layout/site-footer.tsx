@@ -10,10 +10,6 @@ function isLinkEnabled(href: string, platformSettings: Awaited<ReturnType<typeof
     return true;
   }
 
-  if (href === "/") {
-    return true;
-  }
-
   if (href === "/threats" || href.startsWith("/threats/")) {
     return platformSettings.modules.threatAcademy;
   }
@@ -32,10 +28,6 @@ function isLinkEnabled(href: string, platformSettings: Awaited<ReturnType<typeof
 
   if (href === "/#simulations") {
     return platformSettings.modules.simulations;
-  }
-
-  if (href === "/#training") {
-    return platformSettings.modules.simulations || platformSettings.modules.attackLab;
   }
 
   if (href === "/threats/analyzer") {

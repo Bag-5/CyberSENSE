@@ -40,8 +40,8 @@ export function Hero() {
   }, []);
 
   const trainingHref = isAuthenticated
-    ? "#training"
-    : "/auth?returnTo=%2F%23training";
+    ? "/threats"
+    : "/auth?returnTo=%2Fthreats";
 
   return (
     <AnimatedSection className="relative overflow-hidden">

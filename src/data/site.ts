@@ -8,14 +8,12 @@ export const siteDescription =
 export const publicNavLinks: NavLink[] = [];
 
 export const authenticatedNavLinks: NavLink[] = [
-  { label: "Home", href: "/" },
   { label: "Threat Academy", href: "/threats" },
   { label: "AI Analyzer", href: "/threats/analyzer" },
   { label: "Quizzes", href: "/quizzes" },
   { label: "Attack Lab", href: "/lab" },
   { label: "Spot the Red Flags", href: "/games/red-flags" },
   { label: "Simulations", href: "/#simulations" },
-  { label: "Training", href: "/#training" },
 ];
 
 export const featureCards: FeatureCard[] = [

@@ -1,9 +1,48 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 import { AnimatedSection } from "@/components/animated-section";
 import { cyberButtonClasses, cyberPanelClasses, SectionHeader } from "@/components/ui/cyber";
+import { readStoredSessionUser } from "@/lib/auth/session-client";
 
 export function CyberCTA() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadUser() {
+      const cachedUser = readStoredSessionUser();
+      if (cachedUser && active) {
+        setIsAuthenticated(true);
+      }
+
+      try {
+        const response = await fetch("/api/auth/me", { cache: "no-store" });
+        const payload = (await response.json()) as { user: unknown };
+        if (active) {
+          setIsAuthenticated(Boolean(payload.user));
+        }
+      } catch {
+        if (active) {
+          setIsAuthenticated(false);
+        }
+      }
+    }
+
+    void loadUser();
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const trainingHref = isAuthenticated
+    ? "/threats"
+    : "/auth?returnTo=%2Fthreats";
+
   return (
     <AnimatedSection delay={0.14} className="mx-auto w-full max-w-7xl px-4 pb-10 sm:px-6 lg:px-8">
       <div className={cyberPanelClasses("relative overflow-hidden px-6 py-8 sm:px-8 sm:py-10")}>
@@ -18,7 +57,7 @@ export function CyberCTA() {
 
           <div className="flex flex-col gap-3 sm:flex-row">
             <Link
-              href="#training"
+              href={trainingHref}
               className={cyberButtonClasses("primary", "lg")}
             >
               Start Training

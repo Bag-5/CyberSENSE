@@ -36,7 +36,7 @@ export default async function AuthPage({ searchParams }: AuthPageProps) {
   }
 
   if (user) {
-    redirect("/");
+    redirect("/threats");
   }
 
   if (superAdmin) {
