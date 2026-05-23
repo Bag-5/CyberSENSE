@@ -20,7 +20,12 @@ export default async function AuthPage({ searchParams }: AuthPageProps) {
   const resolvedSearchParams = (await searchParams) ?? {};
   const returnToParam = resolvedSearchParams.returnTo;
   const returnTo = Array.isArray(returnToParam) ? returnToParam[0] ?? "/" : returnToParam ?? "/";
-  const wantsSuperAdmin = typeof returnTo === "string" && returnTo.startsWith("/superadmin");
+  const normalizedReturnTo = typeof returnTo === "string" ? returnTo : "/";
+  const safeReturnTo =
+    normalizedReturnTo.startsWith("/") && !normalizedReturnTo.startsWith("//")
+      ? normalizedReturnTo
+      : "/threats";
+  const wantsSuperAdmin = safeReturnTo.startsWith("/superadmin");
 
   const [user, superAdmin] = await Promise.all([
     getCurrentSessionUser(),
@@ -36,11 +41,11 @@ export default async function AuthPage({ searchParams }: AuthPageProps) {
   }
 
   if (user) {
-    redirect("/threats");
+    redirect(safeReturnTo === "/superadmin" ? "/threats" : safeReturnTo);
   }
 
   if (superAdmin) {
-    redirect("/superadmin");
+    redirect(safeReturnTo === "/superadmin" ? "/superadmin" : safeReturnTo);
   }
 
   return <AuthPanel />;

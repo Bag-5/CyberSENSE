@@ -214,6 +214,40 @@ export async function readAuthStore(): Promise<AuthStore> {
   }
 }
 
+export async function getUserById(userId: string) {
+  try {
+    await ensureDatabaseReady();
+    const db = getDatabase();
+
+    const rows = await db<UserRow[]>`
+      select
+        id,
+        username,
+        email,
+        role,
+        created_at,
+        last_login_at,
+        total_score,
+        quizzes_completed,
+        streak,
+        longest_streak,
+        quiz_scores,
+        achievements
+      from cybersense_users
+      where id = ${userId}
+      limit 1
+    `;
+
+    return rows[0] ? mapUserRow(rows[0]) : null;
+  } catch (error) {
+    if (!isFallbackDatabaseError(error)) {
+      throw error;
+    }
+
+    return getMemoryStore().users[userId] ?? null;
+  }
+}
+
 export async function writeAuthStore(store: AuthStore) {
   try {
     await ensureDatabaseReady();

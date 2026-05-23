@@ -33,3 +33,23 @@ export async function getCurrentSessionUser(
     role: payload.role,
   };
 }
+
+export async function getAnySessionUser(): Promise<
+  | {
+      user: PublicSessionUser;
+      portal: AuthPortal;
+    }
+  | null
+> {
+  const user = await getCurrentSessionUser();
+  if (user) {
+    return { user, portal: "user" };
+  }
+
+  const superadmin = await getCurrentSessionUser("superadmin");
+  if (superadmin) {
+    return { user: superadmin, portal: "superadmin" };
+  }
+
+  return null;
+}
