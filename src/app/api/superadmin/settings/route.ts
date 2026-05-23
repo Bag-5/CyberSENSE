@@ -6,7 +6,7 @@ import { getPlatformSettings, updatePlatformSettings } from "@/lib/superadmin/se
 export const runtime = "nodejs";
 
 export async function GET() {
-  const user = await getCurrentSessionUser();
+  const user = await getCurrentSessionUser("superadmin");
   if (!user || user.role !== "superadmin") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -16,7 +16,7 @@ export async function GET() {
 }
 
 export async function PATCH(request: Request) {
-  const user = await getCurrentSessionUser();
+  const user = await getCurrentSessionUser("superadmin");
   if (!user || user.role !== "superadmin") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }

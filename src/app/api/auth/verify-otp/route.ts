@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { createSessionToken, hashOtpCode } from "@/lib/auth/crypto";
+import { getSessionCookieName, getSessionCookiePath, type AuthPortal } from "@/lib/auth/constants";
 import { resolveAuthRole } from "@/lib/auth/roles";
 import {
   buildSessionUser,
@@ -9,7 +10,6 @@ import {
   setPendingOtp,
   upsertUserFromSession,
 } from "@/lib/auth/store";
-import { sessionCookieName } from "@/lib/auth/constants";
 function normalizeEmail(value: unknown) {
   return typeof value === "string" ? value.trim().toLowerCase() : "";
 }
@@ -34,17 +34,23 @@ function describeError(error: unknown, fallback: string) {
   return fallback;
 }
 
+function normalizePortal(value: unknown): AuthPortal {
+  return value === "superadmin" ? "superadmin" : "user";
+}
+
 export async function POST(request: Request) {
   try {
     const body = (await request.json()) as {
       email?: unknown;
       username?: unknown;
       otp?: unknown;
+      portal?: unknown;
     };
 
     const email = normalizeEmail(body.email);
     const username = normalizeUsername(body.username);
     const otp = typeof body.otp === "string" ? body.otp.trim() : "";
+    const portal = normalizePortal(body.portal);
 
     if (!email || !username || !isValidOtp(otp)) {
       return NextResponse.json(
@@ -95,6 +101,24 @@ export async function POST(request: Request) {
     await consumePendingOtp(email);
 
     const role = resolveAuthRole(email);
+    if (portal === "user" && role === "superadmin") {
+      return NextResponse.json(
+        {
+          error:
+            "This account must use the superadmin sign-in flow. Open the superadmin portal to continue.",
+        },
+        { status: 403 },
+      );
+    }
+    if (portal === "superadmin" && role !== "superadmin") {
+      return NextResponse.json(
+        {
+          error:
+            "This portal is reserved for allowlisted superadmins. Use the standard sign-in flow.",
+        },
+        { status: 403 },
+      );
+    }
 
     const existingUser = await upsertUserFromSession({
       id: "",
@@ -116,11 +140,11 @@ export async function POST(request: Request) {
       message: "Signed in successfully.",
     });
 
-    response.cookies.set(sessionCookieName, sessionToken, {
+    response.cookies.set(getSessionCookieName(portal), sessionToken, {
       httpOnly: true,
       sameSite: "lax",
       secure: process.env.NODE_ENV === "production",
-      path: "/",
+      path: getSessionCookiePath(portal),
       maxAge: 60 * 60 * 24 * 30,
     });
 

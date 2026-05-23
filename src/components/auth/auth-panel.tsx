@@ -9,12 +9,14 @@ import {
   notifyAuthSessionChanged,
   writeStoredSessionUser,
 } from "@/lib/auth/session-client";
+import type { AuthPortal } from "@/lib/auth/constants";
 import { cn } from "@/utils/cn";
 
 export function AuthPanel() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const returnTo = searchParams.get("redirect") || searchParams.get("returnTo") || "/";
+  const authPortal: AuthPortal = returnTo.startsWith("/superadmin") ? "superadmin" : "user";
 
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -57,7 +59,7 @@ export function AuthPanel() {
       const response = await fetch("/api/auth/verify-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, email, otp }),
+        body: JSON.stringify({ username, email, otp, portal: authPortal }),
       });
       const payload = await response.json();
       if (!response.ok) {
@@ -65,15 +67,10 @@ export function AuthPanel() {
       }
       setMessage(payload.message || "Signed in.");
       if (payload.user) {
-        writeStoredSessionUser(payload.user);
-        notifyAuthSessionChanged();
+        writeStoredSessionUser(payload.user, authPortal);
+        notifyAuthSessionChanged(authPortal);
       }
-      router.refresh();
-      const destination =
-        payload.user?.role === "superadmin" && returnTo === "/"
-          ? "/superadmin"
-          : returnTo;
-      router.replace(destination);
+      router.replace(returnTo.startsWith("/superadmin") ? "/superadmin" : returnTo);
     } catch (verifyError) {
       setError(verifyError instanceof Error ? verifyError.message : "Unable to verify OTP.");
     } finally {

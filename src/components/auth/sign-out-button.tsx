@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 
+import type { AuthPortal } from "@/lib/auth/constants";
 import { cn } from "@/utils/cn";
 import {
   clearStoredSessionUser,
@@ -10,17 +11,22 @@ import {
 
 type SignOutButtonProps = {
   className?: string;
+  portal?: AuthPortal;
+  redirectTo?: string;
 };
 
-export function SignOutButton({ className }: SignOutButtonProps) {
+export function SignOutButton({
+  className,
+  portal = "user",
+  redirectTo = "/auth",
+}: SignOutButtonProps) {
   const router = useRouter();
 
   async function handleSignOut() {
-    await fetch("/api/auth/logout", { method: "POST" });
-    clearStoredSessionUser();
-    notifyAuthSessionChanged();
-    router.refresh();
-    router.push("/auth");
+    await fetch(`/api/auth/logout?portal=${portal}`, { method: "POST" });
+    clearStoredSessionUser(portal);
+    notifyAuthSessionChanged(portal);
+    router.replace(redirectTo);
   }
 
   return (

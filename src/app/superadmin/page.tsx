@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 };
 
 export default async function SuperAdminPage() {
-  const user = await getCurrentSessionUser();
+  const user = await getCurrentSessionUser("superadmin");
 
   if (!user) {
     redirect("/auth?returnTo=%2Fsuperadmin");
