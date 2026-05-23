@@ -4,6 +4,7 @@ import Link from "next/link";
 import { SectionHeader, cyberButtonClasses, cyberPanelClasses } from "@/components/ui/cyber";
 import { ThreatAcademyBrowser } from "@/components/threats/threat-academy-browser";
 import { AnimatedSection } from "@/components/animated-section";
+import { AnalyticsBeacon } from "@/components/admin/analytics/analytics-beacon";
 import { threats } from "@/data/threats";
 import { siteDescription, siteName } from "@/data/site";
 
@@ -18,6 +19,14 @@ export const metadata: Metadata = {
 export default function ThreatAcademyPage() {
   return (
     <div className="space-y-8 pb-10 pt-10">
+      <AnalyticsBeacon
+        eventType="page_view"
+        module="threats"
+        slug="academy"
+        category="Threat Academy"
+        portal="user"
+        dedupeKey="threats-academy"
+      />
       <AnimatedSection className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className={cyberPanelClasses("p-6 sm:p-8")}>
           <SectionHeader

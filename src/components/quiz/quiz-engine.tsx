@@ -43,12 +43,32 @@ export function QuizEngine({ quiz }: QuizEngineProps) {
       return;
     }
 
+    const isCorrect = selectedAnswer === currentQuestion.correctAnswer;
     const nextAnswers = {
       ...submittedAnswers,
       [currentQuestion.id]: selectedAnswer,
     };
     setSubmittedAnswers(nextAnswers);
     setShowFeedback(true);
+
+    void fetch("/api/analytics/quiz-attempt", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        quizSlug: quiz.slug,
+        quizTitle: quiz.title,
+        questionId: currentQuestion.id,
+        questionText: currentQuestion.question,
+        category: currentQuestion.category,
+        difficulty: currentQuestion.difficulty,
+        selectedAnswer,
+        correctAnswer: currentQuestion.correctAnswer,
+        isCorrect,
+        points: isCorrect ? 100 : 0,
+      }),
+    });
 
     if (isFinalQuestion) {
       const nextSummary = scoreQuiz(quiz, nextAnswers);

@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { AnalyticsBeacon } from "@/components/admin/analytics/analytics-beacon";
 import { AnimatedSection } from "@/components/animated-section";
 import { AchievementBadge } from "@/components/achievements/achievement-badge";
 import { LeaderboardBoard } from "@/components/leaderboard/leaderboard-board";
@@ -22,6 +23,14 @@ export function QuizPageShell({ quiz }: QuizPageShellProps) {
 
     return (
       <div className="space-y-8 pb-10 pt-10">
+        <AnalyticsBeacon
+          eventType="quiz_viewed"
+          module="quizzes"
+          slug={quiz.slug}
+          category={quiz.title}
+          portal="user"
+          dedupeKey={`quiz-${quiz.slug}`}
+        />
         <AnimatedSection className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className={cyberPanelClasses("p-6 sm:p-8")}>
             <SectionHeader
@@ -88,6 +97,14 @@ export function QuizPageShell({ quiz }: QuizPageShellProps) {
 
   return (
     <div className="space-y-8 pb-10 pt-10">
+      <AnalyticsBeacon
+        eventType="page_view"
+        module="quizzes"
+        slug="quiz-hub"
+        category="Quiz Hub"
+        portal="user"
+        dedupeKey="quiz-hub-shell"
+      />
       <AnimatedSection className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="cyber-panel rounded-[2rem] p-6 sm:p-8">
           <p className="text-sm font-semibold tracking-[0.24em] text-cyan-200 uppercase">

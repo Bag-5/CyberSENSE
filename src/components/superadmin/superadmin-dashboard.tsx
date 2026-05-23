@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 
@@ -187,15 +188,21 @@ export function SuperAdminDashboard({ user, initialSettings }: SuperAdminDashboa
               >
                 Jump to access
               </button>
-              <button
-                type="button"
-                onClick={() => setActiveSection("security")}
-                className={cyberButtonClasses("secondary", "sm", "w-full")}
-              >
-                Jump to security
-              </button>
-            </div>
-          </motion.section>
+            <button
+              type="button"
+              onClick={() => setActiveSection("security")}
+              className={cyberButtonClasses("secondary", "sm", "w-full")}
+            >
+              Jump to security
+            </button>
+            <Link
+              href="/superadmin/analytics"
+              className={cyberButtonClasses("ghost", "sm", "w-full")}
+            >
+              Open analytics
+            </Link>
+          </div>
+        </motion.section>
 
           <motion.section
             initial={{ opacity: 0, x: -12 }}

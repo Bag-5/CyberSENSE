@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import type { ComponentType } from "react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { labSimulationCards } from "@/data/simulations";
 import type { LabSimulationId } from "@/types/lab";
@@ -59,6 +59,25 @@ export function LabDashboard() {
   const [activeId, setActiveId] = useState<LabSimulationId>("phishing");
 
   const activeSimulation = simulationMap[activeId];
+
+  useEffect(() => {
+    void fetch("/api/analytics/events", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        eventType: "simulation_selected",
+        module: "lab",
+        slug: activeId,
+        category: activeSimulation.title,
+        portal: "user",
+        metadata: {
+          description: activeSimulation.description,
+        },
+      }),
+    });
+  }, [activeId, activeSimulation.description, activeSimulation.title]);
 
   const metrics = useMemo(
     () => [

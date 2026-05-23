@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { AnalyticsBeacon } from "@/components/admin/analytics/analytics-beacon";
 import { ThreatSection } from "@/components/threats/threat-section";
 import { ThreatRelatedThreats } from "@/components/threats/threat-related-threats";
 import { ThreatQuizPlaceholder } from "@/components/threats/threat-quiz-placeholder";
@@ -31,6 +32,17 @@ function ThreatList({ items }: { items: string[] }) {
 export function ThreatDetailView({ threat, relatedThreats }: ThreatDetailViewProps) {
   return (
     <div className="space-y-8 pb-10">
+      <AnalyticsBeacon
+        eventType="threat_viewed"
+        module="threats"
+        slug={threat.slug}
+        category={threat.category}
+        portal="user"
+        dedupeKey={`threat-${threat.slug}`}
+        metadata={{
+          severity: threat.severity,
+        }}
+      />
       <section className="mx-auto w-full max-w-7xl px-4 pt-10 sm:px-6 lg:px-8">
         <div className={cyberPanelClasses("relative overflow-hidden p-6 sm:p-8")}>
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(34,211,238,0.18),transparent_28%),radial-gradient(circle_at_bottom_left,rgba(217,70,239,0.14),transparent_30%)]" />

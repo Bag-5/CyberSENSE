@@ -1,4 +1,6 @@
 import { analyzeScamContent } from "@/lib/ai/openrouter";
+import { classifyScamContent, extractPatternKeywords } from "@/lib/analytics/classify";
+import { recordAnalyticsEvent } from "@/lib/analytics/store";
 
 type AnalyzeScamRequest = {
   content?: string;
@@ -26,6 +28,25 @@ export async function POST(request: Request) {
 
     const result = await analyzeScamContent(content);
 
+    const scamFamily = classifyScamContent(content);
+    const redFlags = result.analysis.redFlags;
+    const patterns = extractPatternKeywords(redFlags);
+
+    void recordAnalyticsEvent({
+      eventType: "scam_analysis_completed",
+      module: "analyzer",
+      category: result.analysis.riskLevel,
+      portal: "user",
+      metadata: {
+        scamFamily,
+        riskLevel: result.analysis.riskLevel,
+        redFlags,
+        patterns,
+        modelUsed: result.modelUsed,
+        contentLength: content.trim().length,
+      },
+    });
+
     return Response.json({
       analysis: result.analysis,
       modelUsed: result.modelUsed,
@@ -49,4 +70,3 @@ export async function POST(request: Request) {
     );
   }
 }
-

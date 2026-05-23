@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { verifySessionToken } from "@/lib/auth/crypto";
 import { sessionCookieName } from "@/lib/auth/constants";
 import { updateQuizCompletion } from "@/lib/auth/store";
+import { recordAnalyticsEvent } from "@/lib/analytics/store";
 
 function getTokenFromCookie(header: string | null) {
   if (!header) {
@@ -49,6 +50,17 @@ export async function POST(request: Request) {
         { status: 500 },
       );
     }
+
+    void recordAnalyticsEvent({
+      eventType: "quiz_completed",
+      module: "quiz",
+      slug: body.quizSlug,
+      portal: "user",
+      userId: session.userId,
+      metadata: {
+        score: body.score,
+      },
+    });
 
     return NextResponse.json({ ok: true });
   } catch (error) {
