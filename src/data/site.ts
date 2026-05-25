@@ -3,18 +3,14 @@ import type { FeatureCard, MissionCard, NavLink } from "@/types/site";
 export const siteName = "CyberSENSE";
 export const siteTagline = "Learn Cybersecurity Before Hackers Learn You";
 export const siteDescription =
-  "CyberSENSE is an interactive cybersecurity awareness platform with simulations, games, storytelling, and quizzes wrapped in a cyberpunk interface.";
+  "CyberSENSE is an interactive cybersecurity awareness platform with academy courses, weekly competitions, AI analysis, and cyberpunk visuals.";
 
 export const publicNavLinks: NavLink[] = [];
 
 export const authenticatedNavLinks: NavLink[] = [
   { label: "Threat Academy", href: "/threats" },
   { label: "AI Analyzer", href: "/threats/analyzer" },
-  { label: "Quizzes", href: "/quizzes" },
-  { label: "Reports", href: "/reports" },
-  { label: "Attack Lab", href: "/lab" },
-  { label: "Spot the Red Flags", href: "/games/red-flags" },
-  { label: "Simulations", href: "/#simulations" },
+  { label: "Weekly Quiz Competition", href: "/weekly-quiz-competition" },
 ];
 
 export const featureCards: FeatureCard[] = [

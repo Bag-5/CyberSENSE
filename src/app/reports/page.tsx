@@ -4,12 +4,13 @@ import { redirect } from "next/navigation";
 import { ReportCenter } from "@/components/reports/report-center";
 import { getCurrentSessionUser } from "@/lib/auth/context";
 import { getAnalyticsSnapshot } from "@/lib/analytics/store";
+import { loadIssuedCertificates } from "@/lib/certificates/store";
 import { buildQuizReportPdfInput, getUserReportContext } from "@/lib/reports/report-data";
 
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Reports",
+  title: "Superadmin Reports",
   description:
     "Generate CyberSENSE certificates, quiz reports, and superadmin progress reports from live platform data.",
 };
@@ -25,8 +26,13 @@ export default async function ReportsPage() {
     redirect("/auth?returnTo=%2Freports");
   }
 
+  if (session.role !== "superadmin") {
+    redirect("/weekly-quiz-competition");
+  }
+
   const context = await getUserReportContext(session.id);
   const quizReport = buildQuizReportPdfInput(context, session.username);
+  const issuedCertificates = await loadIssuedCertificates();
 
   const superadminPreview = session.role === "superadmin" ? await buildSuperAdminPreview() : undefined;
   const averageScore = Math.round(context.user.totalScore / Math.max(context.user.quizzesCompleted, 1));
@@ -51,12 +57,12 @@ export default async function ReportsPage() {
       leaderboardRank={context.rank}
       summaryMetrics={summaryMetrics}
       completedQuizzes={context.completedQuizzes}
-      milestoneChoices={context.milestoneChoices}
       categoryMetrics={context.categoryStats.map((item) => ({
         label: item.category,
         value: `${Math.round((item.correct / Math.max(item.attempts, 1)) * 100)}%`,
         detail: `${item.correct}/${item.attempts} attempts`,
       }))}
+      issuedCertificates={issuedCertificates}
       strengths={quizReport.strengths}
       recommendations={quizReport.recommendations}
       achievements={quizReport.achievements}

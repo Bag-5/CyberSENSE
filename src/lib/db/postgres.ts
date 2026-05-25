@@ -92,6 +92,38 @@ async function createTables() {
   `;
 
   await db`
+    create table if not exists cybersense_certificate_issues (
+      id text primary key,
+      user_id text not null references cybersense_users(id) on delete cascade,
+      username text not null,
+      email text not null,
+      full_name text not null,
+      certificate_type text not null check (certificate_type in ('quiz', 'milestone', 'training')),
+      subject_key text,
+      subject_title text not null,
+      issued_at text not null,
+      updated_at text not null
+    )
+  `;
+
+  await db`
+    create table if not exists cybersense_weekly_competition_entries (
+      competition_key text not null,
+      user_id text not null references cybersense_users(id) on delete cascade,
+      username text not null,
+      email text not null,
+      score integer not null default 0,
+      correct_count integer not null default 0,
+      total_questions integer not null default 100,
+      streak integer not null default 0,
+      badge text not null,
+      completed_at text not null,
+      updated_at text not null,
+      primary key (competition_key, user_id)
+    )
+  `;
+
+  await db`
     create index if not exists cybersense_users_total_score_idx
     on cybersense_users (total_score desc, quizzes_completed desc, last_login_at desc)
   `;
@@ -129,6 +161,21 @@ async function createTables() {
   await db`
     create index if not exists cybersense_quiz_attempts_question_idx
     on cybersense_quiz_attempts (quiz_slug, question_id, is_correct, created_at desc)
+  `;
+
+  await db`
+    create index if not exists cybersense_certificate_issues_issued_at_idx
+    on cybersense_certificate_issues (issued_at desc)
+  `;
+
+  await db`
+    create index if not exists cybersense_certificate_issues_user_idx
+    on cybersense_certificate_issues (user_id, certificate_type, issued_at desc)
+  `;
+
+  await db`
+    create index if not exists cybersense_weekly_competition_entries_score_idx
+    on cybersense_weekly_competition_entries (competition_key, score desc, correct_count desc, updated_at asc)
   `;
 
   await db`

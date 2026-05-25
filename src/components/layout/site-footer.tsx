@@ -18,6 +18,10 @@ function isLinkEnabled(href: string, platformSettings: Awaited<ReturnType<typeof
     return platformSettings.modules.quizzes;
   }
 
+  if (href === "/weekly-quiz-competition") {
+    return platformSettings.modules.quizzes;
+  }
+
   if (href === "/lab") {
     return platformSettings.modules.attackLab;
   }
@@ -88,8 +92,7 @@ export async function SiteFooter() {
             ) : (
               <div className="space-y-4">
                 <p className="text-sm leading-6 text-slate-400">
-                  Sign in to unlock the academy, quizzes, lab, and training
-                  routes.
+                  Sign in to unlock the academy and the weekly competition route.
                 </p>
                 <Link
                   href="/auth"
@@ -103,9 +106,10 @@ export async function SiteFooter() {
 
           <div className="rounded-[1.5rem] border border-white/10 bg-white/5 p-5">
             <p className="mb-3 text-sm font-medium text-slate-200">Focus</p>
-            <p className="text-sm leading-6 text-slate-400">
+              <p className="text-sm leading-6 text-slate-400">
               Dark mode, neon glow, subtle Ghana-inspired accent tones, and
-              modular components ready for future simulations and games.
+              modular learning flows ready for course checkpoints and weekly
+              competitions.
             </p>
           </div>
         </div>

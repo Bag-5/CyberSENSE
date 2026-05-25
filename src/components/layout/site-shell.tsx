@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 
+import { AssistantLauncher } from "@/components/assistant/assistant-launcher";
 import { getCurrentSessionUser } from "@/lib/auth/context";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
@@ -35,6 +36,7 @@ export async function SiteShell({ children }: SiteShellProps) {
       <main id="main-content" className="relative flex-1 focus:outline-none">
         {children}
       </main>
+      <AssistantLauncher initialUser={currentUser} />
       <SiteFooter />
     </div>
   );

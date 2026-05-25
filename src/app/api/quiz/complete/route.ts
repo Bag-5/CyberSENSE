@@ -4,6 +4,7 @@ import { verifySessionToken } from "@/lib/auth/crypto";
 import { sessionCookieName } from "@/lib/auth/constants";
 import { updateQuizCompletion } from "@/lib/auth/store";
 import { recordAnalyticsEvent } from "@/lib/analytics/store";
+import { recordWeeklyCompetitionResult } from "@/lib/competition/store";
 
 function getTokenFromCookie(header: string | null) {
   if (!header) {
@@ -34,6 +35,8 @@ export async function POST(request: Request) {
     const body = (await request.json()) as {
       quizSlug?: string;
       score?: number;
+      correctCount?: number;
+      totalQuestions?: number;
     };
 
     if (typeof body.quizSlug !== "string" || typeof body.score !== "number") {
@@ -41,6 +44,39 @@ export async function POST(request: Request) {
         { error: "quizSlug and score are required." },
         { status: 400 },
       );
+    }
+
+    if (body.quizSlug === "weekly-competition") {
+      if (typeof body.correctCount !== "number" || typeof body.totalQuestions !== "number") {
+        return NextResponse.json(
+          { error: "correctCount and totalQuestions are required for the weekly competition." },
+          { status: 400 },
+        );
+      }
+
+      await recordWeeklyCompetitionResult({
+        userId: session.userId,
+        username: session.username,
+        email: session.email,
+        score: body.score,
+        correctCount: body.correctCount,
+        totalQuestions: body.totalQuestions,
+      });
+
+      void recordAnalyticsEvent({
+        eventType: "weekly_competition_completed",
+        module: "quiz",
+        slug: body.quizSlug,
+        portal: "user",
+        userId: session.userId,
+        metadata: {
+          score: body.score,
+          correctCount: body.correctCount,
+          totalQuestions: body.totalQuestions,
+        },
+      });
+
+      return NextResponse.json({ ok: true });
     }
 
     const updatedUser = await updateQuizCompletion(session.userId, body.quizSlug, body.score);

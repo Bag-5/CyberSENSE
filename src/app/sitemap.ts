@@ -11,6 +11,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/auth",
     "/threats",
     "/threats/analyzer",
+    "/weekly-quiz-competition",
     "/lab",
     "/quizzes",
     "/games/red-flags",

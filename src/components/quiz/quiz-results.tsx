@@ -1,8 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 
 import { AchievementBadge } from "@/components/achievements/achievement-badge";
+import { CertificatePromptModal } from "@/components/certificates/certificate-prompt-modal";
 import type { QuizAchievement, QuizCategory, QuizResultSummary } from "@/types/quiz";
 import { getCyberFeedback, getCyberRankLabel, getQuizSuggestions, getQuizStrengths } from "@/lib/quiz/scoring";
 import { cyberButtonClasses, cyberPanelClasses } from "@/components/ui/cyber";
@@ -13,6 +15,14 @@ type QuizResultsProps = {
   unlockedAchievements: QuizAchievement[];
   onRetry: () => void;
   onPickAnotherQuiz: () => void;
+  onPickAnotherQuizLabel?: string;
+  certificateFlow?: {
+    title: string;
+    description: string;
+    ctaLabel?: string;
+    certificateType: "quiz" | "milestone" | "training";
+    subjectKey?: string;
+  };
 };
 
 export function QuizResults({
@@ -21,7 +31,10 @@ export function QuizResults({
   unlockedAchievements,
   onRetry,
   onPickAnotherQuiz,
+  onPickAnotherQuizLabel = "Pick another quiz",
+  certificateFlow,
 }: QuizResultsProps) {
+  const [showCertificatePrompt, setShowCertificatePrompt] = useState(Boolean(certificateFlow));
   const performanceLabel = getCyberRankLabel(summary.percentage);
   const feedback = getCyberFeedback(summary.percentage);
   const strengths = getQuizStrengths(summary);
@@ -34,6 +47,19 @@ export function QuizResults({
       animate={{ opacity: 1, y: 0 }}
       className="space-y-5"
     >
+      {certificateFlow ? (
+        <CertificatePromptModal
+          open={showCertificatePrompt}
+          title={certificateFlow.title}
+          description={certificateFlow.description}
+          certificateType={certificateFlow.certificateType}
+          subjectKey={certificateFlow.subjectKey}
+          ctaLabel={certificateFlow.ctaLabel ?? "Generate certificate"}
+          onClose={() => setShowCertificatePrompt(false)}
+          onGenerated={() => setShowCertificatePrompt(false)}
+        />
+      ) : null}
+
       <div className={cyberPanelClasses("border-cyan-300/20 bg-cyan-400/10 p-5")}>
         <p className="text-xs font-semibold tracking-[0.24em] text-cyan-100 uppercase">
           Final score
@@ -117,7 +143,7 @@ export function QuizResults({
           onClick={onPickAnotherQuiz}
           className={cyberButtonClasses("ghost", "md", "flex-1")}
         >
-          Pick another quiz
+          {onPickAnotherQuizLabel}
         </button>
       </div>
     </motion.section>

@@ -39,6 +39,10 @@ function isLinkEnabled(href: string, settings?: PlatformSettings | null) {
     return settings.modules.quizzes;
   }
 
+  if (href === "/weekly-quiz-competition") {
+    return settings.modules.quizzes;
+  }
+
   if (href === "/lab") {
     return settings.modules.attackLab;
   }

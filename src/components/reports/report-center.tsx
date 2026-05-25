@@ -1,12 +1,12 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 
 import { cyberButtonClasses, cyberPanelClasses, SectionHeader } from "@/components/ui/cyber";
+import type { IssuedCertificateRecord } from "@/lib/certificates/store";
 import type {
   CompletedQuizChoice,
-  MilestoneChoice,
   ProgressReportKind,
 } from "@/lib/reports/report-data";
 import { cn } from "@/utils/cn";
@@ -30,8 +30,8 @@ type ReportCenterProps = {
   leaderboardRank: number | null;
   summaryMetrics: SummaryMetric[];
   completedQuizzes: CompletedQuizChoice[];
-  milestoneChoices: MilestoneChoice[];
   categoryMetrics: SummaryMetric[];
+  issuedCertificates: IssuedCertificateRecord[];
   strengths: Bullet[];
   recommendations: Bullet[];
   achievements: Bullet[];
@@ -56,12 +56,6 @@ type ReportCenterProps = {
     };
   };
 };
-
-const certificateKinds = [
-  { value: "quiz", label: "Quiz completion" },
-  { value: "milestone", label: "Awareness milestone" },
-  { value: "training", label: "Training completion" },
-] as const;
 
 const progressKinds: Array<{
   kind: ProgressReportKind;
@@ -109,39 +103,6 @@ function downloadPdf(blob: Blob, filename: string) {
   window.setTimeout(() => URL.revokeObjectURL(url), 1500);
 }
 
-function ButtonGroup({
-  value,
-  onChange,
-  options,
-}: {
-  value: string;
-  onChange: (value: string) => void;
-  options: Array<{ value: string; label: string }>;
-}) {
-  return (
-    <div className="grid gap-2 sm:grid-cols-3">
-      {options.map((option) => {
-        const active = value === option.value;
-        return (
-          <button
-            key={option.value}
-            type="button"
-            onClick={() => onChange(option.value)}
-            className={cn(
-              "rounded-2xl border px-4 py-3 text-left text-sm font-semibold transition",
-              active
-                ? "border-cyan-300/30 bg-cyan-400/15 text-cyan-50 shadow-[0_0_22px_rgba(34,211,238,0.18)]"
-                : "border-white/10 bg-white/5 text-slate-300 hover:border-white/20 hover:bg-white/10",
-            )}
-          >
-            {option.label}
-          </button>
-        );
-      })}
-    </div>
-  );
-}
-
 function InfoCard({
   label,
   value,
@@ -162,6 +123,23 @@ function InfoCard({
   );
 }
 
+function CertificateBadge({ type }: { type: IssuedCertificateRecord["certificateType"] }) {
+  const label =
+    type === "quiz" ? "Quiz" : type === "milestone" ? "Milestone" : "Training";
+  const className =
+    type === "quiz"
+      ? "border-cyan-300/20 bg-cyan-400/10 text-cyan-100"
+      : type === "milestone"
+        ? "border-amber-300/20 bg-amber-400/10 text-amber-100"
+        : "border-emerald-300/20 bg-emerald-400/10 text-emerald-100";
+
+  return (
+    <span className={cn("rounded-full border px-3 py-1 text-xs font-semibold", className)}>
+      {label}
+    </span>
+  );
+}
+
 export function ReportCenter({
   currentName,
   currentEmail,
@@ -170,102 +148,25 @@ export function ReportCenter({
   leaderboardRank,
   summaryMetrics,
   completedQuizzes,
-  milestoneChoices,
   categoryMetrics,
+  issuedCertificates,
   strengths,
   recommendations,
   achievements,
   superadminPreview,
 }: ReportCenterProps) {
   const reduceMotion = useReducedMotion();
-  const [fullName, setFullName] = useState("");
-  const [certificateKind, setCertificateKind] = useState<(typeof certificateKinds)[number]["value"]>(
-    completedQuizzes.length ? "quiz" : "training",
-  );
-  const [selectedQuiz, setSelectedQuiz] = useState(completedQuizzes[0]?.slug ?? "");
-  const [selectedMilestone, setSelectedMilestone] = useState(milestoneChoices[0]?.key ?? "training-complete");
   const [notice, setNotice] = useState<{ tone: "success" | "error" | "info"; text: string } | null>(null);
   const [loadingKey, setLoadingKey] = useState<string | null>(null);
+  const [certificateFilter, setCertificateFilter] = useState<"all" | "quiz" | "milestone" | "training">("all");
 
-  const certificatePreview = useMemo(() => {
-    const selectedQuizItem = completedQuizzes.find((item) => item.slug === selectedQuiz);
-    const selectedMilestoneItem = milestoneChoices.find((item) => item.key === selectedMilestone);
-    const previewName = fullName.trim() || currentName;
-
-    if (certificateKind === "quiz") {
-      return {
-        title: selectedQuizItem?.title ?? "Quiz completion certificate",
-        subtitle: selectedQuizItem
-          ? `${selectedQuizItem.score}% score · ${formatDate(selectedQuizItem.completedAt)}`
-          : "Select a completed quiz to preview the certificate",
-        badge: "Quiz cert",
-        name: previewName,
-      };
+  const filteredCertificates = useMemo(() => {
+    if (certificateFilter === "all") {
+      return issuedCertificates;
     }
 
-    if (certificateKind === "milestone") {
-      return {
-        title: selectedMilestoneItem?.label ?? "Awareness milestone",
-        subtitle: selectedMilestoneItem?.description ?? "Choose a milestone to continue",
-        badge: "Milestone",
-        name: previewName,
-      };
-    }
-
-    return {
-      title: "CyberSENSE Training Completion",
-      subtitle: "Full awareness journey certificate",
-      badge: "Training",
-      name: previewName,
-    };
-  }, [certificateKind, completedQuizzes, currentName, fullName, selectedMilestone, selectedQuiz, milestoneChoices]);
-
-  async function downloadCertificate() {
-    const trimmedName = fullName.trim();
-    if (!trimmedName) {
-      setNotice({ tone: "error", text: "Please enter the full name that should appear on the certificate." });
-      return;
-    }
-
-    if (certificateKind === "quiz" && !selectedQuiz) {
-      setNotice({ tone: "error", text: "Choose a completed quiz before downloading a quiz certificate." });
-      return;
-    }
-
-    setLoadingKey("certificate");
-    setNotice(null);
-
-    try {
-      const response = await fetch("/api/reports/certificate", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          fullName: trimmedName,
-          certificateType: certificateKind,
-          subjectKey: certificateKind === "quiz" ? selectedQuiz : selectedMilestone,
-        }),
-      });
-
-      if (!response.ok) {
-        const payload = (await response.json().catch(() => null)) as { error?: string } | null;
-        throw new Error(payload?.error ?? "Could not generate the certificate.");
-      }
-
-      const blob = await response.blob();
-      const filename = `cybersense-certificate-${trimmedName.toLowerCase().replace(/[^a-z0-9]+/g, "-")}.pdf`;
-      downloadPdf(blob, filename);
-      setNotice({ tone: "success", text: "Certificate download started. Check your downloads folder." });
-    } catch (error) {
-      setNotice({
-        tone: "error",
-        text: error instanceof Error ? error.message : "Could not generate the certificate.",
-      });
-    } finally {
-      setLoadingKey(null);
-    }
-  }
+    return issuedCertificates.filter((item) => item.certificateType === certificateFilter);
+  }, [certificateFilter, issuedCertificates]);
 
   async function downloadQuizReport() {
     setLoadingKey("quiz-report");
@@ -342,10 +243,26 @@ export function ReportCenter({
               Report center
             </div>
             <SectionHeader
-              eyebrow="Certificates and reports"
+              eyebrow="Reports and issued certificates"
               title="Generate downloadable PDFs"
-              description="Ask for the full name you want on the certificate, pick the report type, and download a polished CyberSENSE PDF with live data."
+              description="Superadmins can export live reports, and the issued certificate archive only shows learners who have already earned a certificate."
             />
+            <div className="flex flex-wrap items-center gap-2 text-xs text-slate-400">
+              <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">
+                Signed in as {currentName}
+              </span>
+              <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">
+                {currentEmail}
+              </span>
+              <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">
+                {currentRole === "superadmin"
+                  ? "Super Admin"
+                  : currentRole === "admin"
+                    ? "Admin"
+                    : "Learner"}{" "}
+                · Rank {leaderboardRank ? `#${leaderboardRank}` : "pending"}
+              </span>
+            </div>
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2 xl:w-[30rem]">
@@ -380,277 +297,80 @@ export function ReportCenter({
           >
             <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
               <SectionHeader
-                eyebrow="Certificate studio"
-                title="Enter the certificate name first"
-                description="The full name field is required before any certificate can be generated."
+                eyebrow="Issued certificates"
+                title="Learners who already earned a certificate"
+                description="This archive only shows users who have been issued a certificate, so the superadmin view stays clean and audit-friendly."
               />
-              <span className="rounded-full border border-amber-300/20 bg-amber-400/10 px-3 py-1 text-[11px] font-semibold tracking-[0.2em] text-amber-100 uppercase">
-                Name required
-              </span>
+              <div className="flex flex-wrap gap-2">
+                {[
+                  { value: "all", label: "All" },
+                  { value: "quiz", label: "Quiz" },
+                  { value: "milestone", label: "Milestone" },
+                  { value: "training", label: "Training" },
+                ].map((option) => {
+                  const active = certificateFilter === option.value;
+                  return (
+                    <button
+                      key={option.value}
+                      type="button"
+                      onClick={() => setCertificateFilter(option.value as typeof certificateFilter)}
+                      className={cn(
+                        "rounded-full border px-3 py-1.5 text-xs font-semibold transition",
+                        active
+                          ? "border-cyan-300/30 bg-cyan-400/15 text-cyan-50"
+                          : "border-white/10 bg-white/5 text-slate-300 hover:border-white/20 hover:bg-white/10",
+                      )}
+                    >
+                      {option.label}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
-            <div className="mt-6 grid gap-5 lg:grid-cols-[0.92fr_1.08fr]">
-              <div className="space-y-5">
-                <label className="block">
-                  <span className="mb-2 block text-sm font-semibold text-slate-200">
-                    Full name
-                  </span>
-                  <input
-                    value={fullName}
-                    onChange={(event) => setFullName(event.target.value)}
-                    placeholder="Enter the full name for the certificate"
-                    className="cyber-input w-full rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-300/40 focus:ring-2 focus:ring-cyan-200/20"
-                  />
-                </label>
-
-                <div className="space-y-3">
-                  <p className="text-sm font-semibold text-slate-200">Certificate type</p>
-                  <ButtonGroup
-                    value={certificateKind}
-                    onChange={(value) => setCertificateKind(value as (typeof certificateKinds)[number]["value"])}
-                    options={certificateKinds.map((kind) => ({ value: kind.value, label: kind.label }))}
-                  />
-                </div>
-
-                {certificateKind === "quiz" ? (
-                  <div className="space-y-3">
-                    <p className="text-sm font-semibold text-slate-200">Completed quiz</p>
-                    {completedQuizzes.length ? (
-                      <select
-                        value={selectedQuiz}
-                        onChange={(event) => setSelectedQuiz(event.target.value)}
-                        className="cyber-input w-full rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 text-sm text-white outline-none transition focus:border-cyan-300/40 focus:ring-2 focus:ring-cyan-200/20"
-                      >
-                        {completedQuizzes.map((quiz) => (
-                          <option key={quiz.slug} value={quiz.slug}>
-                            {quiz.title} · {quiz.score}%
-                          </option>
-                        ))}
-                      </select>
-                    ) : (
-                      <div className="rounded-2xl border border-amber-300/20 bg-amber-400/10 px-4 py-3 text-sm text-amber-50">
-                        Complete at least one quiz before generating a quiz certificate.
+            <div className="mt-5 grid gap-3">
+              {filteredCertificates.length ? (
+                filteredCertificates.map((certificate) => (
+                  <motion.div
+                    key={certificate.id}
+                    initial={reduceMotion ? { opacity: 1 } : { opacity: 0, y: 10 }}
+                    animate={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+                    whileHover={reduceMotion ? undefined : { y: -2 }}
+                    className="rounded-[1.35rem] border border-white/10 bg-slate-950/55 p-4"
+                  >
+                    <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                      <div className="space-y-2">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <p className="text-sm font-semibold text-white">{certificate.fullName}</p>
+                          <CertificateBadge type={certificate.certificateType} />
+                        </div>
+                        <p className="text-sm text-slate-400">
+                          {certificate.subjectTitle} · {formatDate(certificate.issuedAt)}
+                        </p>
+                        <p className="text-xs text-slate-500">
+                          Issued to {certificate.username} · {certificate.email}
+                        </p>
                       </div>
-                    )}
-                  </div>
-                ) : certificateKind === "milestone" ? (
-                  <div className="space-y-3">
-                    <p className="text-sm font-semibold text-slate-200">Awareness milestone</p>
-                    <select
-                      value={selectedMilestone}
-                      onChange={(event) => setSelectedMilestone(event.target.value)}
-                      className="cyber-input w-full rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 text-sm text-white outline-none transition focus:border-cyan-300/40 focus:ring-2 focus:ring-cyan-200/20"
-                    >
-                      {milestoneChoices.map((milestone) => (
-                        <option key={milestone.key} value={milestone.key}>
-                          {milestone.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                ) : null}
-
-                <button
-                  type="button"
-                  onClick={() => void downloadCertificate()}
-                  disabled={
-                    loadingKey === "certificate" ||
-                    (!fullName.trim() && certificateKind !== "training") ||
-                    (certificateKind === "quiz" && !completedQuizzes.length)
-                  }
-                  className={cyberButtonClasses(
-                    "primary",
-                    "lg",
-                    "w-full justify-center disabled:opacity-50",
-                  )}
-                >
-                  {loadingKey === "certificate" ? "Generating certificate..." : "Download certificate"}
-                </button>
-
-                <p className="text-xs leading-6 text-slate-400">
-                  Your name is used exactly as entered to personalize the certificate header and
-                  recipient line.
-                </p>
-              </div>
-
-              <motion.div
-                initial={{ opacity: 0, scale: 0.98 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={
-                  reduceMotion
-                    ? { duration: 0.01 }
-                    : {
-                        duration: 0.8,
-                        ease: "easeOut",
-                      }
-                }
-                whileHover={reduceMotion ? undefined : { y: -4, scale: 1.01 }}
-                className="relative overflow-hidden rounded-[2rem] border border-amber-300/20 bg-[radial-gradient(circle_at_top_left,rgba(206,17,38,0.22),transparent_32%),radial-gradient(circle_at_top_right,rgba(0,107,63,0.18),transparent_30%),linear-gradient(180deg,rgba(2,6,23,0.95),rgba(15,23,42,0.95))] p-5 shadow-[0_0_30px_rgba(245,158,11,0.12)]"
-              >
-                <motion.div
-                  aria-hidden="true"
-                  className="absolute inset-[-3px] rounded-[2.1rem] bg-[conic-gradient(from_0deg,rgba(206,17,38,0.9),rgba(252,209,22,0.95),rgba(0,107,63,0.9),rgba(206,17,38,0.9))] opacity-45 blur-xl"
-                  animate={
-                    reduceMotion
-                      ? undefined
-                      : {
-                          rotate: 360,
-                        }
-                  }
-                  transition={
-                    reduceMotion
-                      ? undefined
-                      : {
-                          duration: 16,
-                          repeat: Number.POSITIVE_INFINITY,
-                          ease: "linear",
-                        }
-                  }
-                />
-                <motion.div
-                  aria-hidden="true"
-                  className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.08)_0%,transparent_28%,transparent_72%,rgba(255,255,255,0.08)_100%)] opacity-70"
-                  animate={
-                    reduceMotion
-                      ? undefined
-                      : {
-                          x: ["-10%", "10%", "-10%"],
-                          opacity: [0.55, 0.85, 0.55],
-                        }
-                  }
-                  transition={
-                    reduceMotion
-                      ? undefined
-                      : {
-                          duration: 12,
-                          repeat: Number.POSITIVE_INFINITY,
-                          ease: "easeInOut",
-                        }
-                  }
-                />
-                <motion.div
-                  aria-hidden="true"
-                  className="absolute left-8 top-8 h-20 w-20 rounded-full bg-[#ce1126]/25 blur-3xl"
-                  animate={reduceMotion ? undefined : { scale: [1, 1.18, 1], opacity: [0.4, 0.8, 0.4] }}
-                  transition={
-                    reduceMotion
-                      ? undefined
-                      : {
-                          duration: 8,
-                          repeat: Number.POSITIVE_INFINITY,
-                          ease: "easeInOut",
-                        }
-                  }
-                />
-                <motion.div
-                  aria-hidden="true"
-                  className="absolute right-8 bottom-8 h-24 w-24 rounded-full bg-[#006b3f]/20 blur-3xl"
-                  animate={reduceMotion ? undefined : { scale: [1, 1.12, 1], opacity: [0.35, 0.68, 0.35] }}
-                  transition={
-                    reduceMotion
-                      ? undefined
-                      : {
-                          duration: 10,
-                          repeat: Number.POSITIVE_INFINITY,
-                          ease: "easeInOut",
-                        }
-                  }
-                />
-                <motion.div
-                  aria-hidden="true"
-                  className="absolute inset-x-10 top-10 h-24 rounded-full bg-[linear-gradient(90deg,rgba(206,17,38,0.22),rgba(252,209,22,0.22),rgba(0,107,63,0.22))] blur-2xl"
-                  animate={
-                    reduceMotion
-                      ? undefined
-                      : {
-                          x: ["-2%", "2%", "-2%"],
-                          opacity: [0.55, 0.9, 0.55],
-                        }
-                  }
-                  transition={
-                    reduceMotion
-                      ? undefined
-                      : {
-                          duration: 9,
-                          repeat: Number.POSITIVE_INFINITY,
-                          ease: "easeInOut",
-                        }
-                  }
-                />
-                <div className="relative z-10 space-y-5">
-                  <div className="flex items-center justify-between gap-4">
-                    <div>
-                      <p className="text-[11px] font-semibold tracking-[0.26em] text-amber-100 uppercase">
-                        Certificate preview
-                      </p>
-                      <p className="mt-2 text-2xl font-black tracking-[-0.06em] text-white">
-                        {certificatePreview.title}
-                      </p>
+                      <div className="text-left lg:text-right">
+                        <p className="text-xs font-semibold tracking-[0.22em] text-slate-400 uppercase">
+                          Certificate file
+                        </p>
+                        <p className="mt-1 text-sm text-cyan-100">
+                          {certificate.certificateType === "quiz"
+                            ? "Quiz completion PDF"
+                            : certificate.certificateType === "milestone"
+                              ? "Milestone certificate PDF"
+                              : "Training completion PDF"}
+                        </p>
+                      </div>
                     </div>
-                    <span className="rounded-full border border-amber-300/30 bg-amber-400/15 px-3 py-1 text-[11px] font-semibold text-amber-100">
-                      {certificatePreview.badge}
-                    </span>
-                  </div>
-
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={`${certificatePreview.badge}-${certificatePreview.title}-${certificatePreview.name}-${certificatePreview.subtitle}`}
-                      initial={reduceMotion ? { opacity: 1 } : { opacity: 0, y: 12, scale: 0.985 }}
-                      animate={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 }}
-                      exit={reduceMotion ? { opacity: 1 } : { opacity: 0, y: -8, scale: 0.985 }}
-                      transition={
-                        reduceMotion
-                          ? { duration: 0.01 }
-                          : {
-                              duration: 0.45,
-                              ease: "easeOut",
-                            }
-                      }
-                      className="rounded-[1.6rem] border border-white/10 bg-slate-950/55 p-5 shadow-[0_0_28px_rgba(245,158,11,0.08)]"
-                    >
-                      <p className="text-xs font-semibold tracking-[0.24em] text-slate-400 uppercase">
-                        Presented to
-                      </p>
-                      <p className="mt-2 text-3xl font-black tracking-[-0.06em] text-fuchsia-100">
-                        {certificatePreview.name || "Your full name"}
-                      </p>
-                      <p className="mt-3 text-sm leading-6 text-slate-300">
-                        {certificatePreview.subtitle}
-                      </p>
-                      <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                        <motion.div
-                          whileHover={reduceMotion ? undefined : { y: -2, scale: 1.01 }}
-                          className="rounded-2xl border border-cyan-300/20 bg-cyan-400/10 p-3"
-                        >
-                          <p className="text-[11px] font-semibold tracking-[0.2em] text-cyan-100 uppercase">
-                            Account
-                          </p>
-                          <p className="mt-2 text-sm font-semibold text-cyan-50">{currentUsername}</p>
-                          <p className="mt-1 text-xs text-cyan-100/80">{currentEmail}</p>
-                        </motion.div>
-                        <motion.div
-                          whileHover={reduceMotion ? undefined : { y: -2, scale: 1.01 }}
-                          className="rounded-2xl border border-amber-300/20 bg-amber-400/10 p-3"
-                        >
-                          <p className="text-[11px] font-semibold tracking-[0.2em] text-amber-100 uppercase">
-                            Role
-                          </p>
-                          <p className="mt-2 text-sm font-semibold text-amber-50">
-                            {currentRole === "superadmin"
-                              ? "Super Admin"
-                              : currentRole === "admin"
-                                ? "Admin"
-                                : "Learner"}
-                          </p>
-                          <p className="mt-1 text-xs text-amber-100/80">
-                            Rank {leaderboardRank ? `#${leaderboardRank}` : "pending"}
-                          </p>
-                        </motion.div>
-                      </div>
-                    </motion.div>
-                  </AnimatePresence>
+                  </motion.div>
+                ))
+              ) : (
+                <div className="rounded-2xl border border-dashed border-white/15 bg-white/5 p-4 text-sm text-slate-400">
+                  No issued certificates match this filter yet.
                 </div>
-              </motion.div>
+              )}
             </div>
           </motion.section>
 
@@ -752,7 +472,10 @@ export function ReportCenter({
                   </p>
                   <ul className="mt-3 space-y-3 text-sm leading-6 text-emerald-50/90">
                     {strengths.map((item) => (
-                      <li key={`${item.title ?? item.text}`} className="rounded-2xl border border-white/10 bg-slate-950/35 p-3">
+                      <li
+                        key={`${item.title ?? item.text}`}
+                        className="rounded-2xl border border-white/10 bg-slate-950/35 p-3"
+                      >
                         {item.title ? <p className="font-semibold text-white">{item.title}</p> : null}
                         <p className={cn("text-slate-300", item.title ? "mt-1" : "")}>{item.text}</p>
                       </li>
@@ -766,7 +489,10 @@ export function ReportCenter({
                   </p>
                   <ul className="mt-3 space-y-3 text-sm leading-6 text-amber-50/90">
                     {recommendations.map((item) => (
-                      <li key={`${item.title ?? item.text}`} className="rounded-2xl border border-white/10 bg-slate-950/35 p-3">
+                      <li
+                        key={`${item.title ?? item.text}`}
+                        className="rounded-2xl border border-white/10 bg-slate-950/35 p-3"
+                      >
                         {item.title ? <p className="font-semibold text-white">{item.title}</p> : null}
                         <p className={cn("text-slate-300", item.title ? "mt-1" : "")}>{item.text}</p>
                       </li>
@@ -790,9 +516,14 @@ export function ReportCenter({
             />
             <div className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
               {achievements.map((item) => (
-                <div key={`${item.title ?? item.text}`} className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                <div
+                  key={`${item.title ?? item.text}`}
+                  className="rounded-2xl border border-white/10 bg-white/5 p-4"
+                >
                   {item.title ? <p className="font-semibold text-white">{item.title}</p> : null}
-                  <p className={cn("text-sm leading-6 text-slate-300", item.title ? "mt-1" : "")}>{item.text}</p>
+                  <p className={cn("text-sm leading-6 text-slate-300", item.title ? "mt-1" : "")}>
+                    {item.text}
+                  </p>
                 </div>
               ))}
             </div>
@@ -834,9 +565,7 @@ export function ReportCenter({
                         disabled={loadingKey === `progress-${item.kind}`}
                         className={cyberButtonClasses("primary", "sm")}
                       >
-                        {loadingKey === `progress-${item.kind}`
-                          ? "Generating..."
-                          : "Download PDF"}
+                        {loadingKey === `progress-${item.kind}` ? "Generating..." : "Download PDF"}
                       </button>
                     </div>
                   </div>

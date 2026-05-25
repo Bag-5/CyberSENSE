@@ -296,7 +296,16 @@ export async function getAnalyticsSnapshot(): Promise<AnalyticsSnapshot> {
   const scamAnalyses = events.filter((event) => event.event_type === "scam_analysis_completed");
   const threatViews = events.filter((event) => event.event_type === "threat_viewed");
   const moduleEvents = events.filter((event) =>
-    ["threat_viewed", "page_view", "simulation_selected", "quiz_viewed", "quiz_hub_viewed", "scam_analysis_completed", "quiz_completed"].includes(
+    [
+      "threat_viewed",
+      "page_view",
+      "simulation_selected",
+      "quiz_viewed",
+      "quiz_hub_viewed",
+      "scam_analysis_completed",
+      "quiz_completed",
+      "weekly_competition_completed",
+    ].includes(
       event.event_type,
     ),
   );

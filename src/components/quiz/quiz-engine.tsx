@@ -14,9 +14,16 @@ import { cyberButtonClasses, cyberPanelClasses } from "@/components/ui/cyber";
 
 type QuizEngineProps = {
   quiz: QuizCategory;
+  certificateFlow?: {
+    title: string;
+    description: string;
+    ctaLabel?: string;
+    certificateType: "quiz" | "milestone" | "training";
+    subjectKey?: string;
+  };
 };
 
-export function QuizEngine({ quiz }: QuizEngineProps) {
+export function QuizEngine({ quiz, certificateFlow }: QuizEngineProps) {
   const router = useRouter();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
@@ -28,6 +35,9 @@ export function QuizEngine({ quiz }: QuizEngineProps) {
   const currentQuestion = quiz.questions[currentIndex] ?? quiz.questions[0];
   const isFinalQuestion = currentIndex === quiz.questions.length - 1;
   const isFinished = summary !== null;
+  const isWeeklyCompetition = quiz.slug === "weekly-competition";
+  const backHref = isWeeklyCompetition ? "/weekly-quiz-competition" : "/threats";
+  const backLabel = isWeeklyCompetition ? "Back to competition" : "Back to Threat Academy";
 
   const currentEvaluation = useMemo(() => {
     if (!currentQuestion) {
@@ -72,7 +82,9 @@ export function QuizEngine({ quiz }: QuizEngineProps) {
 
     if (isFinalQuestion) {
       const nextSummary = scoreQuiz(quiz, nextAnswers);
-      const { newAchievements } = recordQuizCompletion(quiz, nextSummary);
+      const { newAchievements } = isWeeklyCompetition
+        ? { newAchievements: [] as QuizAchievement[] }
+        : recordQuizCompletion(quiz, nextSummary);
       setSummary(nextSummary);
       setUnlockedAchievements(newAchievements);
       void fetch("/api/quiz/complete", {
@@ -81,6 +93,8 @@ export function QuizEngine({ quiz }: QuizEngineProps) {
         body: JSON.stringify({
           quizSlug: quiz.slug,
           score: nextSummary.score,
+          correctCount: nextSummary.correctCount,
+          totalQuestions: nextSummary.totalQuestions,
         }),
       }).finally(() => {
         router.refresh();
@@ -108,7 +122,7 @@ export function QuizEngine({ quiz }: QuizEngineProps) {
   }
 
   function handlePickAnotherQuiz() {
-    window.location.href = "/quizzes";
+    window.location.href = backHref;
   }
 
   if (!currentQuestion) {
@@ -127,6 +141,8 @@ export function QuizEngine({ quiz }: QuizEngineProps) {
         unlockedAchievements={unlockedAchievements}
         onRetry={handleRetry}
         onPickAnotherQuiz={handlePickAnotherQuiz}
+        onPickAnotherQuizLabel={isWeeklyCompetition ? "Try weekly competition again" : "Back to Threat Academy"}
+        certificateFlow={certificateFlow}
       />
     );
   }
@@ -158,10 +174,10 @@ export function QuizEngine({ quiz }: QuizEngineProps) {
             Cyber question
           </p>
           <Link
-            href="/quizzes"
+            href={backHref}
             className="text-sm font-semibold text-slate-400 transition hover:text-cyan-100"
           >
-            Back to quizzes
+            {backLabel}
           </Link>
         </div>
 

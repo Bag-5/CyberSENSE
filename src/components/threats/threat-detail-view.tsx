@@ -1,9 +1,9 @@
 import Link from "next/link";
 
 import { AnalyticsBeacon } from "@/components/admin/analytics/analytics-beacon";
+import { AcademyCourseQuizSection } from "@/components/academy/course-quiz-section";
 import { ThreatSection } from "@/components/threats/threat-section";
 import { ThreatRelatedThreats } from "@/components/threats/threat-related-threats";
-import { ThreatQuizPlaceholder } from "@/components/threats/threat-quiz-placeholder";
 import { threatLevels } from "@/data/threats";
 import type { ThreatDetail } from "@/types/site";
 import { cyberButtonClasses, cyberPanelClasses } from "@/components/ui/cyber";
@@ -128,10 +128,10 @@ export function ThreatDetailView({ threat, relatedThreats }: ThreatDetailViewPro
 
       <ThreatSection
         eyebrow="Quiz"
-        title="Interactive quiz placeholder"
-        description="This area is ready for a future challenge mode that tests the user before unlocking the next threat."
+        title="Course checkpoint"
+        description="Finish the lesson, then take the course quiz and generate the certificate for this Academy module."
       >
-        <ThreatQuizPlaceholder prompt={threat.quizPrompt} />
+        <AcademyCourseQuizSection threatSlug={threat.slug} title={threat.name} />
       </ThreatSection>
 
       <ThreatSection

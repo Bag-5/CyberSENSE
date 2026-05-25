@@ -17,7 +17,8 @@ export type AnalyticsEventType =
   | "quiz_hub_viewed"
   | "quiz_viewed"
   | "quiz_attempted"
-  | "quiz_completed";
+  | "quiz_completed"
+  | "weekly_competition_completed";
 
 export type AnalyticsEventPayload = {
   eventType: AnalyticsEventType;

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { SectionHeader, cyberButtonClasses, cyberPanelClasses } from "@/components/ui/cyber";
 import { ThreatAcademyBrowser } from "@/components/threats/threat-academy-browser";
 import { AnimatedSection } from "@/components/animated-section";
+import { AcademyCompletionModal } from "@/components/academy/academy-completion-modal";
 import { AnalyticsBeacon } from "@/components/admin/analytics/analytics-beacon";
 import { threats } from "@/data/threats";
 import { siteDescription, siteName } from "@/data/site";
@@ -38,6 +39,8 @@ export default function ThreatAcademyPage() {
       </AnimatedSection>
 
       <ThreatAcademyBrowser threats={threats} />
+
+      <AcademyCompletionModal />
 
       <AnimatedSection className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className={cyberPanelClasses("p-6 sm:p-8")}>

@@ -8,7 +8,8 @@ export type QuizCategorySlug =
   | "deepfakes"
   | "voice-cloning-scams"
   | "fake-apps"
-  | "ransomware";
+  | "ransomware"
+  | "weekly-competition";
 
 export type QuizDifficulty = "Easy" | "Medium" | "Hard";
 

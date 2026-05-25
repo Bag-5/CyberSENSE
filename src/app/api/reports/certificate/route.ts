@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { recordCertificateIssue } from "@/lib/certificates/store";
 import { buildCertificatePdfInput, getReportSessionUser, getUserReportContext } from "@/lib/reports/report-data";
 import { generateCertificatePdf } from "@/lib/pdf/report-generator";
 
@@ -47,6 +48,15 @@ export async function POST(request: Request) {
       body.certificateType,
       body.subjectKey,
     );
+    await recordCertificateIssue({
+      userId: session.user.id,
+      username: session.user.username,
+      email: session.user.email,
+      fullName: body.fullName,
+      certificateType: body.certificateType,
+      subjectKey: body.subjectKey,
+      subjectTitle: pdfInput.achievementTitle,
+    });
     const pdfBuffer = await generateCertificatePdf(pdfInput);
 
     return new NextResponse(new Uint8Array(pdfBuffer), {
