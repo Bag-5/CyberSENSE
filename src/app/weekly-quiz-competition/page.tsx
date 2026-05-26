@@ -4,6 +4,8 @@ import { redirect } from "next/navigation";
 import { WeeklyCompetitionPage } from "@/components/weekly-competition/weekly-competition-page";
 import { getCurrentSessionUser } from "@/lib/auth/context";
 import { loadWeeklyCompetitionEntries } from "@/lib/competition/store";
+import { getPlatformSettings } from "@/lib/superadmin/settings";
+import { getCurrentWeeklyCompetitionKey } from "@/lib/competition/store";
 
 export const dynamic = "force-dynamic";
 
@@ -19,7 +21,22 @@ export default async function WeeklyQuizCompetitionRoute() {
     redirect("/auth?returnTo=%2Fweekly-quiz-competition");
   }
 
-  const leaderboardEntries = await loadWeeklyCompetitionEntries();
+  const [leaderboardEntries, platformSettings] = await Promise.all([
+    loadWeeklyCompetitionEntries(),
+    getPlatformSettings().catch(() => null),
+  ]);
+  const currentCompetitionKey = getCurrentWeeklyCompetitionKey();
+  const weeklyCompetition = platformSettings?.weeklyCompetition ?? null;
+  const isPublished =
+    Boolean(weeklyCompetition?.published) &&
+    weeklyCompetition?.competitionKey === currentCompetitionKey;
 
-  return <WeeklyCompetitionPage leaderboardEntries={leaderboardEntries} />;
+  return (
+    <WeeklyCompetitionPage
+      leaderboardEntries={leaderboardEntries}
+      isPublished={isPublished}
+      competitionKey={currentCompetitionKey}
+      publishedAt={weeklyCompetition?.publishedAt ?? null}
+    />
+  );
 }

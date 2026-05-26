@@ -25,8 +25,15 @@ function downloadPdf(blob: Blob, filename: string) {
   const anchor = document.createElement("a");
   anchor.href = url;
   anchor.download = filename;
-  anchor.click();
-  window.setTimeout(() => URL.revokeObjectURL(url), 1500);
+  anchor.rel = "noopener";
+  anchor.style.display = "none";
+  document.body.appendChild(anchor);
+  try {
+    anchor.click();
+  } finally {
+    anchor.remove();
+    window.setTimeout(() => URL.revokeObjectURL(url), 5000);
+  }
 }
 
 export function CertificatePromptModal({
@@ -157,41 +164,48 @@ function CertificatePromptSheet({
           </button>
         </div>
 
-        <label className="mt-5 block">
-          <span className="mb-2 block text-xs font-semibold tracking-[0.18em] text-slate-400 uppercase">
-            Full name as it should appear on the certificate
-          </span>
-          <input
-            ref={inputRef}
-            defaultValue={defaultName}
-            placeholder="Enter the full name for the certificate"
-            className="cyber-input w-full rounded-[1.1rem] border border-white/10 bg-slate-950/70 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-300/40 focus:ring-2 focus:ring-cyan-200/20"
-          />
-        </label>
+        <form
+          className="mt-5 space-y-4"
+          onSubmit={(event) => {
+            event.preventDefault();
+            void handleGenerate();
+          }}
+        >
+          <label className="block">
+            <span className="mb-2 block text-xs font-semibold tracking-[0.18em] text-slate-400 uppercase">
+              Full name as it should appear on the certificate
+            </span>
+            <input
+              ref={inputRef}
+              defaultValue={defaultName}
+              placeholder="Enter the full name for the certificate"
+              className="cyber-input w-full rounded-[1.1rem] border border-white/10 bg-slate-950/70 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-300/40 focus:ring-2 focus:ring-cyan-200/20"
+            />
+          </label>
 
-        {notice ? (
-          <div
-            className={cn(
-              "mt-4 rounded-2xl border px-4 py-3 text-sm",
-              notice.tone === "success"
-                ? "border-emerald-300/20 bg-emerald-400/10 text-emerald-100"
-                : "border-rose-300/20 bg-rose-400/10 text-rose-100",
-            )}
-          >
-            {notice.text}
+          {notice ? (
+            <div
+              className={cn(
+                "rounded-2xl border px-4 py-3 text-sm",
+                notice.tone === "success"
+                  ? "border-emerald-300/20 bg-emerald-400/10 text-emerald-100"
+                  : "border-rose-300/20 bg-rose-400/10 text-rose-100",
+              )}
+            >
+              {notice.text}
+            </div>
+          ) : null}
+
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
+            <button
+              type="submit"
+              disabled={loading}
+              className={cyberButtonClasses("primary", "md")}
+            >
+              {loading ? "Generating..." : ctaLabel}
+            </button>
           </div>
-        ) : null}
-
-        <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
-          <button
-            type="button"
-            onClick={handleGenerate}
-            disabled={loading}
-            className={cyberButtonClasses("primary", "md")}
-          >
-            {loading ? "Generating..." : ctaLabel}
-          </button>
-        </div>
+        </form>
       </motion.div>
     </motion.div>
   );

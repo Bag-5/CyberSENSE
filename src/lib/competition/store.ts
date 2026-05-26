@@ -1,15 +1,7 @@
 import { getUserById } from "@/lib/auth/store";
 import { ensureDatabaseReady, getDatabase } from "@/lib/db/postgres";
+import { getCurrentWeeklyCompetitionKey as getCurrentWeeklyCompetitionKeyUtil } from "@/lib/competition/utils";
 import type { LeaderboardEntry } from "@/types/quiz";
-
-function getCompetitionKey(date = new Date()) {
-  const utcDate = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
-  const day = utcDate.getUTCDay() || 7;
-  utcDate.setUTCDate(utcDate.getUTCDate() + 4 - day);
-  const yearStart = new Date(Date.UTC(utcDate.getUTCFullYear(), 0, 1));
-  const weekNumber = Math.ceil((((utcDate.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
-  return `${utcDate.getUTCFullYear()}-W${String(weekNumber).padStart(2, "0")}`;
-}
 
 function badgeForScore(score: number) {
   if (score >= 900) {
@@ -50,7 +42,7 @@ type WeeklyCompetitionRow = {
 export async function recordWeeklyCompetitionResult(input: WeeklyCompetitionResultInput) {
   await ensureDatabaseReady();
   const db = getDatabase();
-  const competitionKey = getCompetitionKey();
+  const competitionKey = getCurrentWeeklyCompetitionKeyUtil();
   const user = await getUserById(input.userId);
   const updatedAt = new Date().toISOString();
   const completedAt = updatedAt;
@@ -103,7 +95,7 @@ export async function recordWeeklyCompetitionResult(input: WeeklyCompetitionResu
 export async function loadWeeklyCompetitionEntries() {
   await ensureDatabaseReady();
   const db = getDatabase();
-  const competitionKey = getCompetitionKey();
+  const competitionKey = getCurrentWeeklyCompetitionKeyUtil();
 
   const rows = await db<WeeklyCompetitionRow[]>`
     select
@@ -132,5 +124,5 @@ export async function loadWeeklyCompetitionEntries() {
 }
 
 export function getCurrentWeeklyCompetitionKey() {
-  return getCompetitionKey();
+  return getCurrentWeeklyCompetitionKeyUtil();
 }

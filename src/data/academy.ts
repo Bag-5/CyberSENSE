@@ -1,4 +1,5 @@
 import { quizCategories } from "@/data/quizzes";
+import type { LabSimulationId } from "@/types/lab";
 import type { QuizCategory, QuizCategorySlug } from "@/types/quiz";
 
 export type AcademyCourse = {
@@ -97,6 +98,23 @@ export function getAcademyQuizByThreatSlug(threatSlug: string): QuizCategory | n
   }
 
   return quizBySlug.get(course.quizSlug) ?? null;
+}
+
+const labByThreatSlug: Record<string, LabSimulationId> = {
+  phishing: "phishing",
+  "social-engineering": "fake-login",
+  malware: "ransomware-awareness",
+  "password-attacks": "password-cracking",
+  "public-wi-fi-attacks": "public-wifi",
+  ransomware: "ransomware-awareness",
+  "fake-apps-scams": "app-permissions",
+  deepfakes: "fake-login",
+  "voice-cloning-scams": "fake-login",
+  "ai-misinformation": "phishing",
+};
+
+export function getAcademyAttackLabByThreatSlug(threatSlug: string): LabSimulationId | null {
+  return labByThreatSlug[threatSlug] ?? null;
 }
 
 export function isAcademyComplete(completedQuizSlugs: Iterable<string>) {

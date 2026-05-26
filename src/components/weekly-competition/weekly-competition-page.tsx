@@ -8,9 +8,17 @@ import type { LeaderboardEntry } from "@/types/quiz";
 
 type WeeklyCompetitionPageProps = {
   leaderboardEntries: LeaderboardEntry[];
+  isPublished: boolean;
+  competitionKey: string;
+  publishedAt: string | null;
 };
 
-export function WeeklyCompetitionPage({ leaderboardEntries }: WeeklyCompetitionPageProps) {
+export function WeeklyCompetitionPage({
+  leaderboardEntries,
+  isPublished,
+  competitionKey,
+  publishedAt,
+}: WeeklyCompetitionPageProps) {
   return (
     <div className="space-y-8 pb-10 pt-10">
       <AnalyticsBeacon
@@ -29,6 +37,29 @@ export function WeeklyCompetitionPage({ leaderboardEntries }: WeeklyCompetitionP
             title="Weekly Quiz Competition"
             description="A 100-question academy-wide competition built from the full Threat Academy curriculum. Your score feeds the live leaderboard."
           />
+
+          {!isPublished ? (
+            <div className="mt-5 rounded-[1.5rem] border border-amber-300/20 bg-amber-400/10 p-5">
+              <p className="text-sm font-semibold tracking-[0.24em] text-amber-100 uppercase">
+                Awaiting superadmin start
+              </p>
+              <h2 className="mt-2 text-2xl font-black tracking-[-0.05em] text-white">
+                This week&apos;s competition is locked
+              </h2>
+              <p className="mt-3 max-w-2xl text-sm leading-6 text-amber-50/80">
+                The competition shell is ready, the leaderboard is waiting, but the question set
+                stays hidden until a superadmin publishes the current week.
+              </p>
+              <div className="mt-4 flex flex-wrap gap-2 text-xs text-amber-50/70">
+                <span className="rounded-full border border-amber-200/20 bg-amber-100/10 px-3 py-1">
+                  Week key: {competitionKey}
+                </span>
+                <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">
+                  Published at: {publishedAt ? new Date(publishedAt).toLocaleString() : "Not yet"}
+                </span>
+              </div>
+            </div>
+          ) : null}
 
           <div className="mt-5 grid gap-3 sm:grid-cols-3">
             <div className="rounded-2xl border border-cyan-300/15 bg-cyan-400/10 p-4">
@@ -63,7 +94,25 @@ export function WeeklyCompetitionPage({ leaderboardEntries }: WeeklyCompetitionP
       </AnimatedSection>
 
       <div className="mx-auto grid w-full max-w-7xl gap-6 px-4 lg:grid-cols-[1.1fr_0.9fr] lg:px-8">
-        <QuizEngine quiz={weeklyCompetitionQuiz} />
+        {isPublished ? (
+          <QuizEngine quiz={weeklyCompetitionQuiz} />
+        ) : (
+          <div className={cyberPanelClasses("p-5 sm:p-6")}>
+            <p className="text-sm font-semibold tracking-[0.24em] text-cyan-200 uppercase">
+              Weekly quiz locked
+            </p>
+            <h2 className="mt-2 text-2xl font-black tracking-[-0.05em] text-white">
+              Questions are hidden for now
+            </h2>
+            <p className="mt-3 text-sm leading-6 text-slate-300">
+              Learners can open the competition page, but the 100-question set only appears after
+              a superadmin publishes the current week from the control room.
+            </p>
+            <div className="mt-5 rounded-3xl border border-white/10 bg-slate-950/60 p-4 text-sm leading-6 text-slate-300">
+              Keep training in Threat Academy while you wait for the weekly challenge to go live.
+            </div>
+          </div>
+        )}
 
         <div className="space-y-6">
           <LeaderboardBoard entries={leaderboardEntries} title="Weekly competition leaderboard" />

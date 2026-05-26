@@ -24,21 +24,49 @@ type CategoryBlueprint = {
   templates: QuestionTemplate[];
 };
 
+function hashSeed(value: string) {
+  let hash = 0;
+  for (let index = 0; index < value.length; index += 1) {
+    hash = (hash * 31 + value.charCodeAt(index)) >>> 0;
+  }
+  return hash;
+}
+
+function shuffleOptions(options: string[], seed: string) {
+  const shuffled = [...options];
+  let state = hashSeed(seed) || 1;
+
+  for (let index = shuffled.length - 1; index > 0; index -= 1) {
+    state = (state * 1664525 + 1013904223) >>> 0;
+    const swapIndex = state % (index + 1);
+    [shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]];
+  }
+
+  return shuffled;
+}
+
 function buildQuestions(
   category: QuizCategorySlug,
   contexts: string[],
   templates: QuestionTemplate[],
 ): QuizQuestion[] {
   return contexts.flatMap((context, contextIndex) =>
-    templates.map((template, templateIndex) => ({
-      id: `${category}-${contextIndex + 1}-${templateIndex + 1}`,
-      question: `A ${context} ${template.stem}`,
-      options: template.options,
-      correctAnswer: template.correctAnswer,
-      explanation: template.explanation,
-      difficulty: template.difficulty,
-      category,
-    })),
+    templates.map((template, templateIndex) => {
+      const options = shuffleOptions(
+        template.options,
+        `${category}-${contextIndex + 1}-${templateIndex + 1}`,
+      );
+
+      return {
+        id: `${category}-${contextIndex + 1}-${templateIndex + 1}`,
+        question: `A ${context} ${template.stem}`,
+        options,
+        correctAnswer: template.correctAnswer,
+        explanation: template.explanation,
+        difficulty: template.difficulty,
+        category,
+      };
+    }),
   );
 }
 

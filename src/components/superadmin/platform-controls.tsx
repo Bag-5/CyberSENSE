@@ -3,6 +3,7 @@
 import { useMemo, useState, useTransition } from "react";
 
 import { cyberButtonClasses, cyberPanelClasses } from "@/components/ui/cyber";
+import { getCurrentWeeklyCompetitionKey } from "@/lib/competition/utils";
 import type { PlatformSettings } from "@/lib/superadmin/settings";
 import { cn } from "@/utils/cn";
 
@@ -49,6 +50,10 @@ export function PlatformControls({ initialSettings }: PlatformControlsProps) {
     () => Object.values(settings.modules).filter(Boolean).length,
     [settings.modules],
   );
+  const currentCompetitionKey = useMemo(() => getCurrentWeeklyCompetitionKey(), []);
+  const weeklyCompetitionPublished =
+    settings.weeklyCompetition.published &&
+    settings.weeklyCompetition.competitionKey === currentCompetitionKey;
 
   async function saveSettings(nextSettings: PlatformSettings) {
     setError(null);
@@ -103,6 +108,26 @@ export function PlatformControls({ initialSettings }: PlatformControlsProps) {
     const nextSettings: PlatformSettings = {
       ...settings,
       announcement: settings.announcement.trim(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    setSettings(nextSettings);
+    startTransition(() => {
+      void saveSettings(nextSettings).catch((saveError) => {
+        setError(saveError instanceof Error ? saveError.message : "Unable to save platform settings.");
+      });
+    });
+  }
+
+  function toggleWeeklyCompetition() {
+    const nextPublished = !weeklyCompetitionPublished;
+    const nextSettings: PlatformSettings = {
+      ...settings,
+      weeklyCompetition: {
+        competitionKey: currentCompetitionKey,
+        published: nextPublished,
+        publishedAt: nextPublished ? new Date().toISOString() : null,
+      },
       updatedAt: new Date().toISOString(),
     };
 
@@ -171,6 +196,31 @@ export function PlatformControls({ initialSettings }: PlatformControlsProps) {
           )}
         >
           {settings.maintenanceMode ? "Disable maintenance" : "Enable maintenance"}
+        </button>
+      </div>
+
+      <div className="mt-5 flex flex-wrap items-center justify-between gap-4 rounded-[1.5rem] border border-white/10 bg-slate-950/50 p-4">
+        <div>
+          <p className="text-sm font-semibold text-white">Weekly quiz competition</p>
+          <p className="mt-1 text-sm leading-6 text-slate-300">
+            Publish the current 100-question set before learners can start the weekly ranking
+            challenge.
+          </p>
+          <p className="mt-2 text-xs tracking-[0.18em] text-slate-500 uppercase">
+            Current week: {currentCompetitionKey}
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={toggleWeeklyCompetition}
+          disabled={isPending}
+          className={cn(
+            cyberButtonClasses(weeklyCompetitionPublished ? "secondary" : "primary", "md"),
+            weeklyCompetitionPublished &&
+              "border-emerald-300/25 bg-emerald-400/15 text-emerald-50 hover:bg-emerald-400/20",
+          )}
+        >
+          {weeklyCompetitionPublished ? "Unpublish weekly competition" : "Publish weekly competition"}
         </button>
       </div>
 

@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { AnalyticsBeacon } from "@/components/admin/analytics/analytics-beacon";
-import { AcademyCourseQuizSection } from "@/components/academy/course-quiz-section";
+import { AcademyCourseFlowSection } from "@/components/academy/course-flow-section";
 import { ThreatSection } from "@/components/threats/threat-section";
 import { ThreatRelatedThreats } from "@/components/threats/threat-related-threats";
 import { threatLevels } from "@/data/threats";
@@ -127,11 +127,11 @@ export function ThreatDetailView({ threat, relatedThreats }: ThreatDetailViewPro
       </ThreatSection>
 
       <ThreatSection
-        eyebrow="Quiz"
+        eyebrow="Academy flow"
         title="Course checkpoint"
-        description="Finish the lesson, then take the course quiz and generate the certificate for this Academy module."
+        description="Finish the lesson, take the course quiz, complete the attack lab, and then generate the certificate for this Academy module."
       >
-        <AcademyCourseQuizSection threatSlug={threat.slug} title={threat.name} />
+        <AcademyCourseFlowSection threatSlug={threat.slug} title={threat.name} />
       </ThreatSection>
 
       <ThreatSection

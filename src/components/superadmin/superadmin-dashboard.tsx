@@ -82,6 +82,12 @@ export function SuperAdminDashboard({ user, initialSettings }: SuperAdminDashboa
         tone: "amber",
       },
       {
+        label: "Weekly quiz",
+        value: initialSettings.weeklyCompetition.published ? "Published" : "Draft",
+        detail: initialSettings.weeklyCompetition.competitionKey ?? "No week started yet",
+        tone: initialSettings.weeklyCompetition.published ? "emerald" : "amber",
+      },
+      {
         label: "Updated",
         value: formatTimestamp(initialSettings.updatedAt),
         detail: "Last settings write",

@@ -5,6 +5,8 @@ import { sessionCookieName } from "@/lib/auth/constants";
 import { updateQuizCompletion } from "@/lib/auth/store";
 import { recordAnalyticsEvent } from "@/lib/analytics/store";
 import { recordWeeklyCompetitionResult } from "@/lib/competition/store";
+import { getCurrentWeeklyCompetitionKey } from "@/lib/competition/utils";
+import { getPlatformSettings } from "@/lib/superadmin/settings";
 
 function getTokenFromCookie(header: string | null) {
   if (!header) {
@@ -47,6 +49,20 @@ export async function POST(request: Request) {
     }
 
     if (body.quizSlug === "weekly-competition") {
+      const platformSettings = await getPlatformSettings().catch(() => null);
+      const weeklyCompetition = platformSettings?.weeklyCompetition ?? null;
+      const currentCompetitionKey = getCurrentWeeklyCompetitionKey();
+      const isPublished =
+        Boolean(weeklyCompetition?.published) &&
+        weeklyCompetition?.competitionKey === currentCompetitionKey;
+
+      if (!isPublished) {
+        return NextResponse.json(
+          { error: "The weekly competition is not published yet." },
+          { status: 403 },
+        );
+      }
+
       if (typeof body.correctCount !== "number" || typeof body.totalQuestions !== "number") {
         return NextResponse.json(
           { error: "correctCount and totalQuestions are required for the weekly competition." },

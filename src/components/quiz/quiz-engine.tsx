@@ -21,9 +21,10 @@ type QuizEngineProps = {
     certificateType: "quiz" | "milestone" | "training";
     subjectKey?: string;
   };
+  onComplete?: (summary: ReturnType<typeof scoreQuiz>, achievements: QuizAchievement[]) => void;
 };
 
-export function QuizEngine({ quiz, certificateFlow }: QuizEngineProps) {
+export function QuizEngine({ quiz, certificateFlow, onComplete }: QuizEngineProps) {
   const router = useRouter();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
@@ -87,6 +88,7 @@ export function QuizEngine({ quiz, certificateFlow }: QuizEngineProps) {
         : recordQuizCompletion(quiz, nextSummary);
       setSummary(nextSummary);
       setUnlockedAchievements(newAchievements);
+      onComplete?.(nextSummary, newAchievements);
       void fetch("/api/quiz/complete", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

@@ -9,6 +9,7 @@ export const publicNavLinks: NavLink[] = [];
 
 export const authenticatedNavLinks: NavLink[] = [
   { label: "Threat Academy", href: "/threats" },
+  { label: "Spot the Red Flags", href: "/games/red-flags" },
   { label: "AI Analyzer", href: "/threats/analyzer" },
   { label: "Weekly Quiz Competition", href: "/weekly-quiz-competition" },
 ];

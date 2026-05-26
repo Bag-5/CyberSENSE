@@ -26,6 +26,7 @@ export async function PATCH(request: Request) {
       maintenanceMode?: unknown;
       announcement?: unknown;
       modules?: Record<string, unknown> | undefined;
+      weeklyCompetition?: Record<string, unknown> | undefined;
     };
 
     const current = await getPlatformSettings();
@@ -63,6 +64,25 @@ export async function PATCH(request: Request) {
                   : current.modules.simulations,
             }
           : current.modules,
+      weeklyCompetition:
+        body.weeklyCompetition && typeof body.weeklyCompetition === "object"
+          ? {
+              competitionKey:
+                typeof body.weeklyCompetition.competitionKey === "string"
+                  ? body.weeklyCompetition.competitionKey
+                  : current.weeklyCompetition.competitionKey,
+              published:
+                typeof body.weeklyCompetition.published === "boolean"
+                  ? body.weeklyCompetition.published
+                  : current.weeklyCompetition.published,
+              publishedAt:
+                typeof body.weeklyCompetition.publishedAt === "string"
+                  ? body.weeklyCompetition.publishedAt
+                  : body.weeklyCompetition.publishedAt === null
+                    ? null
+                    : current.weeklyCompetition.publishedAt,
+            }
+          : current.weeklyCompetition,
     });
 
     return NextResponse.json({ settings: next });

@@ -9,10 +9,17 @@ export type PlatformModules = {
   simulations: boolean;
 };
 
+export type WeeklyCompetitionSettings = {
+  competitionKey: string | null;
+  published: boolean;
+  publishedAt: string | null;
+};
+
 export type PlatformSettings = {
   maintenanceMode: boolean;
   announcement: string;
   modules: PlatformModules;
+  weeklyCompetition: WeeklyCompetitionSettings;
   updatedAt: string;
 };
 
@@ -27,6 +34,11 @@ const defaultSettings: PlatformSettings = {
     redFlags: true,
     simulations: true,
   },
+  weeklyCompetition: {
+    competitionKey: null,
+    published: false,
+    publishedAt: null,
+  },
   updatedAt: new Date().toISOString(),
 };
 
@@ -35,6 +47,10 @@ function normalizeSettings(value: unknown): PlatformSettings {
   const modules =
     source.modules && typeof source.modules === "object"
       ? (source.modules as Partial<PlatformModules>)
+      : {};
+  const weeklyCompetition =
+    source.weeklyCompetition && typeof source.weeklyCompetition === "object"
+      ? (source.weeklyCompetition as Partial<WeeklyCompetitionSettings>)
       : {};
 
   return {
@@ -50,6 +66,14 @@ function normalizeSettings(value: unknown): PlatformSettings {
       attackLab: typeof modules.attackLab === "boolean" ? modules.attackLab : true,
       redFlags: typeof modules.redFlags === "boolean" ? modules.redFlags : true,
       simulations: typeof modules.simulations === "boolean" ? modules.simulations : true,
+    },
+    weeklyCompetition: {
+      competitionKey: typeof weeklyCompetition.competitionKey === "string" ? weeklyCompetition.competitionKey : null,
+      published: typeof weeklyCompetition.published === "boolean" ? weeklyCompetition.published : false,
+      publishedAt:
+        typeof weeklyCompetition.publishedAt === "string" && weeklyCompetition.publishedAt.trim()
+          ? weeklyCompetition.publishedAt
+          : null,
     },
     updatedAt:
       typeof source.updatedAt === "string" && source.updatedAt.trim()
