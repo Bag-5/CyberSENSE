@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 
+import { getCurrentSessionUser } from "@/lib/auth/context";
 import { recordCertificateIssue } from "@/lib/certificates/store";
-import { buildCertificatePdfInput, getReportSessionUser, getUserReportContext } from "@/lib/reports/report-data";
+import { buildCertificatePdfInput, getUserReportContext } from "@/lib/reports/report-data";
 import { generateCertificatePdf } from "@/lib/pdf/report-generator";
 
 export const runtime = "nodejs";
@@ -18,9 +19,12 @@ function slugify(value: string) {
 
 export async function POST(request: Request) {
   try {
-    const session = await getReportSessionUser();
+    const session = await getCurrentSessionUser();
     if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json(
+        { error: "Please sign in as a learner to generate a course certificate." },
+        { status: 401 },
+      );
     }
 
     const body = (await request.json()) as {
@@ -41,7 +45,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "certificateType is required." }, { status: 400 });
     }
 
-    const context = await getUserReportContext(session.user.id);
+    const context = await getUserReportContext(session.id);
     const pdfInput = await buildCertificatePdfInput(
       context,
       body.fullName,
@@ -49,9 +53,9 @@ export async function POST(request: Request) {
       body.subjectKey,
     );
     await recordCertificateIssue({
-      userId: session.user.id,
-      username: session.user.username,
-      email: session.user.email,
+      userId: session.id,
+      username: session.username,
+      email: session.email,
       fullName: body.fullName,
       certificateType: body.certificateType,
       subjectKey: body.subjectKey,
