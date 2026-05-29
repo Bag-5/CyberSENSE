@@ -49,7 +49,7 @@ export function QuizEngine({ quiz, certificateFlow, onComplete }: QuizEngineProp
     return { chosen, isCorrect };
   }, [currentQuestion, selectedAnswer, submittedAnswers]);
 
-  function handleSubmitAnswer() {
+  async function handleSubmitAnswer() {
     if (!currentQuestion || !selectedAnswer) {
       return;
     }
@@ -86,21 +86,31 @@ export function QuizEngine({ quiz, certificateFlow, onComplete }: QuizEngineProp
       const { newAchievements } = isWeeklyCompetition
         ? { newAchievements: [] as QuizAchievement[] }
         : recordQuizCompletion(quiz, nextSummary);
-      setSummary(nextSummary);
-      setUnlockedAchievements(newAchievements);
-      onComplete?.(nextSummary, newAchievements);
-      void fetch("/api/quiz/complete", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          quizSlug: quiz.slug,
-          score: nextSummary.score,
-          correctCount: nextSummary.correctCount,
-          totalQuestions: nextSummary.totalQuestions,
-        }),
-      }).finally(() => {
+      try {
+        const completionResponse = await fetch("/api/quiz/complete", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            quizSlug: quiz.slug,
+            score: nextSummary.score,
+            correctCount: nextSummary.correctCount,
+            totalQuestions: nextSummary.totalQuestions,
+          }),
+        });
+
+        if (!completionResponse.ok) {
+          const payload = (await completionResponse.json().catch(() => null)) as { error?: string } | null;
+          console.warn("[quiz] completion sync failed", {
+            quizSlug: quiz.slug,
+            error: payload?.error ?? completionResponse.statusText,
+          });
+        }
+      } finally {
+        setSummary(nextSummary);
+        setUnlockedAchievements(newAchievements);
+        onComplete?.(nextSummary, newAchievements);
         router.refresh();
-      });
+      }
     }
   }
 

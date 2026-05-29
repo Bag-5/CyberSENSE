@@ -2,7 +2,6 @@ export const assistantQuickPrompts = [
   "How do phishing scams work?",
   "How can I detect fake AI videos?",
   "Is this message suspicious?",
-  "How do hackers steal passwords?",
 ];
 
 export const assistantCapabilities = [

@@ -112,6 +112,12 @@ function CertificatePromptSheet({
         throw new Error(payload?.error ?? "Could not generate the certificate.");
       }
 
+      const contentType = response.headers.get("Content-Type") ?? "";
+      if (!contentType.includes("application/pdf")) {
+        const payload = (await response.json().catch(() => null)) as { error?: string } | null;
+        throw new Error(payload?.error ?? "The certificate service did not return a PDF.");
+      }
+
       const blob = await response.blob();
       const filename = `cybersense-certificate-${trimmedName.toLowerCase().replace(/[^a-z0-9]+/g, "-")}.pdf`;
       downloadPdf(blob, filename);

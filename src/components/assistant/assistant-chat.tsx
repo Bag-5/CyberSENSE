@@ -2,7 +2,6 @@
 
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useEffect, useMemo, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
-import Link from "next/link";
 
 import { cyberButtonClasses, cyberPanelClasses } from "@/components/ui/cyber";
 import { assistantQuickPrompts } from "@/data/assistant";
@@ -20,7 +19,6 @@ type AssistantChatProps = {
   compact?: boolean;
   className?: string;
   currentName?: string | null;
-  fullPageHref?: string;
 };
 
 function buildInitialMessages(name?: string | null): DisplayMessage[] {
@@ -44,7 +42,6 @@ export function AssistantChat({
   compact = false,
   className,
   currentName,
-  fullPageHref,
 }: AssistantChatProps) {
   const reduceMotion = useReducedMotion();
   const [messages, setMessages] = useState<DisplayMessage[]>(() =>
@@ -195,11 +192,6 @@ export function AssistantChat({
         </div>
 
         <div className="flex flex-col items-end gap-2">
-          {fullPageHref ? (
-            <Link href={fullPageHref} className={cyberButtonClasses("secondary", "sm")}>
-              Full page
-            </Link>
-          ) : null}
           <div className="rounded-full border border-emerald-300/20 bg-emerald-400/10 px-3 py-1 text-[10px] font-semibold tracking-[0.2em] text-emerald-100 uppercase">
             Live model ready
           </div>
@@ -281,7 +273,7 @@ export function AssistantChat({
 
       <div className="border-t border-white/10 px-5 py-4">
         <div className="mb-3 flex flex-wrap gap-2">
-          {assistantQuickPrompts.map((prompt) => (
+          {assistantQuickPrompts.slice(0, 3).map((prompt) => (
             <button
               key={prompt}
               type="button"
@@ -295,7 +287,7 @@ export function AssistantChat({
 
         {latestAssistant?.suggestedPrompts?.length ? (
           <div className="mb-3 flex flex-wrap gap-2">
-            {latestAssistant.suggestedPrompts.map((prompt) => (
+            {latestAssistant.suggestedPrompts.slice(0, 3).map((prompt) => (
               <button
                 key={prompt}
                 type="button"

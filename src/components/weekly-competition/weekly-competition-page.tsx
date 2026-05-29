@@ -41,14 +41,14 @@ export function WeeklyCompetitionPage({
           {!isPublished ? (
             <div className="mt-5 rounded-[1.5rem] border border-amber-300/20 bg-amber-400/10 p-5">
               <p className="text-sm font-semibold tracking-[0.24em] text-amber-100 uppercase">
-                Awaiting superadmin start
+                Stay tuned
               </p>
               <h2 className="mt-2 text-2xl font-black tracking-[-0.05em] text-white">
-                This week&apos;s competition is locked
+                This week&apos;s competition will start soon
               </h2>
               <p className="mt-3 max-w-2xl text-sm leading-6 text-amber-50/80">
-                The competition shell is ready, the leaderboard is waiting, but the question set
-                stays hidden until a superadmin publishes the current week.
+                The competition shell is ready, the leaderboard is waiting, and the question set
+                will appear as soon as the weekly challenge goes live.
               </p>
               <div className="mt-4 flex flex-wrap gap-2 text-xs text-amber-50/70">
                 <span className="rounded-full border border-amber-200/20 bg-amber-100/10 px-3 py-1">
@@ -105,8 +105,8 @@ export function WeeklyCompetitionPage({
               Questions are hidden for now
             </h2>
             <p className="mt-3 text-sm leading-6 text-slate-300">
-              Learners can open the competition page, but the 100-question set only appears after
-              a superadmin publishes the current week from the control room.
+              Learners can open the competition page, but the 100-question set only appears when
+              the weekly challenge goes live.
             </p>
             <div className="mt-5 rounded-3xl border border-white/10 bg-slate-950/60 p-4 text-sm leading-6 text-slate-300">
               Keep training in Threat Academy while you wait for the weekly challenge to go live.
@@ -128,8 +128,8 @@ export function WeeklyCompetitionPage({
                 Rankings are based on your competition score and broader training streaks.
               </li>
               <li className="rounded-2xl border border-white/10 bg-white/5 p-3">
-                Superadmins publish the weekly set and monitor the live leaderboard from the
-                control room.
+                The weekly set will unlock when the challenge goes live, and your result will feed
+                the live leaderboard.
               </li>
             </ul>
           </section>
