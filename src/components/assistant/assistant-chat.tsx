@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { useEffect, useMemo, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
 
 import { cyberButtonClasses, cyberPanelClasses } from "@/components/ui/cyber";
 import { assistantQuickPrompts } from "@/data/assistant";
@@ -9,7 +9,6 @@ import { cn } from "@/utils/cn";
 import type { CyberAssistantMessage, CyberAssistantResponse } from "@/types/assistant";
 
 type DisplayMessage = CyberAssistantMessage & {
-  suggestedPrompts?: string[];
   safetyNote?: string;
   modelUsed?: string;
 };
@@ -26,7 +25,6 @@ function buildInitialMessages(name?: string | null): DisplayMessage[] {
       id: "welcome",
       role: "assistant",
       content: `Hello${name ? ` ${name}` : ""}. I’m CyberSENSE Assistant. I can help you understand phishing, AI scams, ransomware, password safety, and suspicious messages in a safe, beginner-friendly way.`,
-      suggestedPrompts: assistantQuickPrompts.slice(0, 2),
       safetyNote: "Educational and defensive only.",
     },
   ];
@@ -55,11 +53,6 @@ export function AssistantChat({
 
     scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
   }, [messages, isLoading]);
-
-  const latestAssistant = useMemo(() => {
-    const reversed = [...messages].reverse();
-    return reversed.find((message) => message.role === "assistant");
-  }, [messages]);
 
   async function sendMessage(value: string) {
     const trimmed = value.trim();
@@ -107,7 +100,6 @@ export function AssistantChat({
           id: `assistant-${messageIdRef.current + 1}`,
           role: "assistant",
           content: payload.reply,
-          suggestedPrompts: payload.suggestedPrompts,
           safetyNote: payload.safetyNote,
           modelUsed: payload.modelUsed,
         },
@@ -127,7 +119,6 @@ export function AssistantChat({
           role: "assistant",
           content:
             "I could not complete that answer right now, but I can still help with safe, defensive cybersecurity advice. Please try again or choose one of the suggested prompts.",
-          suggestedPrompts: assistantQuickPrompts.slice(0, 2),
           safetyNote: "The assistant is still available for safe learning questions.",
         },
       ]);
@@ -153,8 +144,8 @@ export function AssistantChat({
   const shellClassName = cn(
     cyberPanelClasses(
       compact
-        ? "flex h-[min(44rem,calc(100vh-6rem))] w-[min(32rem,calc(100vw-1rem))] flex-col border border-cyan-300/15 bg-slate-950/95 shadow-[0_0_45px_rgba(34,211,238,0.18)]"
-        : "flex min-h-[36rem] flex-col border border-cyan-300/15 bg-slate-950/80 shadow-[0_0_45px_rgba(34,211,238,0.12)]",
+        ? "flex min-h-0 h-[min(52rem,calc(100vh-2rem))] w-full flex-col overflow-hidden border border-cyan-300/15 bg-slate-950/95 shadow-[0_0_45px_rgba(34,211,238,0.18)]"
+        : "flex min-h-0 min-h-[36rem] flex-col overflow-hidden border border-cyan-300/15 bg-slate-950/80 shadow-[0_0_45px_rgba(34,211,238,0.12)]",
     ),
     className,
   );
@@ -186,7 +177,7 @@ export function AssistantChat({
         </div>
       </div>
 
-      <div ref={scrollRef} className="flex-1 space-y-4 overflow-y-auto px-5 py-4">
+      <div ref={scrollRef} className="flex-1 min-h-0 space-y-4 overflow-y-auto px-5 py-4">
         {messages.map((message) => (
           <motion.div
             key={message.id}
@@ -242,7 +233,7 @@ export function AssistantChat({
         </AnimatePresence>
       </div>
 
-      <div className="border-t border-white/10 px-5 py-4">
+      <div className="border-t border-white/10 px-5 py-3">
         <div className="mb-3 flex flex-wrap gap-2">
           {assistantQuickPrompts.slice(0, 2).map((prompt) => (
             <button
@@ -255,21 +246,6 @@ export function AssistantChat({
             </button>
           ))}
         </div>
-
-        {latestAssistant?.suggestedPrompts?.length ? (
-          <div className="mb-3 flex flex-wrap gap-2">
-            {latestAssistant.suggestedPrompts.slice(0, 2).map((prompt) => (
-              <button
-                key={prompt}
-                type="button"
-                onClick={() => void sendMessage(prompt)}
-                className="rounded-full border border-amber-300/20 bg-amber-400/10 px-3 py-2 text-xs text-amber-50 transition hover:border-amber-200/40 hover:bg-amber-400/15"
-              >
-                {prompt}
-              </button>
-            ))}
-          </div>
-        ) : null}
 
         <form onSubmit={handleSubmit} className="space-y-3">
           <label className="block">

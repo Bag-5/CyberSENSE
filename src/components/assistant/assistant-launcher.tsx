@@ -44,14 +44,11 @@ function AssistantGlyph() {
   );
 }
 
-const COMPACT_ASSISTANT_TIP_KEY = "cybersense.assistant.compact-tip.seen";
-
 export function AssistantLauncher({ initialUser = null }: AssistantLauncherProps) {
   const reduceMotion = useReducedMotion();
   const pathname = usePathname();
   const [user, setUser] = useState<PublicSessionUser | null>(initialUser);
   const [open, setOpen] = useState(false);
-  const [showTip, setShowTip] = useState(false);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
@@ -88,32 +85,6 @@ export function AssistantLauncher({ initialUser = null }: AssistantLauncherProps
       unsubscribe();
     };
   }, []);
-
-  useEffect(() => {
-    if (!open || typeof window === "undefined") {
-      return;
-    }
-
-    if (window.sessionStorage.getItem(COMPACT_ASSISTANT_TIP_KEY) === "seen") {
-      return;
-    }
-
-    const frame = window.requestAnimationFrame(() => setShowTip(true));
-    return () => window.cancelAnimationFrame(frame);
-  }, [open]);
-
-  useEffect(() => {
-    if (!showTip || typeof window === "undefined") {
-      return;
-    }
-
-    const timeout = window.setTimeout(() => {
-      setShowTip(false);
-      window.sessionStorage.setItem(COMPACT_ASSISTANT_TIP_KEY, "seen");
-    }, 7000);
-
-    return () => window.clearTimeout(timeout);
-  }, [showTip]);
 
   const launcherLabel = useMemo(
     () => (user ? `CyberSENSE Assistant · ${user.username}` : "CyberSENSE Assistant"),
@@ -169,39 +140,8 @@ export function AssistantLauncher({ initialUser = null }: AssistantLauncherProps
             animate={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 }}
             exit={reduceMotion ? { opacity: 1 } : { opacity: 0, y: 10, scale: 0.98 }}
             transition={reduceMotion ? { duration: 0.01 } : { duration: 0.28, ease: "easeOut" }}
-            className="fixed bottom-6 right-6 z-[65] w-[min(30rem,calc(100vw-1.25rem))]"
+            className="fixed bottom-6 right-6 z-[65] w-[min(34rem,calc(100vw-1.25rem))]"
           >
-            <AnimatePresence>
-              {showTip ? (
-                <motion.div
-                  initial={reduceMotion ? { opacity: 1 } : { opacity: 0, y: 8 }}
-                  animate={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
-                  exit={reduceMotion ? { opacity: 1 } : { opacity: 0, y: 8 }}
-                  transition={reduceMotion ? { duration: 0.01 } : { duration: 0.22, ease: "easeOut" }}
-                  className="mb-3 rounded-[1.35rem] border border-cyan-300/20 bg-slate-950/90 px-4 py-3 text-sm leading-6 text-slate-200 shadow-[0_0_24px_rgba(34,211,238,0.12)] backdrop-blur-xl"
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <p>
-                      Quick tip: this mini assistant is for fast questions. Use the main Assistant
-                      page if you want more room for a longer chat.
-                    </p>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setShowTip(false);
-                        if (typeof window !== "undefined") {
-                          window.sessionStorage.setItem(COMPACT_ASSISTANT_TIP_KEY, "seen");
-                        }
-                      }}
-                      className="rounded-full border border-white/10 bg-white/5 px-2 py-1 text-[11px] font-semibold text-slate-300 transition hover:bg-white/10 hover:text-white"
-                    >
-                      Close
-                    </button>
-                  </div>
-                </motion.div>
-              ) : null}
-            </AnimatePresence>
-
             <AssistantChat compact currentName={user.username} className="overflow-hidden" />
             <div className="mt-3 flex justify-end">
               <button

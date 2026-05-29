@@ -110,24 +110,6 @@ export function AssistantPage({ currentName, currentEmail, currentRole }: Assist
               </div>
             </div>
 
-            <div className={cyberPanelClasses("border border-white/10 p-5 sm:p-6")}>
-              <SectionHeader
-                eyebrow="Quick tips"
-                title="How to get the best answer"
-                description="Ask in a normal sentence. You can paste suspicious text, and the assistant will explain what to watch for."
-              />
-              <div className="mt-5 space-y-3 text-sm leading-6 text-slate-300">
-                <p className="rounded-2xl border border-cyan-300/15 bg-cyan-400/10 p-3">
-                  Ask questions like: “How do phishing scams work?” or “Is this message
-                  suspicious?”
-                </p>
-                <p className="rounded-2xl border border-amber-300/15 bg-amber-400/10 p-3">
-                  If the question becomes risky, the assistant will refuse the harmful part and
-                  keep the guidance defensive.
-                </p>
-              </div>
-            </div>
-
             {currentName ? (
               <div className={cyberPanelClasses("border border-white/10 p-5 sm:p-6")}>
                 <SectionHeader

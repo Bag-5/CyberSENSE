@@ -22,14 +22,30 @@ type AcademyCourseFlowSectionProps = {
   title: string;
 };
 
+function hasQuizCheckpoint(progress: AcademyCourseProgress) {
+  return Boolean(
+    progress.quiz.summary ||
+      progress.quiz.currentIndex > 0 ||
+      progress.quiz.selectedAnswer ||
+      progress.quiz.showFeedback ||
+      Object.keys(progress.quiz.submittedAnswers).length,
+  );
+}
+
 export function AcademyCourseFlowSection({ threatSlug, title }: AcademyCourseFlowSectionProps) {
   const quiz = getAcademyQuizByThreatSlug(threatSlug);
   const course = getAcademyCourseByThreatSlug(threatSlug);
   const [courseProgress, setCourseProgress] = useState<AcademyCourseProgress>(() =>
     loadAcademyCourseProgress(threatSlug),
   );
+
+  const [showQuiz, setShowQuiz] = useState(() => {
+    const initialProgress = loadAcademyCourseProgress(threatSlug);
+    return initialProgress.stage !== "quiz" || !hasQuizCheckpoint(initialProgress);
+  });
+
   const [showCertificatePrompt, setShowCertificatePrompt] = useState(
-    courseProgress.stage === "certificate",
+    () => loadAcademyCourseProgress(threatSlug).stage === "certificate",
   );
 
   const certificateDescription = useMemo(
@@ -40,20 +56,7 @@ export function AcademyCourseFlowSection({ threatSlug, title }: AcademyCourseFlo
 
   const quizSummary = courseProgress.quiz.summary;
   const quizAchievements = courseProgress.quiz.unlockedAchievements;
-  const hasSavedQuizProgress = Boolean(
-    courseProgress.quiz.summary ||
-      courseProgress.quiz.currentIndex > 0 ||
-      courseProgress.quiz.selectedAnswer ||
-      courseProgress.quiz.showFeedback ||
-      Object.keys(courseProgress.quiz.submittedAnswers).length,
-  );
-  const [showQuiz, setShowQuiz] = useState(
-    courseProgress.stage !== "quiz" || !hasSavedQuizProgress,
-  );
-  const attackLabComplete =
-    courseProgress.stage === "lab" ||
-    courseProgress.stage === "certificate" ||
-    courseProgress.stage === "complete";
+  const hasSavedQuizProgress = hasQuizCheckpoint(courseProgress);
   const hasResumeCheckpoint = courseProgress.stage === "quiz" && hasSavedQuizProgress;
   const showResumeCard = hasResumeCheckpoint && !showQuiz;
 
@@ -160,13 +163,49 @@ export function AcademyCourseFlowSection({ threatSlug, title }: AcademyCourseFlo
 
               setCourseProgress(nextProgress);
               saveAcademyCourseProgress(threatSlug, nextProgress);
+              setShowQuiz(false);
+              setShowCertificatePrompt(false);
             }}
           />
         </div>
       ) : null}
 
       {quizSummary ? (
-        <div className="space-y-4">
+        <div className={cyberPanelClasses("space-y-4 border border-cyan-300/15 p-5 sm:p-6")}>
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <div className="max-w-3xl space-y-3">
+              <p className="text-xs font-semibold tracking-[0.24em] text-fuchsia-200 uppercase">
+                Quiz complete
+              </p>
+              <h3 className="text-2xl font-black tracking-[-0.05em] text-white sm:text-3xl">
+                You’ve cleared the quiz. Next comes the attack lab.
+              </h3>
+              <p className="text-sm leading-6 text-slate-300">
+                Work through the safe simulation below, then enter your full name in the
+                certificate popup to finish this course and download the PDF.
+              </p>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-2 lg:w-[22rem]">
+              <div className="rounded-2xl border border-white/10 bg-slate-950/60 p-4">
+                <p className="text-[10px] font-semibold tracking-[0.2em] text-slate-400 uppercase">
+                  Score
+                </p>
+                <p className="mt-2 text-2xl font-black tracking-[-0.05em] text-white">
+                  {quizSummary.correctCount}/{quizSummary.totalQuestions}
+                </p>
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-slate-950/60 p-4">
+                <p className="text-[10px] font-semibold tracking-[0.2em] text-slate-400 uppercase">
+                  Achievements
+                </p>
+                <p className="mt-2 text-2xl font-black tracking-[-0.05em] text-white">
+                  {quizAchievements.length}
+                </p>
+              </div>
+            </div>
+          </div>
+
           <AcademyCourseAttackLab
             threatSlug={threatSlug}
             title={course.title}
@@ -178,14 +217,25 @@ export function AcademyCourseFlowSection({ threatSlug, title }: AcademyCourseFlo
               };
               setCourseProgress(nextProgress);
               saveAcademyCourseProgress(threatSlug, nextProgress);
-              setShowQuiz(true);
+              setShowQuiz(false);
               setShowCertificatePrompt(true);
             }}
           />
-          {!attackLabComplete ? (
-            <p className="rounded-2xl border border-amber-300/20 bg-amber-400/10 px-4 py-3 text-sm leading-6 text-amber-50">
-              Finish the attack lab above to unlock the certificate download step.
-            </p>
+
+          {courseProgress.stage === "certificate" && !showCertificatePrompt ? (
+            <div className="rounded-2xl border border-emerald-300/20 bg-emerald-400/10 px-4 py-3 text-sm leading-6 text-emerald-50">
+              The attack lab is complete. Open the certificate prompt to enter your full name and
+              download the course certificate.
+              <div className="mt-3">
+                <button
+                  type="button"
+                  onClick={() => setShowCertificatePrompt(true)}
+                  className={cyberButtonClasses("primary", "md")}
+                >
+                  Open certificate form
+                </button>
+              </div>
+            </div>
           ) : null}
         </div>
       ) : null}
@@ -210,33 +260,9 @@ export function AcademyCourseFlowSection({ threatSlug, title }: AcademyCourseFlo
           setCourseProgress(nextProgress);
           saveAcademyCourseProgress(threatSlug, nextProgress);
           setShowCertificatePrompt(false);
+          setShowQuiz(false);
         }}
       />
-
-      {quizSummary ? (
-        <div className={cyberPanelClasses("border border-white/10 p-5")}>
-          <p className="text-xs font-semibold tracking-[0.24em] text-fuchsia-200 uppercase">
-            Course score
-          </p>
-          <p className="mt-2 text-sm leading-6 text-slate-300">
-            {quizSummary.correctCount}/{quizSummary.totalQuestions} correct. {quizAchievements.length
-              ? "You unlocked new achievements on the way."
-              : "Keep sharpening your instincts as you move through the academy."}
-          </p>
-        </div>
-      ) : null}
-
-      {attackLabComplete && courseProgress.stage !== "complete" && !showCertificatePrompt ? (
-        <div className={cyberPanelClasses("border border-emerald-300/15 p-5")}>
-          <p className="text-xs font-semibold tracking-[0.24em] text-emerald-200 uppercase">
-            Course checkpoint
-          </p>
-          <p className="mt-2 text-sm leading-6 text-slate-300">
-            Your quiz is complete and the attack lab has been marked done. Open the certificate
-            prompt to finish this course and issue the PDF.
-          </p>
-        </div>
-      ) : null}
     </section>
   );
 }
