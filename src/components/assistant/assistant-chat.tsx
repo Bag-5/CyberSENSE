@@ -10,7 +10,6 @@ import type { CyberAssistantMessage, CyberAssistantResponse } from "@/types/assi
 
 type DisplayMessage = CyberAssistantMessage & {
   suggestedPrompts?: string[];
-  quickTips?: string[];
   safetyNote?: string;
   modelUsed?: string;
 };
@@ -27,11 +26,6 @@ function buildInitialMessages(name?: string | null): DisplayMessage[] {
       id: "welcome",
       role: "assistant",
       content: `Hello${name ? ` ${name}` : ""}. I’m CyberSENSE Assistant. I can help you understand phishing, AI scams, ransomware, password safety, and suspicious messages in a safe, beginner-friendly way.`,
-      quickTips: [
-        "I can explain the red flags in plain language.",
-        "I will not help with hacking or harmful steps.",
-        "I can turn suspicious messages into simple safety lessons.",
-      ],
       suggestedPrompts: assistantQuickPrompts.slice(0, 2),
       safetyNote: "Educational and defensive only.",
     },
@@ -114,7 +108,6 @@ export function AssistantChat({
           role: "assistant",
           content: payload.reply,
           suggestedPrompts: payload.suggestedPrompts,
-          quickTips: payload.quickTips,
           safetyNote: payload.safetyNote,
           modelUsed: payload.modelUsed,
         },
@@ -135,11 +128,6 @@ export function AssistantChat({
           content:
             "I could not complete that answer right now, but I can still help with safe, defensive cybersecurity advice. Please try again or choose one of the suggested prompts.",
           suggestedPrompts: assistantQuickPrompts.slice(0, 2),
-          quickTips: [
-            "Ask about phishing, fake apps, ransomware, or password safety.",
-            "Paste suspicious text only if you want a defensive explanation.",
-            "I will keep the reply educational and beginner-friendly.",
-          ],
           safetyNote: "The assistant is still available for safe learning questions.",
         },
       ]);
@@ -165,7 +153,7 @@ export function AssistantChat({
   const shellClassName = cn(
     cyberPanelClasses(
       compact
-        ? "flex h-[min(34rem,calc(100vh-8rem))] w-[min(26rem,calc(100vw-1.25rem))] flex-col border border-cyan-300/15 bg-slate-950/95 shadow-[0_0_45px_rgba(34,211,238,0.18)]"
+        ? "flex h-[min(44rem,calc(100vh-6rem))] w-[min(32rem,calc(100vw-1rem))] flex-col border border-cyan-300/15 bg-slate-950/95 shadow-[0_0_45px_rgba(34,211,238,0.18)]"
         : "flex min-h-[36rem] flex-col border border-cyan-300/15 bg-slate-950/80 shadow-[0_0_45px_rgba(34,211,238,0.12)]",
     ),
     className,
@@ -232,23 +220,6 @@ export function AssistantChat({
               </div>
             ) : null}
 
-            {message.role === "assistant" && message.quickTips?.length ? (
-              <div className="mt-3 space-y-2">
-                <p className="text-[10px] font-semibold tracking-[0.2em] text-slate-400 uppercase">
-                  Quick tips
-                </p>
-                <ul className="space-y-2">
-                  {message.quickTips.map((tip) => (
-                    <li
-                      key={tip}
-                      className="rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-slate-300"
-                    >
-                      {tip}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ) : null}
           </motion.div>
         ))}
 
