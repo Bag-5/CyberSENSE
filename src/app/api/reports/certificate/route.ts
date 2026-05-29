@@ -31,6 +31,9 @@ export async function POST(request: Request) {
       fullName?: string;
       certificateType?: "quiz" | "milestone" | "training";
       subjectKey?: string;
+      quizTitle?: string;
+      quizScore?: number;
+      quizCompletedAt?: string;
     };
 
     if (typeof body.fullName !== "string" || !body.fullName.trim()) {
@@ -51,6 +54,11 @@ export async function POST(request: Request) {
       body.fullName,
       body.certificateType,
       body.subjectKey,
+      {
+        title: body.quizTitle,
+        score: body.quizScore,
+        completedAt: body.quizCompletedAt,
+      },
     );
     await recordCertificateIssue({
       userId: session.id,

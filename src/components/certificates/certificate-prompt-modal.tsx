@@ -14,6 +14,9 @@ type CertificatePromptModalProps = {
   description: string;
   certificateType: CertificateType;
   subjectKey?: string;
+  quizTitle?: string;
+  quizScore?: number;
+  quizCompletedAt?: string;
   defaultName?: string;
   ctaLabel?: string;
   onClose: () => void;
@@ -42,6 +45,9 @@ export function CertificatePromptModal({
   description,
   certificateType,
   subjectKey,
+  quizTitle,
+  quizScore,
+  quizCompletedAt,
   defaultName = "",
   ctaLabel = "Generate certificate",
   onClose,
@@ -56,6 +62,9 @@ export function CertificatePromptModal({
           description={description}
           certificateType={certificateType}
           subjectKey={subjectKey}
+          quizTitle={quizTitle}
+          quizScore={quizScore}
+          quizCompletedAt={quizCompletedAt}
           defaultName={defaultName}
           ctaLabel={ctaLabel}
           onClose={onClose}
@@ -71,6 +80,9 @@ function CertificatePromptSheet({
   description,
   certificateType,
   subjectKey,
+  quizTitle,
+  quizScore,
+  quizCompletedAt,
   defaultName,
   ctaLabel,
   onClose,
@@ -104,6 +116,9 @@ function CertificatePromptSheet({
           fullName: trimmedName,
           certificateType,
           subjectKey,
+          quizTitle,
+          quizScore,
+          quizCompletedAt,
         }),
       });
 

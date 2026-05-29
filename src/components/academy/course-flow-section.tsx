@@ -246,6 +246,9 @@ export function AcademyCourseFlowSection({ threatSlug, title }: AcademyCourseFlo
         description={certificateDescription}
         certificateType="quiz"
         subjectKey={quiz.slug}
+        quizTitle={quiz.title}
+        quizScore={quizSummary?.score}
+        quizCompletedAt={quizSummary ? new Date().toISOString() : undefined}
         ctaLabel="Generate course certificate"
         onClose={() => {
           setShowCertificatePrompt(false);

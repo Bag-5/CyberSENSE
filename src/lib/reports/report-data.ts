@@ -312,6 +312,11 @@ export async function buildCertificatePdfInput(
   fullName: string,
   certificateType: ReportCertificateKind,
   subjectKey?: string,
+  fallbackQuiz?: {
+    title?: string;
+    score?: number;
+    completedAt?: string;
+  },
 ): Promise<CertificatePdfInput> {
   const dateFormatter = new Intl.DateTimeFormat("en-US", {
     dateStyle: "medium",
@@ -328,7 +333,19 @@ export async function buildCertificatePdfInput(
       ? context.completedQuizzes.find((quiz) => quiz.slug === subjectKey) ?? context.completedQuizzes[0]
       : null;
 
-  if (certificateType === "quiz" && !selectedQuiz) {
+  const quizFallback =
+    certificateType === "quiz" && subjectKey
+      ? {
+          slug: subjectKey,
+          title: fallbackQuiz?.title ?? getQuizTitle(subjectKey),
+          score: typeof fallbackQuiz?.score === "number" ? fallbackQuiz.score : 100,
+          completedAt: fallbackQuiz?.completedAt ?? currentDate,
+        }
+      : null;
+
+  const resolvedQuiz = selectedQuiz ?? quizFallback;
+
+  if (certificateType === "quiz" && !resolvedQuiz) {
     throw new Error("Complete at least one quiz before requesting a quiz certificate.");
   }
 
@@ -338,10 +355,10 @@ export async function buildCertificatePdfInput(
       : null;
 
   const details: ReportMetric[] =
-    certificateType === "quiz" && selectedQuiz
+    certificateType === "quiz" && resolvedQuiz
       ? [
-          { label: "Quiz", value: selectedQuiz.title },
-          { label: "Score", value: `${selectedQuiz.score}%` },
+          { label: "Quiz", value: resolvedQuiz.title },
+          { label: "Score", value: `${resolvedQuiz.score}%` },
           { label: "Issued to", value: selectedFullName },
         ]
       : certificateType === "milestone" && milestone
@@ -356,13 +373,15 @@ export async function buildCertificatePdfInput(
             { label: "Issued to", value: selectedFullName },
           ];
 
-  if (certificateType === "quiz" && selectedQuiz) {
-    const completionDate = selectedQuiz.completedAt ? dateFormatter.format(new Date(selectedQuiz.completedAt)) : currentDate;
+  if (certificateType === "quiz" && resolvedQuiz) {
+    const completionDate = resolvedQuiz.completedAt
+      ? dateFormatter.format(new Date(resolvedQuiz.completedAt))
+      : currentDate;
 
     return {
       fullName: selectedFullName,
       certificateTitle: "Certificate of Quiz Completion",
-      achievementTitle: `${selectedQuiz.title} Completed`,
+      achievementTitle: `${resolvedQuiz.title} Completed`,
       completionDate,
       description:
         "This certifies that the recipient has successfully completed a CyberSENSE quiz and demonstrated stronger cyber awareness instincts.",

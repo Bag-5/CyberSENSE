@@ -54,6 +54,9 @@ export function QuizResults({
           description={certificateFlow.description}
           certificateType={certificateFlow.certificateType}
           subjectKey={certificateFlow.subjectKey}
+          quizTitle={quiz.title}
+          quizScore={summary.score}
+          quizCompletedAt={new Date().toISOString()}
           ctaLabel={certificateFlow.ctaLabel ?? "Generate certificate"}
           onClose={() => setShowCertificatePrompt(false)}
           onGenerated={() => setShowCertificatePrompt(false)}
