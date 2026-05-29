@@ -236,7 +236,7 @@ function addTwoColumnList(doc: PDFKit.PDFDocument, items: ReportMetric[]) {
   });
 }
 
-const certificateLogoPath = join(process.cwd(), "Logo", "CyberSENSE-image.png");
+const certificateLogoPath = join(process.cwd(), "Logo", "CyberSENSE-logo.png");
 const certificateRegularFontPath = join(process.cwd(), "src", "lib", "pdf", "fonts", "Arial.ttf");
 const certificateBoldFontPath = join(process.cwd(), "src", "lib", "pdf", "fonts", "Arial-Bold.ttf");
 const certificateLogoBuffer = readFileSync(certificateLogoPath);
@@ -290,7 +290,7 @@ export async function generateCertificatePdf(input: CertificatePdfInput) {
   doc.clip();
   if (certificateLogoBuffer.length) {
     doc.image(certificateLogoBuffer, centerX - 110, panelY + 20, {
-      cover: [220, 84],
+      fit: [220, 84],
       align: "center",
       valign: "center",
     });
