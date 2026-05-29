@@ -60,6 +60,7 @@ export function QuizEngine({
   const [unlockedAchievements, setUnlockedAchievements] = useState<QuizAchievement[]>(
     initialState?.unlockedAchievements ?? [],
   );
+  const [isCompleting, setIsCompleting] = useState(false);
 
   const currentQuestion = quiz.questions[currentIndex] ?? quiz.questions[0];
   const isFinalQuestion = currentIndex === quiz.questions.length - 1;
@@ -96,6 +97,46 @@ export function QuizEngine({
     unlockedAchievements,
   ]);
 
+  async function completeQuiz(nextAnswers: Record<string, string>) {
+    if (!currentQuestion || isCompleting || summary) {
+      return;
+    }
+
+    const nextSummary = scoreQuiz(quiz, nextAnswers);
+    const { newAchievements } = isWeeklyCompetition
+      ? { newAchievements: [] as QuizAchievement[] }
+      : recordQuizCompletion(quiz, nextSummary);
+
+    setIsCompleting(true);
+
+    try {
+      const completionResponse = await fetch("/api/quiz/complete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          quizSlug: quiz.slug,
+          score: nextSummary.score,
+          correctCount: nextSummary.correctCount,
+          totalQuestions: nextSummary.totalQuestions,
+        }),
+      });
+
+      if (!completionResponse.ok) {
+        const payload = (await completionResponse.json().catch(() => null)) as { error?: string } | null;
+        console.warn("[quiz] completion sync failed", {
+          quizSlug: quiz.slug,
+          error: payload?.error ?? completionResponse.statusText,
+        });
+      }
+    } finally {
+      setSummary(nextSummary);
+      setUnlockedAchievements(newAchievements);
+      onComplete?.(nextSummary, newAchievements);
+      router.refresh();
+      setIsCompleting(false);
+    }
+  }
+
   async function handleSubmitAnswer() {
     if (!currentQuestion || !selectedAnswer) {
       return;
@@ -129,40 +170,24 @@ export function QuizEngine({
     });
 
     if (isFinalQuestion) {
-      const nextSummary = scoreQuiz(quiz, nextAnswers);
-      const { newAchievements } = isWeeklyCompetition
-        ? { newAchievements: [] as QuizAchievement[] }
-        : recordQuizCompletion(quiz, nextSummary);
-      try {
-        const completionResponse = await fetch("/api/quiz/complete", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            quizSlug: quiz.slug,
-            score: nextSummary.score,
-            correctCount: nextSummary.correctCount,
-            totalQuestions: nextSummary.totalQuestions,
-          }),
-        });
-
-        if (!completionResponse.ok) {
-          const payload = (await completionResponse.json().catch(() => null)) as { error?: string } | null;
-          console.warn("[quiz] completion sync failed", {
-            quizSlug: quiz.slug,
-            error: payload?.error ?? completionResponse.statusText,
-          });
-        }
-      } finally {
-        setSummary(nextSummary);
-        setUnlockedAchievements(newAchievements);
-        onComplete?.(nextSummary, newAchievements);
-        router.refresh();
-      }
+      await completeQuiz(nextAnswers);
     }
   }
 
   function handleNextQuestion() {
     if (isFinalQuestion) {
+      if (summary || isCompleting) {
+        return;
+      }
+
+      const finalAnswers = {
+        ...submittedAnswers,
+      };
+      if (currentQuestion && selectedAnswer) {
+        finalAnswers[currentQuestion.id] = selectedAnswer;
+      }
+
+      void completeQuiz(finalAnswers);
       return;
     }
 
@@ -292,7 +317,7 @@ export function QuizEngine({
             <button
               type="button"
               onClick={handleSubmitAnswer}
-              disabled={!selectedAnswer}
+              disabled={!selectedAnswer || isCompleting}
               className={cyberButtonClasses("primary", "md", "flex-1")}
             >
               Check answer
@@ -301,9 +326,10 @@ export function QuizEngine({
             <button
               type="button"
               onClick={handleNextQuestion}
+              disabled={isCompleting}
               className={cyberButtonClasses("primary", "md", "flex-1")}
             >
-              {isFinalQuestion ? "Finish quiz" : "Next question"}
+              {isFinalQuestion ? (isCompleting ? "Finishing..." : "Finish quiz") : "Next question"}
             </button>
           )}
 
