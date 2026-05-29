@@ -49,6 +49,7 @@ function createDocument() {
     margin: 42,
     bufferPages: true,
     autoFirstPage: false,
+    font: certificateRegularFontBuffer as unknown as string,
   });
 
   registerCertificateFonts(doc);
@@ -239,13 +240,15 @@ const certificateLogoPath = join(process.cwd(), "Logo", "CyberSENSE-image.png");
 const certificateRegularFontPath = join(process.cwd(), "src", "lib", "pdf", "fonts", "Arial.ttf");
 const certificateBoldFontPath = join(process.cwd(), "src", "lib", "pdf", "fonts", "Arial-Bold.ttf");
 const certificateLogoBuffer = readFileSync(certificateLogoPath);
+const certificateRegularFontBuffer = readFileSync(certificateRegularFontPath);
+const certificateBoldFontBuffer = readFileSync(certificateBoldFontPath);
 
 const CERTIFICATE_FONT_REGULAR = "CyberSenseCertificateRegular";
 const CERTIFICATE_FONT_BOLD = "CyberSenseCertificateBold";
 
 function registerCertificateFonts(doc: PDFKit.PDFDocument) {
-  doc.registerFont(CERTIFICATE_FONT_REGULAR, readFileSync(certificateRegularFontPath));
-  doc.registerFont(CERTIFICATE_FONT_BOLD, readFileSync(certificateBoldFontPath));
+  doc.registerFont(CERTIFICATE_FONT_REGULAR, certificateRegularFontBuffer);
+  doc.registerFont(CERTIFICATE_FONT_BOLD, certificateBoldFontBuffer);
 }
 
 export async function generateCertificatePdf(input: CertificatePdfInput) {
