@@ -145,7 +145,7 @@ function parseAssistantReply(raw: string): CyberAssistantReply {
     typeof safetyNote !== "string" ||
     !Array.isArray(suggestedPrompts) ||
     !Array.isArray(quickTips) ||
-    suggestedPrompts.length !== 3 ||
+    suggestedPrompts.length !== 2 ||
     quickTips.length !== 3 ||
     suggestedPrompts.some((item) => typeof item !== "string") ||
     quickTips.some((item) => typeof item !== "string")

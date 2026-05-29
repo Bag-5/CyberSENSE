@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
@@ -21,17 +21,45 @@ type QuizEngineProps = {
     certificateType: "quiz" | "milestone" | "training";
     subjectKey?: string;
   };
+  initialState?: {
+    currentIndex?: number;
+    selectedAnswer?: string | null;
+    submittedAnswers?: Record<string, string>;
+    showFeedback?: boolean;
+    summary?: ReturnType<typeof scoreQuiz> | null;
+    unlockedAchievements?: QuizAchievement[];
+  };
   onComplete?: (summary: ReturnType<typeof scoreQuiz>, achievements: QuizAchievement[]) => void;
+  onStateChange?: (state: {
+    currentIndex: number;
+    selectedAnswer: string | null;
+    submittedAnswers: Record<string, string>;
+    showFeedback: boolean;
+    summary: ReturnType<typeof scoreQuiz> | null;
+    unlockedAchievements: QuizAchievement[];
+  }) => void;
 };
 
-export function QuizEngine({ quiz, certificateFlow, onComplete }: QuizEngineProps) {
+export function QuizEngine({
+  quiz,
+  certificateFlow,
+  initialState,
+  onComplete,
+  onStateChange,
+}: QuizEngineProps) {
   const router = useRouter();
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
-  const [submittedAnswers, setSubmittedAnswers] = useState<Record<string, string>>({});
-  const [showFeedback, setShowFeedback] = useState(false);
-  const [summary, setSummary] = useState<ReturnType<typeof scoreQuiz> | null>(null);
-  const [unlockedAchievements, setUnlockedAchievements] = useState<QuizAchievement[]>([]);
+  const [currentIndex, setCurrentIndex] = useState(initialState?.currentIndex ?? 0);
+  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(initialState?.selectedAnswer ?? null);
+  const [submittedAnswers, setSubmittedAnswers] = useState<Record<string, string>>(
+    initialState?.submittedAnswers ?? {},
+  );
+  const [showFeedback, setShowFeedback] = useState(initialState?.showFeedback ?? false);
+  const [summary, setSummary] = useState<ReturnType<typeof scoreQuiz> | null>(
+    initialState?.summary ?? null,
+  );
+  const [unlockedAchievements, setUnlockedAchievements] = useState<QuizAchievement[]>(
+    initialState?.unlockedAchievements ?? [],
+  );
 
   const currentQuestion = quiz.questions[currentIndex] ?? quiz.questions[0];
   const isFinalQuestion = currentIndex === quiz.questions.length - 1;
@@ -48,6 +76,25 @@ export function QuizEngine({ quiz, certificateFlow, onComplete }: QuizEngineProp
     const isCorrect = chosen === currentQuestion.correctAnswer;
     return { chosen, isCorrect };
   }, [currentQuestion, selectedAnswer, submittedAnswers]);
+
+  useEffect(() => {
+    onStateChange?.({
+      currentIndex,
+      selectedAnswer,
+      submittedAnswers,
+      showFeedback,
+      summary,
+      unlockedAchievements,
+    });
+  }, [
+    currentIndex,
+    onStateChange,
+    selectedAnswer,
+    showFeedback,
+    submittedAnswers,
+    summary,
+    unlockedAchievements,
+  ]);
 
   async function handleSubmitAnswer() {
     if (!currentQuestion || !selectedAnswer) {

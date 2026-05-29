@@ -83,9 +83,9 @@ export const cyberAssistantSchema = {
       items: {
         type: "string",
       },
-      minItems: 3,
-      maxItems: 3,
-      description: "Three helpful next prompts the learner can ask next.",
+      minItems: 2,
+      maxItems: 2,
+      description: "Two helpful next prompts the learner can ask next.",
     },
     quickTips: {
       type: "array",

@@ -32,7 +32,7 @@ function buildInitialMessages(name?: string | null): DisplayMessage[] {
         "I will not help with hacking or harmful steps.",
         "I can turn suspicious messages into simple safety lessons.",
       ],
-      suggestedPrompts: assistantQuickPrompts.slice(0, 3),
+      suggestedPrompts: assistantQuickPrompts.slice(0, 2),
       safetyNote: "Educational and defensive only.",
     },
   ];
@@ -134,7 +134,7 @@ export function AssistantChat({
           role: "assistant",
           content:
             "I could not complete that answer right now, but I can still help with safe, defensive cybersecurity advice. Please try again or choose one of the suggested prompts.",
-          suggestedPrompts: assistantQuickPrompts.slice(0, 3),
+          suggestedPrompts: assistantQuickPrompts.slice(0, 2),
           quickTips: [
             "Ask about phishing, fake apps, ransomware, or password safety.",
             "Paste suspicious text only if you want a defensive explanation.",
@@ -273,7 +273,7 @@ export function AssistantChat({
 
       <div className="border-t border-white/10 px-5 py-4">
         <div className="mb-3 flex flex-wrap gap-2">
-          {assistantQuickPrompts.slice(0, 3).map((prompt) => (
+          {assistantQuickPrompts.slice(0, 2).map((prompt) => (
             <button
               key={prompt}
               type="button"
@@ -287,7 +287,7 @@ export function AssistantChat({
 
         {latestAssistant?.suggestedPrompts?.length ? (
           <div className="mb-3 flex flex-wrap gap-2">
-            {latestAssistant.suggestedPrompts.slice(0, 3).map((prompt) => (
+            {latestAssistant.suggestedPrompts.slice(0, 2).map((prompt) => (
               <button
                 key={prompt}
                 type="button"

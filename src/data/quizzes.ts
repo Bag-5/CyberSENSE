@@ -45,6 +45,25 @@ function shuffleOptions(options: string[], seed: string) {
   return shuffled;
 }
 
+function buildQuestionStem(
+  category: QuizCategorySlug,
+  context: string,
+  template: QuestionTemplate,
+  contextIndex: number,
+  templateIndex: number,
+) {
+  const tonePhrases = [
+    "A suspicious",
+    "An urgent",
+    "A convincing",
+    "A fake-looking",
+    "A polished",
+    "An unexpected",
+  ];
+  const tone = tonePhrases[hashSeed(`${category}-${contextIndex}-${templateIndex}`) % tonePhrases.length];
+  return `${tone} ${context} ${template.stem}`;
+}
+
 function buildQuestions(
   category: QuizCategorySlug,
   contexts: string[],
@@ -59,7 +78,13 @@ function buildQuestions(
 
       return {
         id: `${category}-${contextIndex + 1}-${templateIndex + 1}`,
-        question: `A ${context} ${template.stem}`,
+        question: buildQuestionStem(
+          category,
+          context,
+          template,
+          contextIndex + 1,
+          templateIndex + 1,
+        ),
         options,
         correctAnswer: template.correctAnswer,
         explanation: template.explanation,
