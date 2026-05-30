@@ -144,7 +144,7 @@ export function AssistantChat({
   const shellClassName = cn(
     cyberPanelClasses(
       compact
-        ? "flex min-h-0 h-[min(52rem,calc(100vh-2rem))] w-full flex-col overflow-hidden border border-cyan-300/15 bg-slate-950/95 shadow-[0_0_45px_rgba(34,211,238,0.18)]"
+        ? "flex min-h-0 h-[min(58rem,calc(100vh-1rem))] w-full flex-col overflow-hidden border border-cyan-300/15 bg-slate-950/95 shadow-[0_0_45px_rgba(34,211,238,0.18)]"
         : "flex min-h-0 min-h-[36rem] flex-col overflow-hidden border border-cyan-300/15 bg-slate-950/80 shadow-[0_0_45px_rgba(34,211,238,0.12)]",
     ),
     className,
@@ -233,39 +233,8 @@ export function AssistantChat({
         </AnimatePresence>
       </div>
 
-      <div className="border-t border-white/10 px-5 py-3">
-        <form onSubmit={handleSubmit} className="space-y-3">
-          <label className="block">
-            <span className="mb-2 block text-xs font-semibold tracking-[0.16em] text-slate-400 uppercase">
-              Ask CyberSENSE Assistant
-            </span>
-            <textarea
-              ref={taRef}
-              value={input}
-              onChange={(event) => setInput(event.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder="Ask about phishing, AI scams, password safety, ransomware, or suspicious messages..."
-              rows={compact ? 3 : 4}
-              className="cyber-input w-full resize-none rounded-[1.2rem] border border-white/10 bg-slate-950/70 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-300/40 focus:ring-2 focus:ring-cyan-200/20"
-            />
-          </label>
-
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-xs leading-5 text-slate-400">
-              {errorText ? <span className="text-rose-200">{errorText}</span> : null}
-            </p>
-
-            <button
-              type="submit"
-              disabled={isLoading || !input.trim()}
-              className={cyberButtonClasses("primary", "md", "justify-center sm:min-w-32")}
-            >
-              {isLoading ? "Thinking..." : "Send"}
-            </button>
-          </div>
-        </form>
-
-        <div className="mt-2 flex flex-wrap gap-1.5">
+      <div className="mt-auto shrink-0 border-t border-white/10 px-5 py-3">
+        <div className="mb-3 flex flex-wrap gap-1.5">
           {assistantQuickPrompts.slice(0, 2).map((prompt) => (
             <button
               key={prompt}
@@ -277,6 +246,37 @@ export function AssistantChat({
             </button>
           ))}
         </div>
+
+        <form onSubmit={handleSubmit} className="space-y-2.5">
+          <label className="block">
+            <span className="mb-2 block text-xs font-semibold tracking-[0.16em] text-slate-400 uppercase">
+              Ask CyberSENSE Assistant
+            </span>
+            <textarea
+              ref={taRef}
+              value={input}
+              onChange={(event) => setInput(event.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Ask about phishing, AI scams, password safety, ransomware, or suspicious messages..."
+              rows={compact ? 2 : 3}
+              className="cyber-input w-full resize-none rounded-[1.2rem] border border-white/10 bg-slate-950/70 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-300/40 focus:ring-2 focus:ring-cyan-200/20"
+            />
+          </label>
+
+          <div className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-xs leading-5 text-slate-400">
+              {errorText ? <span className="text-rose-200">{errorText}</span> : null}
+            </p>
+
+            <button
+              type="submit"
+              disabled={isLoading || !input.trim()}
+              className={cyberButtonClasses("primary", "md", "justify-center sm:min-w-28")}
+            >
+              {isLoading ? "Thinking..." : "Send"}
+            </button>
+          </div>
+        </form>
       </div>
     </motion.div>
   );
