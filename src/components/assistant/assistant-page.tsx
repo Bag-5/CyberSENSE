@@ -131,7 +131,10 @@ export function AssistantPage({ currentName, currentEmail, currentRole }: Assist
             animate={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
             transition={reduceMotion ? { duration: 0.01 } : { delay: 0.08, duration: 0.5, ease: "easeOut" }}
           >
-            <AssistantChat currentName={currentName} className="min-h-[42rem]" />
+            <AssistantChat
+              currentName={currentName}
+              className="min-h-[46rem] sm:min-h-[48rem] lg:min-h-[54rem]"
+            />
           </motion.section>
         </div>
       </div>
