@@ -234,19 +234,6 @@ export function AssistantChat({
       </div>
 
       <div className="border-t border-white/10 px-5 py-3">
-        <div className="mb-3 flex flex-wrap gap-2">
-          {assistantQuickPrompts.slice(0, 2).map((prompt) => (
-            <button
-              key={prompt}
-              type="button"
-              onClick={() => void sendMessage(prompt)}
-              className="rounded-full border border-white/10 bg-white/5 px-3 py-2 text-xs text-slate-200 transition hover:border-cyan-300/30 hover:bg-cyan-400/10 hover:text-cyan-50"
-            >
-              {prompt}
-            </button>
-          ))}
-        </div>
-
         <form onSubmit={handleSubmit} className="space-y-3">
           <label className="block">
             <span className="mb-2 block text-xs font-semibold tracking-[0.16em] text-slate-400 uppercase">
@@ -281,6 +268,19 @@ export function AssistantChat({
             </button>
           </div>
         </form>
+
+        <div className="mt-3 flex flex-wrap gap-2">
+          {assistantQuickPrompts.slice(0, 2).map((prompt) => (
+            <button
+              key={prompt}
+              type="button"
+              onClick={() => void sendMessage(prompt)}
+              className="rounded-full border border-white/10 bg-white/5 px-3 py-2 text-xs text-slate-200 transition hover:border-cyan-300/30 hover:bg-cyan-400/10 hover:text-cyan-50"
+            >
+              {prompt}
+            </button>
+          ))}
+        </div>
       </div>
     </motion.div>
   );
