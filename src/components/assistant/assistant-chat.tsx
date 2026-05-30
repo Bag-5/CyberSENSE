@@ -234,13 +234,13 @@ export function AssistantChat({
       </div>
 
       <div className="mt-auto shrink-0 border-t border-white/10 px-5 py-3">
-        <div className="mb-3 flex flex-wrap gap-1.5">
+        <div className="mb-3 flex flex-wrap gap-1.5 lg:flex-nowrap lg:overflow-x-auto lg:pb-1">
           {assistantQuickPrompts.slice(0, 2).map((prompt) => (
             <button
               key={prompt}
               type="button"
               onClick={() => void sendMessage(prompt)}
-              className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1.5 text-[11px] leading-none text-slate-200 transition hover:border-cyan-300/30 hover:bg-cyan-400/10 hover:text-cyan-50 sm:px-3 sm:py-2 sm:text-xs"
+              className="shrink-0 rounded-full border border-white/10 bg-white/5 px-2.5 py-1.5 text-[11px] leading-none text-slate-200 transition hover:border-cyan-300/30 hover:bg-cyan-400/10 hover:text-cyan-50 sm:px-3 sm:py-2 sm:text-xs"
             >
               {prompt}
             </button>
