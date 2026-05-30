@@ -250,32 +250,28 @@ export function AssistantChat({
             />
           </label>
 
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-xs leading-5 text-slate-400">
-              {errorText ? (
-                <span className="text-rose-200">{errorText}</span>
-              ) : (
-                "We keep this focused on safe learning, prevention, and awareness."
-              )}
+              {errorText ? <span className="text-rose-200">{errorText}</span> : null}
             </p>
 
             <button
               type="submit"
               disabled={isLoading || !input.trim()}
-              className={cyberButtonClasses("primary", "md", "justify-center sm:min-w-36")}
+              className={cyberButtonClasses("primary", "md", "justify-center sm:min-w-32")}
             >
               {isLoading ? "Thinking..." : "Send"}
             </button>
           </div>
         </form>
 
-        <div className="mt-3 flex flex-wrap gap-2">
+        <div className="mt-2 flex flex-wrap gap-1.5">
           {assistantQuickPrompts.slice(0, 2).map((prompt) => (
             <button
               key={prompt}
               type="button"
               onClick={() => void sendMessage(prompt)}
-              className="rounded-full border border-white/10 bg-white/5 px-3 py-2 text-xs text-slate-200 transition hover:border-cyan-300/30 hover:bg-cyan-400/10 hover:text-cyan-50"
+              className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1.5 text-[11px] leading-none text-slate-200 transition hover:border-cyan-300/30 hover:bg-cyan-400/10 hover:text-cyan-50 sm:px-3 sm:py-2 sm:text-xs"
             >
               {prompt}
             </button>
