@@ -19,7 +19,9 @@ type AuthPageProps = {
 export default async function AuthPage({ searchParams }: AuthPageProps) {
   const resolvedSearchParams = (await searchParams) ?? {};
   const returnToParam = resolvedSearchParams.returnTo;
-  const returnTo = Array.isArray(returnToParam) ? returnToParam[0] ?? "/" : returnToParam ?? "/";
+  const returnTo = Array.isArray(returnToParam)
+    ? returnToParam[0] ?? "/threats"
+    : returnToParam ?? "/threats";
   const normalizedReturnTo = typeof returnTo === "string" ? returnTo : "/";
   const safeReturnTo =
     normalizedReturnTo.startsWith("/") && !normalizedReturnTo.startsWith("//")

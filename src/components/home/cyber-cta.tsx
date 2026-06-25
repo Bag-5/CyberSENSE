@@ -7,8 +7,12 @@ import { AnimatedSection } from "@/components/animated-section";
 import { cyberButtonClasses, cyberPanelClasses, SectionHeader } from "@/components/ui/cyber";
 import { readStoredSessionUser } from "@/lib/auth/session-client";
 
-export function CyberCTA() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+type CyberCTAProps = {
+  initialAuthenticated?: boolean;
+};
+
+export function CyberCTA({ initialAuthenticated = false }: CyberCTAProps) {
+  const [isAuthenticated, setIsAuthenticated] = useState(initialAuthenticated);
 
   useEffect(() => {
     let active = true;

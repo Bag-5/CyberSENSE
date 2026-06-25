@@ -23,9 +23,13 @@ const heroItemVariants = {
   },
 } as const;
 
-export function Hero() {
+type HeroProps = {
+  initialAuthenticated?: boolean;
+};
+
+export function Hero({ initialAuthenticated = false }: HeroProps) {
   const prefersReducedMotion = useReducedMotion();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(initialAuthenticated);
 
   useEffect(() => {
     let active = true;
