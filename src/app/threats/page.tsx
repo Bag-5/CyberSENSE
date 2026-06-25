@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
 import { SectionHeader, cyberButtonClasses, cyberPanelClasses } from "@/components/ui/cyber";
 import { ThreatAcademyBrowser } from "@/components/threats/threat-academy-browser";
@@ -8,6 +9,7 @@ import { AcademyCompletionModal } from "@/components/academy/academy-completion-
 import { AnalyticsBeacon } from "@/components/admin/analytics/analytics-beacon";
 import { threats } from "@/data/threats";
 import { siteDescription, siteName } from "@/data/site";
+import { getCurrentSessionUser } from "@/lib/auth/context";
 
 export const dynamic = "force-dynamic";
 
@@ -17,7 +19,12 @@ export const metadata: Metadata = {
     "Explore cyber threats through interactive cards, filters, and detailed explanations.",
 };
 
-export default function ThreatAcademyPage() {
+export default async function ThreatAcademyPage() {
+  const currentUser = await getCurrentSessionUser();
+  if (!currentUser) {
+    redirect("/auth?returnTo=%2Fthreats");
+  }
+
   return (
     <div className="space-y-8 pb-10 pt-10">
       <AnalyticsBeacon

@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 import { ThreatDetailView } from "@/components/threats/threat-detail-view";
 import { threatsBySlug } from "@/data/threats";
+import { getCurrentSessionUser } from "@/lib/auth/context";
 import type { ThreatDetail } from "@/types/site";
 
 export const dynamic = "force-dynamic";
@@ -30,6 +31,11 @@ export async function generateMetadata({
 }
 
 export default async function ThreatPage({ params }: ThreatPageProps) {
+  const currentUser = await getCurrentSessionUser();
+  if (!currentUser) {
+    redirect("/auth?returnTo=%2Fthreats");
+  }
+
   const { slug } = await params;
   const threat = threatsBySlug[slug];
 

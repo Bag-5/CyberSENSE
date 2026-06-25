@@ -223,21 +223,12 @@ export function Hero() {
             </motion.p>
           </div>
 
-          <motion.div
-            variants={heroItemVariants}
-            className="flex flex-col gap-3 sm:flex-row"
-          >
+          <motion.div variants={heroItemVariants} className="flex flex-col gap-3 sm:flex-row">
             <Link
               href={trainingHref}
               className={cyberButtonClasses("primary", "lg")}
             >
               Start Training
-            </Link>
-            <Link
-              href="/threats"
-              className={cyberButtonClasses("secondary", "lg")}
-            >
-              Explore Threats
             </Link>
           </motion.div>
         </motion.div>

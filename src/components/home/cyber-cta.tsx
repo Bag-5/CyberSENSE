@@ -62,12 +62,6 @@ export function CyberCTA() {
             >
               Start Training
             </Link>
-            <Link
-              href="/threats"
-              className={cyberButtonClasses("secondary", "lg")}
-            >
-              Explore Threats
-            </Link>
           </div>
         </div>
       </div>
