@@ -1,6 +1,6 @@
 # CyberSENSE
 
-CyberSENSE is an interactive cybersecurity awareness platform built to help everyday users learn how to spot cyber threats through games, simulations, storytelling, and practical visual training.
+CyberSENSE is a cybersecurity awareness platform built around safe, defensive learning. It combines an authenticated Threat Academy, an AI Scam Analyzer, a CyberSENSE Assistant, interactive games, weekly competition flows, and superadmin reporting so learners can build instincts through guided practice instead of passive reading.
 
 ## Stack
 
@@ -8,45 +8,79 @@ CyberSENSE is an interactive cybersecurity awareness platform built to help ever
 - TypeScript
 - Tailwind CSS
 - Framer Motion
+- PostgreSQL persistence
+- OpenRouter AI integration
+- OTP-based authentication
 
-## What’s Included
+## Product Shape
 
-- Immersive cyberpunk homepage
-- Threat Academy with dynamic detail pages
-- AI Scam Analyzer powered by OpenRouter
-- `Spot the Red Flags` mini-game
-- Reusable modular component structure
-- Responsive dark theme with neon glow effects
-- OTP sign-in/sign-up backed by Postgres
-- Real leaderboard and quiz progress storage
+- Threat Academy is the main learner hub and requires sign-in.
+- Courses are structured as lesson, quiz, attack lab, then certificate.
+- Course completion certificates use the learner's entered full name and generate as downloadable PDFs.
+- The AI Scam Analyzer is defensive only and can enrich analysis with VirusTotal threat intelligence when indicators are present.
+- The CyberSENSE Assistant answers beginner-friendly cyber questions and stays focused on safe, educational guidance.
+- Weekly Quiz Competition is user-facing, but the current week is controlled by superadmin publish state.
+- Superadmin tools stay separate from the learner experience.
+
+## Included Surfaces
+
+- Home and landing experience
+- Threat Academy
+- AI Scam Analyzer
+- CyberSENSE Assistant
+- Spot the Red Flags game
+- Weekly Quiz Competition
+- Reports and certificate generation
+- Superadmin Control Room
+- Superadmin Analytics
+
+## Authentication
+
+- OTP sign-in/sign-up with username and email
+- Gmail SMTP for OTP delivery
+- Separate learner and superadmin session handling
+- Allowlisted superadmin access by email
+- Immediate sign-in/sign-out updates without manual refresh
 
 ## Routes
 
-- `/` - Homepage
-- `/threats` - Threat Academy landing page
+- `/` - Home
+- `/auth` - OTP authentication
+- `/threats` - Threat Academy
+- `/threats/[slug]` - Individual threat lesson
 - `/threats/analyzer` - AI Scam Analyzer
-- `/threats/[slug]` - Individual threat detail pages
-- `/games/red-flags` - Spot the Red Flags mini-game
+- `/assistant` - CyberSENSE Assistant
+- `/games/red-flags` - Spot the Red Flags
+- `/weekly-quiz-competition` - Weekly competition
+- `/reports` - Reports and certificates
+- `/lab` - Simulation lab
+- `/superadmin` - Superadmin control room
+- `/superadmin/analytics` - Superadmin analytics
 
 ## Project Structure
 
-- `src/app` - App Router pages and layouts
-- `src/components/home` - Homepage sections
-- `src/components/threats` - Threat Academy UI
-- `src/components/games/redflags` - Mini-game UI
-- `src/data` - Shared structured content
-- `src/types` - Shared TypeScript types
-- `src/lib/ai` - OpenRouter service and prompts
+- `src/app` - App Router pages, API routes, and layouts
+- `src/components/home` - Homepage sections and visual surfaces
+- `src/components/threats` - Threat Academy and analyzer UI
+- `src/components/assistant` - Chat assistant and launcher
+- `src/components/auth` - OTP sign-in and sign-out
+- `src/components/reports` - Reports and certificate UI
+- `src/data` - Structured content and question banks
+- `src/lib/ai` - OpenRouter prompts and request handling
+- `src/lib/auth` - Session, OTP, and role utilities
+- `src/lib/virustotal.ts` - Threat intelligence lookup helpers
+- `src/lib/extract-indicators.ts` - URL, domain, and IP extraction
 
 ## Getting Started
 
-Copy `.env.example` to `.env` or `.env.local`, then fill in the values for your environment:
+Copy `.env.example` to `.env`, then fill in the values for your environment.
 
 ```bash
 OPENROUTER_API_KEY=your_key_here
 OPENROUTER_MODEL=mistralai/mistral-small-3.2-24b-instruct
 OPENROUTER_FALLBACK_MODEL=google/gemma-4-26b-a4b-it:free
 OPENROUTER_FAILOVER_ENABLED=true
+VIRUSTOTAL_API_KEY=your_virustotal_key_here
 DATABASE_URL=your_postgres_connection_string
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
 CYBERSENSE_SESSION_SECRET=your_random_session_secret
@@ -68,12 +102,6 @@ Run the development server:
 npm run dev
 ```
 
-Open:
-
-```bash
-http://localhost:3000
-```
-
 Build for production:
 
 ```bash
@@ -88,8 +116,8 @@ npm run lint
 
 ## Notes
 
+- The AI features are server-side only.
+- The Threat Academy and its lesson pages are gated behind learner sign-in.
 - The app uses a stable Webpack-based dev/build flow in this Windows environment.
-- Turbopack is still available through `npm run dev:turbopack`, but this machine may fall back to Webpack for reliability.
-- The AI analyzer calls OpenRouter only from the server-side API route.
-- Postgres tables are bootstrapped automatically on first auth usage, and the matching schema is documented in [database/schema.sql](database/schema.sql).
-- The site manifest, sitemap, and robots metadata are generated from the App Router layer for production deployment readiness.
+- `VIRUSTOTAL_API_KEY` is optional, but when present it enriches scam analysis with live threat intelligence.
+- Postgres-backed persistence powers auth, progress, leaderboard, and report flows.
