@@ -4,6 +4,7 @@ import { AssistantLauncher } from "@/components/assistant/assistant-launcher";
 import { getCurrentSessionUser } from "@/lib/auth/context";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
+import { PerspectiveShell } from "@/components/layout/perspective-shell";
 import { getPlatformSettings } from "@/lib/superadmin/settings";
 
 type SiteShellProps = {
@@ -33,9 +34,11 @@ export async function SiteShell({ children }: SiteShellProps) {
         Skip to content
       </a>
       <SiteHeader platformSettings={platformSettings} initialUser={currentUser} />
-      <main id="main-content" className="relative flex-1 focus:outline-none">
-        {children}
-      </main>
+      <PerspectiveShell>
+        <main id="main-content" className="relative flex-1 focus:outline-none">
+          {children}
+        </main>
+      </PerspectiveShell>
       <AssistantLauncher initialUser={currentUser} />
       <SiteFooter />
     </div>

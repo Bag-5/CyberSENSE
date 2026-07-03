@@ -1,5 +1,6 @@
 import { AnimatedSection } from "@/components/animated-section";
 import { SectionHeader, cyberPanelClasses } from "@/components/ui/cyber";
+import { TiltCard } from "@/components/ui/tilt-card";
 import { featureCards, missionCards } from "@/data/site";
 
 export function FeatureGrid() {
@@ -15,10 +16,11 @@ export function FeatureGrid() {
 
           <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
             {featureCards.map((card) => (
-              <article
+              <TiltCard
                 key={card.title}
+                as="article"
                 className={cyberPanelClasses(
-                  "p-6 transition duration-300 hover:-translate-y-1 hover:border-amber-300/25 hover:bg-white/10",
+                  "p-6 transition duration-300 hover:border-amber-300/25 hover:bg-white/10",
                 )}
               >
                 <p className="text-xs font-semibold tracking-[0.22em] text-amber-100 uppercase">
@@ -30,7 +32,7 @@ export function FeatureGrid() {
                 <p className="mt-3 text-sm leading-6 text-slate-300">
                   {card.description}
                 </p>
-              </article>
+              </TiltCard>
             ))}
           </div>
         </div>
@@ -49,8 +51,9 @@ export function FeatureGrid() {
 
             <div className="grid gap-4 sm:grid-cols-3" id="simulations">
               {missionCards.map((mission) => (
-                <article
+                <TiltCard
                   key={mission.title}
+                  as="article"
                   className={cyberPanelClasses("p-6")}
                 >
                   <p className="text-xs font-semibold tracking-[0.22em] text-emerald-200 uppercase">
@@ -62,7 +65,7 @@ export function FeatureGrid() {
                   <p className="mt-3 text-sm leading-6 text-slate-300">
                     {mission.description}
                   </p>
-                </article>
+                </TiltCard>
               ))}
             </div>
           </div>

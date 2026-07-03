@@ -12,6 +12,7 @@ import {
   cyberAssistantSystemPrompt,
   cyberAssistantUserPrompt,
   scamAnalysisSchema,
+  scamAnalyzerIntelPrompt,
   scamAnalyzerSystemPrompt,
   scamAnalyzerUserPrompt,
 } from "@/lib/ai/prompts";
@@ -54,14 +55,23 @@ function sanitizeContent(input: string) {
     .slice(0, 5000);
 }
 
-function buildMessages(content: string): OpenRouterMessage[] {
-  return [
+function buildMessages(content: string, vtIntel?: string): OpenRouterMessage[] {
+  const messages: OpenRouterMessage[] = [
     { role: "system", content: scamAnalyzerSystemPrompt },
     {
       role: "user",
       content: scamAnalyzerUserPrompt.replace("{{content}}", sanitizeContent(content)),
     },
   ];
+
+  if (vtIntel) {
+    messages.push({
+      role: "user",
+      content: scamAnalyzerIntelPrompt.replace("{{intel}}", vtIntel),
+    });
+  }
+
+  return messages;
 }
 
 function sanitizeChatContent(input: string) {
@@ -171,6 +181,7 @@ async function waitForRetryAfter(response: Response) {
 async function requestOpenRouter(
   model: string,
   content: string,
+  vtIntel?: string,
 ): Promise<ScamAnalysis> {
   const apiKey = process.env.OPENROUTER_API_KEY;
   if (!apiKey) {
@@ -190,7 +201,7 @@ async function requestOpenRouter(
         },
         body: JSON.stringify({
           model,
-          messages: buildMessages(content),
+          messages: buildMessages(content, vtIntel),
           temperature: 0.2,
           max_tokens: OPENROUTER_MAX_TOKENS,
           response_format: {
@@ -348,7 +359,10 @@ async function requestOpenRouterAssistant(
   }
 }
 
-export async function analyzeScamContent(content: string) {
+export async function analyzeScamContent(
+  content: string,
+  vtIntel?: string,
+) {
   const sanitizedContent = sanitizeContent(content);
   if (!sanitizedContent) {
     throw new Error("Please paste a message, email, or link to analyze.");
@@ -362,7 +376,7 @@ export async function analyzeScamContent(content: string) {
 
   for (const model of models) {
     try {
-      const analysis = await requestOpenRouter(model, sanitizedContent);
+      const analysis = await requestOpenRouter(model, sanitizedContent, vtIntel);
       return {
         analysis,
         modelUsed: model,

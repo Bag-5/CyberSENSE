@@ -5,13 +5,17 @@ import { useMemo, useState } from "react";
 
 import { cyberButtonClasses, cyberPanelClasses, LoadingSkeleton, SectionHeader } from "@/components/ui/cyber";
 import { cn } from "@/utils/cn";
-import type { ScamAnalysis, ScamAnalysisRiskLevel } from "@/types/ai";
+import type { ScamAnalysis, ScamAnalysisRiskLevel, VirusTotalFinding } from "@/types/ai";
 
 type AnalyzerResponse = {
   success: boolean;
   modelUsed?: string;
   analysis?: ScamAnalysis;
   error?: string;
+  virustotal?: {
+    checked: boolean;
+    findings?: VirusTotalFinding[];
+  };
 };
 
 const samplePrompts = [
@@ -35,6 +39,57 @@ const riskClasses: Record<ScamAnalysisRiskLevel, string> = {
   "High Risk": "border-orange-300/20 bg-orange-400/10 text-orange-100",
   "Critical Threat": "border-rose-300/20 bg-rose-400/10 text-rose-100",
 };
+
+function VtBadge({ finding }: { finding: VirusTotalFinding }) {
+  const isFlagged = finding.malicious > 0 || finding.suspicious > 0;
+  return (
+    <span
+      className={cn(
+        "inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.15em]",
+        isFlagged
+          ? "border-rose-300/20 bg-rose-400/10 text-rose-100"
+          : "border-emerald-300/20 bg-emerald-400/10 text-emerald-100",
+      )}
+    >
+      <span className={cn("h-1.5 w-1.5 rounded-full", isFlagged ? "bg-rose-300" : "bg-emerald-300")} />
+      {finding.type === "url"
+        ? "URL"
+        : finding.type === "domain"
+          ? "Domain"
+          : "IP"}{" "}
+      {isFlagged
+        ? `${finding.malicious}/${finding.total}`
+        : `${finding.total} clean`}
+    </span>
+  );
+}
+
+function VtIntelStrip({ findings, checked }: { findings: VirusTotalFinding[]; checked: boolean }) {
+  if (!checked) return null;
+
+  return (
+    <div className="rounded-3xl border border-white/10 bg-slate-950/60 p-4">
+      <div className="flex items-center gap-2 text-xs font-semibold tracking-[0.2em] text-cyan-200 uppercase">
+        <span className="h-1.5 w-1.5 rounded-full bg-cyan-300 shadow-[0_0_8px_rgba(103,232,249,0.8)]" />
+        Threat Intelligence
+      </div>
+      {findings.length > 0 ? (
+        <div className="mt-3 flex flex-wrap gap-2">
+          {findings.map((f) => (
+            <VtBadge key={`${f.type}-${f.value}`} finding={f} />
+          ))}
+        </div>
+      ) : (
+        <p className="mt-3 text-xs leading-5 text-slate-400">
+          No URLs, domains, or IPs found to check against VirusTotal.
+        </p>
+      )}
+      <p className="mt-2 text-[10px] text-slate-500 tracking-[0.1em]">
+        VirusTotal &middot; 70+ security vendors
+      </p>
+    </div>
+  );
+}
 
 function AnalysisList({
   title,
@@ -65,6 +120,8 @@ export function AiScamAnalyzer() {
   const [analysis, setAnalysis] = useState<ScamAnalysis | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [modelUsed, setModelUsed] = useState<string | null>(null);
+  const [vtFindings, setVtFindings] = useState<VirusTotalFinding[]>([]);
+  const [vtChecked, setVtChecked] = useState(false);
   const [lastSubmitted, setLastSubmitted] = useState("");
 
   const hasResults = Boolean(analysis);
@@ -82,6 +139,8 @@ export function AiScamAnalyzer() {
     setError(null);
     setAnalysis(null);
     setModelUsed(null);
+    setVtFindings([]);
+    setVtChecked(false);
     setLastSubmitted(trimmed);
 
     try {
@@ -101,6 +160,8 @@ export function AiScamAnalyzer() {
 
       setAnalysis(payload.analysis);
       setModelUsed(payload.modelUsed ?? null);
+      setVtFindings(payload.virustotal?.findings ?? []);
+      setVtChecked(payload.virustotal?.checked ?? false);
     } catch (requestError) {
       const message =
         requestError instanceof Error
@@ -243,6 +304,7 @@ export function AiScamAnalyzer() {
 
           {hasResults && analysis ? (
             <div className="grid gap-4" aria-live="polite">
+              <VtIntelStrip findings={vtFindings} checked={vtChecked} />
               <AnalysisList title="Red flags" items={analysis.redFlags} />
               <AnalysisList
                 title="Recommendations"

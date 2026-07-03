@@ -12,3 +12,12 @@ export type ScamAnalysis = {
   explanation: string;
 };
 
+export type VirusTotalFinding = {
+  type: "url" | "domain" | "ip";
+  value: string;
+  malicious: number;
+  suspicious: number;
+  total: number;
+  categories?: string[];
+};
+

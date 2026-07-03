@@ -23,10 +23,19 @@ export function AnimatedSection({
     <motion.section
       id={id}
       className={className}
-      initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 18 }}
-      whileInView={prefersReducedMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+      initial={
+        prefersReducedMotion
+          ? { opacity: 0 }
+          : { opacity: 0, y: 18, rotateX: 1.5, z: -30 }
+      }
+      whileInView={
+        prefersReducedMotion
+          ? { opacity: 1 }
+          : { opacity: 1, y: 0, rotateX: 0, z: 0 }
+      }
       viewport={{ once: true, amount: 0.24 }}
       transition={{ duration: prefersReducedMotion ? 0.2 : 0.6, ease: "easeOut", delay }}
+      style={{ transformStyle: "preserve-3d", perspective: "1200px" }}
     >
       {children}
     </motion.section>

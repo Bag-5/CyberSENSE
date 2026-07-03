@@ -63,6 +63,16 @@ CONTENT:
 {{content}}
 `.trim();
 
+export const scamAnalyzerIntelPrompt = `
+--- THREAT INTELLIGENCE DATA ---
+{{intel}}
+--- END THREAT INTELLIGENCE ---
+
+The data above was retrieved from VirusTotal, a threat intelligence platform that aggregates detections from 70+ security vendors.
+Incorporate this data into your analysis. Reference specific detection numbers where relevant (e.g., "this URL has been flagged by X of Y vendors").
+If no threat intelligence data is present, note that no real-time indicators were checkable.
+`.trim();
+
 export const scamAnalysisRiskOrder: ScamAnalysisRiskLevel[] = [
   "Low Risk",
   "Suspicious",

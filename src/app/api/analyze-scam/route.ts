@@ -1,6 +1,8 @@
 import { analyzeScamContent } from "@/lib/ai/openrouter";
 import { classifyScamContent, extractPatternKeywords } from "@/lib/analytics/classify";
 import { recordAnalyticsEvent } from "@/lib/analytics/store";
+import { extractIndicators } from "@/lib/extract-indicators";
+import { checkIndicators, formatVtIntel } from "@/lib/virustotal";
 
 type AnalyzeScamRequest = {
   content?: string;
@@ -26,7 +28,15 @@ export async function POST(request: Request) {
       );
     }
 
-    const result = await analyzeScamContent(content);
+    const indicators = extractIndicators(content);
+    const vtResult = await checkIndicators(
+      indicators.urls,
+      indicators.domains,
+      indicators.ips,
+    );
+    const vtIntel = vtResult.checked ? formatVtIntel(vtResult.findings) : undefined;
+
+    const result = await analyzeScamContent(content, vtIntel);
 
     const scamFamily = classifyScamContent(content);
     const redFlags = result.analysis.redFlags;
@@ -44,12 +54,18 @@ export async function POST(request: Request) {
         patterns,
         modelUsed: result.modelUsed,
         contentLength: content.trim().length,
+        vtChecked: vtResult.checked,
+        vtFindingsCount: vtResult.findings.length,
       },
     });
 
     return Response.json({
       analysis: result.analysis,
       modelUsed: result.modelUsed,
+      virustotal: {
+        checked: vtResult.checked,
+        findings: vtResult.findings,
+      },
       success: true,
     });
   } catch (error) {

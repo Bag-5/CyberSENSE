@@ -28,7 +28,9 @@
   --panel-shadow:
     0 0 0 1px rgba(255, 255, 255, 0.02) inset,
     0 0 40px var(--cyan-glow),
-    0 0 18px rgba(234, 179, 8, 0.05);
+    0 0 18px rgba(234, 179, 8, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.18);
   --button-primary-bg: linear-gradient(135deg, #22d3ee 0%, #67e8f9 100%);
   --button-primary-fg: #04111b;
   --button-primary-shadow: 0 0 30px rgba(34, 211, 238, 0.28);
@@ -73,7 +75,9 @@
   --panel-background: rgba(255, 255, 255, 0.86);
   --panel-shadow:
     0 16px 36px rgba(15, 23, 42, 0.08),
-    0 0 0 1px rgba(255, 255, 255, 0.7) inset;
+    0 0 0 1px rgba(255, 255, 255, 0.7) inset,
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    inset 0 -1px 0 rgba(15, 23, 42, 0.06);
   --button-primary-bg: linear-gradient(135deg, #0ea5e9 0%, #22d3ee 100%);
   --button-primary-fg: #f8fbff;
   --button-primary-shadow: 0 0 24px rgba(14, 165, 233, 0.24);
@@ -135,7 +139,9 @@ body.superadmin-mode {
   --panel-shadow:
     0 0 0 1px rgba(255, 255, 255, 0.03) inset,
     0 0 36px rgba(234, 179, 8, 0.08),
-    0 0 20px rgba(34, 211, 238, 0.08);
+    0 0 20px rgba(34, 211, 238, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.2);
   --button-secondary-border: rgba(234, 179, 8, 0.2);
   --button-secondary-fg: #f8fafc;
   --button-ghost-border: rgba(255, 255, 255, 0.12);
@@ -159,7 +165,9 @@ body.superadmin-mode {
   --panel-background: rgba(255, 255, 255, 0.88);
   --panel-shadow:
     0 16px 36px rgba(15, 23, 42, 0.08),
-    0 0 0 1px rgba(255, 255, 255, 0.72) inset;
+    0 0 0 1px rgba(255, 255, 255, 0.72) inset,
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    inset 0 -1px 0 rgba(15, 23, 42, 0.06);
   --button-secondary-border: rgba(15, 23, 42, 0.12);
   --button-secondary-fg: #0f172a;
   --button-ghost-border: rgba(15, 23, 42, 0.12);
@@ -234,6 +242,10 @@ select {
       box-shadow 300ms ease-out,
       transform 300ms ease-out;
     outline: none;
+  }
+
+  .cyber-button:active {
+    transform: scale(0.97);
   }
 
   .cyber-button-primary {
