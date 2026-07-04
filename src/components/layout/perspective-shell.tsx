@@ -27,7 +27,7 @@ export function PerspectiveShell({ children }: { children: ReactNode }) {
   return (
     <div
       ref={ref}
-      className="transition-[transform] duration-500 ease-out will-change-transform"
+      className="transition-[transform] duration-500 ease-out"
     >
       {children}
     </div>

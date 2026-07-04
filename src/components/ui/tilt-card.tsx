@@ -51,7 +51,7 @@ export function TiltCard({
       onMouseLeave={() => {
         if (ref.current) resetTilt(ref.current);
       }}
-      style={{ willChange: "transform", transition: "transform 0.12s ease-out" }}
+      style={{ transition: "transform 0.12s ease-out" }}
     >
       {children}
     </Tag>

@@ -67,7 +67,7 @@ export function ThreatCard({ threat }: ThreatCardProps) {
   return (
     <article
       className={cyberPanelClasses("group relative overflow-hidden p-6 shadow-[0_0_40px_rgba(15,23,42,0.35)]")}
-      style={{ perspective: tilt.perspective, transformStyle: "preserve-3d", willChange: "transform", transition: "transform 0.12s ease-out" }}
+      style={{ perspective: tilt.perspective, transformStyle: "preserve-3d", transition: "transform 0.12s ease-out" }}
       onMouseMove={tilt.onMouseMove}
       onMouseLeave={tilt.onMouseLeave}
     >
