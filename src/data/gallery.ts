@@ -1,4 +1,5 @@
 const filenames = [
+  "AMA.jpeg",
   "IMG_9387.JPG.jpeg",
   "IMG_9388.JPG.jpeg",
   "IMG_9390.JPG.jpeg",
