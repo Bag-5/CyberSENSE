@@ -2,7 +2,6 @@
 
 import { useEffect, useCallback, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import Image from "next/image";
 
 type GalleryImage = {
   src: string;
@@ -81,7 +80,7 @@ export function GalleryLightbox({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2 }}
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/95 backdrop-blur-xl"
+      className="fixed inset-0 z-[200] flex items-center justify-center bg-slate-950/95 px-3 py-4 backdrop-blur-xl sm:px-6 sm:py-6"
       onClick={handleBackdropClick}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
@@ -98,7 +97,7 @@ export function GalleryLightbox({
         </svg>
       </button>
 
-      <div className="absolute left-0 top-1/2 -translate-y-1/2 pl-2 sm:pl-4">
+      <div className="absolute left-2 top-1/2 -translate-y-1/2 sm:left-4">
         {images.length > 1 ? (
           <button
             type="button"
@@ -113,7 +112,7 @@ export function GalleryLightbox({
         ) : null}
       </div>
 
-      <div className="absolute right-0 top-1/2 -translate-y-1/2 pr-2 sm:pr-4">
+      <div className="absolute right-2 top-1/2 -translate-y-1/2 sm:right-4">
         {images.length > 1 ? (
           <button
             type="button"
@@ -128,7 +127,7 @@ export function GalleryLightbox({
         ) : null}
       </div>
 
-      <div className="flex h-full w-full items-center justify-center px-14 sm:px-20">
+      <div className="flex h-full w-full items-center justify-center px-12 sm:px-16">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentIndex}
@@ -136,21 +135,19 @@ export function GalleryLightbox({
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -40 }}
             transition={{ duration: 0.25, ease: "easeInOut" }}
-            className="relative h-full w-full max-h-[85vh]"
+            className="flex h-full w-full max-w-[min(96vw,78rem)] items-center justify-center"
           >
-            <Image
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
               src={images[currentIndex].src}
               alt={images[currentIndex].alt}
-              fill
-              className="object-contain"
-              sizes="90vw"
-              priority
+              className="max-h-[calc(100vh-10rem)] w-auto max-w-full rounded-[1.5rem] object-contain shadow-[0_0_50px_rgba(15,23,42,0.55)] sm:max-h-[calc(100vh-8rem)]"
             />
           </motion.div>
         </AnimatePresence>
       </div>
 
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-3 sm:bottom-6">
+      <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-3 sm:bottom-6">
         <div className="flex items-center gap-1.5">
           {images.map((_, i) => (
             <button
