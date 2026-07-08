@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { SignOutButton } from "@/components/auth/sign-out-button";
-import { authenticatedNavLinks } from "@/data/site";
+import { authenticatedNavLinks, publicNavLinks } from "@/data/site";
 import type { PublicSessionUser } from "@/lib/auth/types";
 import { cyberButtonClasses } from "@/components/ui/cyber";
 import { cn } from "@/utils/cn";
@@ -109,9 +109,10 @@ export function SiteHeader({ platformSettings, initialUser = null }: SiteHeaderP
 
   const isAuthenticated = Boolean(user);
   const isSuperAdmin = user?.role === "superadmin";
-  const visibleLinks = isAuthenticated
+  const authenticatedLinks = isAuthenticated
     ? authenticatedNavLinks.filter((link) => isLinkEnabled(link.href, platformSettings))
     : [];
+  const allNavLinks = [...publicNavLinks, ...authenticatedLinks];
 
   return (
     <header className="sticky top-0 z-50 border-b border-cyan-400/10 bg-slate-950/70 backdrop-blur-xl">
@@ -121,7 +122,7 @@ export function SiteHeader({ platformSettings, initialUser = null }: SiteHeaderP
 
           <div className="flex flex-wrap items-center gap-3 lg:hidden">
             <ThemeToggle className="shrink-0" />
-            {isAuthenticated ? (
+            {allNavLinks.length ? (
               <button
                 type="button"
                 aria-expanded={menuOpen}
@@ -145,7 +146,7 @@ export function SiteHeader({ platformSettings, initialUser = null }: SiteHeaderP
           </div>
         </div>
 
-        {isAuthenticated ? (
+        {allNavLinks.length ? (
           <nav
             id="primary-navigation"
             aria-label="Primary"
@@ -156,7 +157,7 @@ export function SiteHeader({ platformSettings, initialUser = null }: SiteHeaderP
                 : "pointer-events-none max-h-0 overflow-hidden opacity-0 lg:pointer-events-auto lg:max-h-none lg:overflow-visible lg:opacity-100",
             )}
           >
-            {visibleLinks.map((link) => {
+            {allNavLinks.map((link) => {
               const active = isActive(link.href);
               return (
                 <Link
@@ -164,19 +165,20 @@ export function SiteHeader({ platformSettings, initialUser = null }: SiteHeaderP
                   href={link.href}
                   onClick={() => setMenuOpen(false)}
                   aria-current={active ? "page" : undefined}
-                  className={cn(
-                    "rounded-full px-4 py-2 transition",
-                    active
-                      ? "bg-cyan-400/15 text-cyan-100 ring-1 ring-cyan-300/20"
-                      : "text-slate-300 hover:bg-white/5 hover:text-cyan-100",
-                  )}
-                >
-                  {link.label}
-                </Link>
-              );
-            })}
+                    className={cn(
+                      "rounded-full px-4 py-2 transition",
+                      active
+                        ? "bg-cyan-400/15 text-cyan-100 ring-1 ring-cyan-300/20"
+                        : "text-slate-300 hover:bg-white/5 hover:text-cyan-100",
+                    )}
+                  >
+                    {link.label}
+                  </Link>
+                );
+              })}
 
-            <div className="mt-2 flex flex-col gap-3 pt-2 lg:hidden">
+              {isAuthenticated ? (
+              <div className="mt-2 flex flex-col gap-3 pt-2 lg:hidden">
               {isSuperAdmin ? (
                 <Link
                   href="/superadmin"
@@ -194,6 +196,7 @@ export function SiteHeader({ platformSettings, initialUser = null }: SiteHeaderP
               </div>
               <SignOutButton />
             </div>
+              ) : null}
           </nav>
         ) : null}
 
