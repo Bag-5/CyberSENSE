@@ -21,7 +21,7 @@ export function GalleryClient({ images }: GalleryClientProps) {
 
   return (
     <>
-      <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-10 grid gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {images.map((img, i) => (
           <button
             key={img.src}

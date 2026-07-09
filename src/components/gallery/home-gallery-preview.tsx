@@ -21,7 +21,7 @@ export function HomeGalleryPreview() {
 
   return (
     <section className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-      <Link href="/gallery" className="group relative block overflow-hidden rounded-[2rem] border border-white/10 shadow-[0_0_40px_rgba(15,23,42,0.35)]">
+       <Link href="/gallery" className="group relative block overflow-hidden rounded-2xl border border-white/10 shadow-[0_0_40px_rgba(15,23,42,0.35)] sm:rounded-[2rem]">
         <div className="relative aspect-[21/9] w-full overflow-hidden sm:aspect-[3/1]">
           <AnimatePresence mode="wait">
             <motion.div
@@ -43,8 +43,8 @@ export function HomeGalleryPreview() {
 
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(34,211,238,0.12),transparent_50%),radial-gradient(circle_at_bottom_left,rgba(217,70,239,0.08),transparent_50%)]" />
 
-          <div className="absolute inset-0 flex flex-col justify-end p-6 sm:p-8 lg:p-10">
-            <div className="max-w-xl space-y-3">
+          <div className="absolute inset-0 flex flex-col justify-end p-4 sm:p-8 lg:p-10">
+            <div className="max-w-xl space-y-2 sm:space-y-3">
               <div className="flex items-center gap-2">
                 <span className="h-2 w-2 rounded-full bg-cyan-300 shadow-[0_0_12px_rgba(103,232,249,0.8)]" />
                 <p className="text-xs font-semibold tracking-[0.24em] text-cyan-200 uppercase">
