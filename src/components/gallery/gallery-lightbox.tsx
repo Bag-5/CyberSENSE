@@ -82,17 +82,17 @@ export function GalleryLightbox({
       onTouchEnd={handleTouchEnd}
     >
       <div className="flex h-full w-full flex-col">
-        <div className="relative flex min-h-0 flex-1 items-center justify-center px-1 sm:px-8 md:px-16">
+        <div className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden px-1 sm:px-8 md:px-16">
           <AnimatePresence mode="wait">
             <motion.div
               key={currentIndex}
-              initial={{ opacity: 0, x: 40 }}
+              initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -40 }}
+              exit={{ opacity: 0, x: -30 }}
               transition={{ duration: 0.25, ease: "easeInOut" }}
               className="relative flex h-full w-full items-center justify-center"
             >
-              <div className="relative h-[80vh] w-full max-w-full sm:h-[85vh] sm:w-auto sm:max-w-[80vw]">
+              <div className="relative max-h-[75vh] w-auto max-w-[calc(100vw-2rem)] sm:h-[85vh] sm:w-auto sm:max-w-[80vw]">
                 <Image
                   src={images[currentIndex].src}
                   alt={images[currentIndex].alt}
