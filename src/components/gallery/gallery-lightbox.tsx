@@ -3,7 +3,6 @@
 import { useEffect, useCallback, useRef } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import Image from "next/image";
 
 type GalleryImage = {
   src: string;
@@ -90,18 +89,14 @@ export function GalleryLightbox({
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -30 }}
               transition={{ duration: 0.25, ease: "easeInOut" }}
-              className="relative flex h-full w-full items-center justify-center"
+              className="flex items-center justify-center"
             >
-              <div className="relative max-h-[75vh] w-auto max-w-[calc(100vw-2rem)] sm:h-[85vh] sm:w-auto sm:max-w-[80vw]">
-                <Image
-                  src={images[currentIndex].src}
-                  alt={images[currentIndex].alt}
-                  fill
-                  className="rounded-xl object-contain"
-                  sizes="(max-width: 640px) 100vw, 80vw"
-                  priority
-                />
-              </div>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={images[currentIndex].src}
+                alt={images[currentIndex].alt}
+                className="max-h-[75vh] max-w-[calc(100vw_-_2rem)] h-auto w-auto rounded-xl object-contain sm:max-h-[85vh] sm:max-w-[80vw]"
+              />
             </motion.div>
           </AnimatePresence>
 
