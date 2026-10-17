@@ -43,3 +43,6 @@ next-env.d.ts
 
 # local dev server log
 dev.log
+
+# hand-generated art drop folder (see scripts/course-art-prompts.md)
+inbox/

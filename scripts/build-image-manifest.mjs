@@ -10,6 +10,12 @@
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 
+import {
+  COURSE_SCENES,
+  STYLE_COURSE_FIGURE,
+  STYLE_COURSE_HERO,
+} from "./course-image-prompts.mjs";
+
 const ROOT = process.cwd();
 
 const RESOLUTION = "1K";
@@ -183,17 +189,56 @@ function buildStoryImages() {
   return images;
 }
 
+function buildCourseImages() {
+  const images = [];
+  let seed = 4000;
+
+  for (const [slug, scene] of Object.entries(COURSE_SCENES)) {
+    images.push({
+      id: `course-${slug}-hero`,
+      label: `${slug} — hero`,
+      out: `public/courses/${slug}/hero.webp`,
+      style: STYLE_COURSE_HERO,
+      prompt: scene.hero,
+      aspectRatio: "16:9",
+      resolution: RESOLUTION,
+      seed: seed++,
+    });
+
+    scene.figures.forEach((description, i) => {
+      images.push({
+        id: `course-${slug}-figure-${i + 1}`,
+        label: `${slug} — figure ${i + 1}`,
+        out: `public/courses/${slug}/figure-${i + 1}.webp`,
+        style: STYLE_COURSE_FIGURE,
+        prompt: description,
+        aspectRatio: "4:3",
+        resolution: RESOLUTION,
+        seed: seed++,
+      });
+    });
+  }
+
+  return images;
+}
+
 /* ------------------------------ validation ------------------------------- */
 
-async function validateAgainstStories(images) {
-  const source = await readFile(path.join(ROOT, "src", "data", "stories.ts"), "utf8");
+async function validateAgainstData(images) {
+  const sources = {
+    stories: await readFile(path.join(ROOT, "src", "data", "stories.ts"), "utf8"),
+    threats: await readFile(path.join(ROOT, "src", "data", "threats.ts"), "utf8"),
+  };
   const problems = [];
 
   for (const img of images) {
-    // public/stories/<slug>/<name>.webp  ->  "/stories/<slug>/<name>.webp"
+    // public/<tree>/<slug>/<name>.webp  ->  "/<tree>/<slug>/<name>.webp"
     const publicPath = img.out.replace(/^public/, "");
-    if (!source.includes(publicPath)) {
-      problems.push(`${img.id}: no matching path "${publicPath}" in src/data/stories.ts`);
+    const isStory = publicPath.startsWith("/stories/");
+    const haystack = isStory ? sources.stories : sources.threats;
+    const where = isStory ? "stories.ts" : "threats.ts";
+    if (!haystack.includes(publicPath)) {
+      problems.push(img.id + ": no matching path \"" + publicPath + "\" in src/data/" + where);
     }
   }
 
@@ -202,8 +247,8 @@ async function validateAgainstStories(images) {
 
 /* --------------------------------- main ---------------------------------- */
 
-const images = buildStoryImages();
-const problems = await validateAgainstStories(images);
+const images = [...buildStoryImages(), ...buildCourseImages()];
+const problems = await validateAgainstData(images);
 
 const manifest = {
   note:
@@ -222,9 +267,9 @@ await writeFile(
 
 process.stdout.write(`Wrote scripts/image-manifest.json with ${images.length} story images.\n`);
 if (problems.length) {
-  process.stdout.write(`\n${problems.length} mismatch(es) against src/data/stories.ts:\n`);
+  process.stdout.write(`\n${problems.length} mismatch(es) against src/data:\n`);
   for (const p of problems) process.stdout.write(`  ! ${p}\n`);
   process.exitCode = 1;
 } else {
-  process.stdout.write("All image paths cross-check against src/data/stories.ts.\n");
+  process.stdout.write("All image paths cross-check against src/data.\n");
 }

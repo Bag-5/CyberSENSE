@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { AnalyticsBeacon } from "@/components/admin/analytics/analytics-beacon";
 import { AcademyCourseFlowSection } from "@/components/academy/course-flow-section";
+import { CourseContent } from "@/components/threats/course-content";
 import { ThreatSection } from "@/components/threats/threat-section";
 import { ThreatRelatedThreats } from "@/components/threats/threat-related-threats";
 import { threatLevels } from "@/data/threats";
@@ -85,6 +86,8 @@ export function ThreatDetailView({ threat, relatedThreats }: ThreatDetailViewPro
           </div>
         </div>
       </section>
+
+      <CourseContent threat={threat} />
 
       <ThreatSection
         eyebrow="How attackers trick people"
