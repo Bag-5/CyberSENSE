@@ -7,7 +7,10 @@
     "dev:turbopack": "next dev --turbopack",
     "build": "next build --webpack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "art:build": "node scripts/build-image-manifest.mjs && node scripts/export-prompt-sheet.mjs",
+    "art:generate": "node scripts/generate-images.mjs",
+    "art:process": "node scripts/process-course-art.mjs"
   },
   "dependencies": {
     "@types/pdfkit": "^0.17.6",

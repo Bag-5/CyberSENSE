@@ -1,0 +1,13 @@
+Course art for: deepfakes
+
+Drop generated images into THIS folder using these exact base names.
+Prompts: scripts/course-art-prompts.md  (search for 'deepfakes')
+
+  - hero (16:9)
+  - figure-1 (4:3)
+  - figure-2 (4:3)
+
+Gemini saves as PNG. Leave it as .png; then run:
+  npm run art:process
+
+That trims letterbox bars and converts each file to .webp in place.
