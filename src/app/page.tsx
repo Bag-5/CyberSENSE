@@ -5,6 +5,7 @@ import { Hero } from "@/components/home/hero";
 import { AnimatedSection } from "@/components/animated-section";
 import { HomeGalleryPreview } from "@/components/gallery/home-gallery-preview";
 import { CyberCTA } from "@/components/home/cyber-cta";
+import { StoryMissionsTeaser } from "@/components/stories/story-missions-teaser";
 import { siteDescription, siteName } from "@/data/site";
 import { getCurrentSessionUser } from "@/lib/auth/context";
 
@@ -22,6 +23,7 @@ export default async function Home() {
     <>
       <Hero initialAuthenticated={Boolean(currentUser)} />
       <FeatureGrid />
+      <StoryMissionsTeaser />
 
       <AnimatedSection id="gallery">
         <HomeGalleryPreview />

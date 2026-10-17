@@ -1,6 +1,7 @@
 export type AnalyticsEventModule =
   | "auth"
   | "threats"
+  | "stories"
   | "analyzer"
   | "lab"
   | "quizzes"
@@ -11,6 +12,7 @@ export type AnalyticsEventType =
   | "page_view"
   | "module_select"
   | "threat_viewed"
+  | "story_viewed"
   | "scam_analysis_completed"
   | "scam_analysis_failed"
   | "simulation_selected"
