@@ -2,16 +2,18 @@
 /**
  * Post-processes hand-generated course art in place.
  *
- * Gemini saves PNGs. This walks public/courses, removes the letterbox bars the
- * generator bakes in, and rewrites each file as WebP, then refreshes
- * COURT-ART-CHECKLIST.md so progress stays accurate.
+ * Gemini saves PNGs. This walks public/courses, crops the bright corner mark
+ * Gemini stamps into every frame, removes letterbox bars, and rewrites each
+ * file as WebP, then refreshes COURT-ART-CHECKLIST.md.
  *
- * Safe to run repeatedly — already-converted files are skipped.
+ * Gemini's invisible SynthID provenance marker is not touched by any of this.
+ *
+ * Safe to run repeatedly.
  *
  * Usage:
- *   node scripts/process-course-art.mjs           # trim + convert, keep sources
+ *   node scripts/process-course-art.mjs           # process, keep source PNGs
  *   node scripts/process-course-art.mjs --prune   # also delete the source PNGs
- *   node scripts/process-course-art.mjs --check   # report only
+ *   node scripts/process-course-art.mjs --check   # report only, write nothing
  */
 
 import { readdir, readFile, writeFile, unlink } from "node:fs/promises";
@@ -23,7 +25,7 @@ import { writeOut } from "./lib/fs-safe.mjs";
 const ROOT = process.cwd();
 const argv = process.argv.slice(2);
 const checkOnly = argv.includes("--check");
-// Keep source PNGs by default. --prune deletes them once the WebP is written,
+// Sources are kept by default. --prune deletes them once the WebP is written,
 // which halves what lands in the repo but discards the original.
 const prune = argv.includes("--prune");
 
@@ -35,6 +37,13 @@ const SAMPLES = 24;
 const MIN_RATIO = 0.02;
 
 const isDark = (r, g, b) => r <= DARK && g <= DARK && b <= DARK;
+
+const isWebpBuffer = (buf) =>
+  buf.length > 12 &&
+  buf.toString("ascii", 0, 4) === "RIFF" &&
+  buf.toString("ascii", 8, 12) === "WEBP";
+
+/* ---------------------------- letterbox bars ----------------------------- */
 
 /** Removes uniform dark bands from the edges, conservatively across samples. */
 async function trimBars(buffer) {
@@ -89,6 +98,84 @@ async function trimBars(buffer) {
   return { buffer: out, trimmed: { from: `${w}x${h}`, to: `${width}x${height}` } };
 }
 
+/* ---------------------------- corner artefact ---------------------------- */
+
+/**
+ * Gemini stamps a small bright four-pointed mark into the bottom-right of every
+ * generated frame, sitting about 65px in from each edge and spanning roughly
+ * 96px. Brightness detection proved unreliable because bright artwork often
+ * occupies the same corner, so we crop a fixed, generous inset instead.
+ *
+ * The invisible SynthID provenance marker is untouched by this.
+ *
+ * The resulting ratio drifts slightly from the requested one, which is fine
+ * because every consumer renders with object-cover inside a fixed aspect box.
+ */
+async function stripCornerMark(buffer) {
+  const { width: w, height: h } = await sharp(buffer).metadata();
+
+  const right = Math.max(Math.round(w * 0.075), 180);
+  const bottom = Math.max(Math.round(h * 0.115), 180);
+
+  const width = w - right;
+  const height = h - bottom;
+  if (width < 64 || height < 64) {
+    return { buffer, right: 0, bottom: 0, trimmed: false };
+  }
+
+  const out = await sharp(buffer).extract({ left: 0, top: 0, width, height }).toBuffer();
+  return { buffer: out, right, bottom, trimmed: true };
+}
+
+/* ---------------------------- checklist refresh --------------------------- */
+
+async function refreshChecklist() {
+  const manifest = JSON.parse(
+    await readFile(path.join(ROOT, "scripts", "image-manifest.json"), "utf8"),
+  );
+
+  const expected = manifest.images
+    .filter((i) => i.id.startsWith("course-"))
+    .map((i) => ({
+      base: path.basename(i.out, path.extname(i.out)),
+      slug: i.id.replace(/^course-/, "").replace(/-(hero|figure-\d)$/, ""),
+    }));
+
+  const all = [];
+  for (const slug of new Set(expected.map((e) => e.slug))) {
+    let entries = [];
+    try {
+      entries = await readdir(path.join(COURSES, slug));
+    } catch {
+      /* folder not created yet */
+    }
+    for (const e of expected.filter((x) => x.slug === slug)) {
+      all.push({
+        ...e,
+        done: entries.some((f) => path.basename(f, path.extname(f)) === e.base),
+      });
+    }
+  }
+
+  const done = all.filter((a) => a.done).length;
+  const body = [
+    "# Course Art — Progress",
+    "",
+    `${done} of ${all.length} images present.`,
+    "",
+    ...all.map(
+      (a) =>
+        `- [${a.done ? "x" : " "}] ${a.slug}/${a.base}${a.done ? "" : "   <- still needed"}`,
+    ),
+    "",
+  ].join("\n");
+
+  await writeFile(path.join(ROOT, "COURT-ART-CHECKLIST.md"), body, "utf8");
+  return { done, total: all.length };
+}
+
+/* ---------------------------------- main ---------------------------------- */
+
 async function walk(dir) {
   const out = [];
   let entries;
@@ -104,55 +191,6 @@ async function walk(dir) {
   }
   return out;
 }
-
-/* ---------------------------- checklist refresh --------------------------- */
-
-async function refreshChecklist() {
-  const expected = JSON.parse(
-    await readFile(path.join(ROOT, "scripts", "image-manifest.json"), "utf8"),
-  )
-    .images.filter((i) => i.id.startsWith("course-"))
-    .map((i) => {
-      const base = path.basename(i.out, path.extname(i.out));
-      const slug = i.id.replace(/^course-/, "").replace(/-(hero|figure-\d)$/, "");
-      return { slug, base };
-    });
-
-  let all = [];
-  for (const slug of new Set(expected.map((e) => e.slug))) {
-    let entries = [];
-    try {
-      entries = await readdir(path.join(COURSES, slug));
-    } catch {
-      /* not created yet */
-    }
-    all.push(
-      ...expected
-        .filter((e) => e.slug === slug)
-        .map((e) => ({
-          ...e,
-          done: entries.some((f) => path.basename(f, path.extname(f)) === e.base),
-        })),
-    );
-  }
-
-  const done = all.filter((a) => a.done).length;
-  const body = [
-    "# Course Art — Progress",
-    "",
-    `${done} of ${all.length} images present.`,
-    "",
-    ...all.map(
-      (a) => `- [${a.done ? "x" : " "}] ${a.slug}/${a.base}${a.done ? "" : "   <- still needed"}`,
-    ),
-    "",
-  ].join("\n");
-
-  await writeFile(path.join(ROOT, "COURT-ART-CHECKLIST.md"), body, "utf8");
-  return { done, total: all.length };
-}
-
-/* ---------------------------------- main ---------------------------------- */
 
 async function main() {
   const files = await walk(COURSES);
@@ -177,24 +215,33 @@ async function main() {
 
     const target = file.replace(/\.(png|jpe?g)$/i, ".webp");
     let buffer = raw;
-    let note = "";
+    const notes = [];
 
-    try {
-      const result = await trimBars(raw);
-      buffer = result.buffer;
-      note = result.trimmed ? `  trimmed ${result.trimmed.from} -> ${result.trimmed.to}` : "";
-    } catch (error) {
-      note = `  (trim skipped: ${error instanceof Error ? error.message : "unknown"})`;
+    // Corner mark first, on the original pixels.
+    if (!isWebpBuffer(buffer)) {
+      const corner = await stripCornerMark(buffer);
+      buffer = corner.buffer;
+      if (corner.trimmed) notes.push(`corner -r${corner.right} -b${corner.bottom}`);
     }
 
-    // Re-encode as WebP unless the trim already produced WebP bytes.
-    const isWebp =
-      buffer.length > 12 &&
-      buffer.toString("ascii", 0, 4) === "RIFF" &&
-      buffer.toString("ascii", 8, 12) === "WEBP";
-    const outBuf = isWebp ? buffer : await sharp(buffer).webp({ quality: QUALITY }).toBuffer();
+    // Then letterbox bars.
+    try {
+      const result = await trimBars(buffer);
+      buffer = result.buffer;
+      if (result.trimmed) {
+        notes.push(`trimmed ${result.trimmed.from} -> ${result.trimmed.to}`);
+      }
+    } catch (error) {
+      notes.push(`(trim skipped: ${error instanceof Error ? error.message : "unknown"})`);
+    }
+
+    const outBuf = isWebpBuffer(buffer)
+      ? buffer
+      : await sharp(buffer).webp({ quality: QUALITY }).toBuffer();
 
     const { width, height } = await sharp(outBuf).metadata();
+    const note = notes.length ? `  ${notes.join("  ")}` : "";
+
     process.stdout.write(
       `  ${path.relative(ROOT, target).padEnd(44)} ${width}x${height}  ` +
         `${(raw.length / 1024).toFixed(0)}KB -> ${(outBuf.length / 1024).toFixed(0)}KB${note}\n`,

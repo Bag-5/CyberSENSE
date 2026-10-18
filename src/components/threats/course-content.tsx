@@ -72,6 +72,7 @@ export function CourseContent({ threat }: { threat: ThreatDetail }) {
           frameClassName={cyberPanelClasses("overflow-hidden p-0")}
           className="aspect-[16/9] w-full sm:max-h-[38vh]"
           imgClassName="object-cover"
+          sizes="(max-width: 640px) 100vw, (max-width: 1536px) 96vw, 1536px"
           priority
         />
       </section>
@@ -136,6 +137,7 @@ export function CourseContent({ threat }: { threat: ThreatDetail }) {
                   frameClassName={cyberPanelClasses("overflow-hidden p-0")}
                   className="aspect-[4/3] w-full"
                   imgClassName="object-contain"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 46vw, 620px"
                 />
                 <figcaption className="mt-3 text-sm leading-6 text-slate-400">
                   {figure.caption}
@@ -173,6 +175,7 @@ export function CourseCard({ threat }: { threat: ThreatDetail }) {
         alt={threat.heroAlt}
         className="aspect-[16/9] w-full rounded-t-2xl"
         imgClassName="object-cover transition duration-500 group-hover:scale-105"
+        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
       />
       <div className="space-y-2 p-5">
         <p className="text-[11px] font-semibold tracking-[0.2em] text-cyan-200 uppercase">
