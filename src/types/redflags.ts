@@ -1,5 +1,16 @@
 export type RedFlagDifficulty = "Easy" | "Medium" | "Hard";
 
+export type RedFlagDifficultyConfig = {
+  /** One-line explanation of what this level changes. */
+  blurb: string;
+  /** Seconds allowed per scenario, or null for an untimed round. */
+  roundSeconds: number | null;
+  /** Whether the per-flag reasoning is shown in the round review. */
+  revealReasons: boolean;
+  /** Applied to the round score, so harder runs are worth more. */
+  scoreMultiplier: number;
+};
+
 export type RedFlagSurface =
   | "whatsapp"
   | "email"

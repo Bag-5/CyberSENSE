@@ -1,10 +1,38 @@
-import type { RedFlagScenario, RedFlagDifficulty } from "@/types/redflags";
+import type {
+  RedFlagScenario,
+  RedFlagDifficulty,
+  RedFlagDifficultyConfig,
+} from "@/types/redflags";
 
 export const redFlagDifficultyLevels: RedFlagDifficulty[] = [
   "Easy",
   "Medium",
   "Hard",
 ];
+
+export const redFlagDifficultyConfig: Record<
+  RedFlagDifficulty,
+  RedFlagDifficultyConfig
+> = {
+  Easy: {
+    blurb: "No clock. Every red flag gets explained.",
+    roundSeconds: null,
+    revealReasons: true,
+    scoreMultiplier: 1,
+  },
+  Medium: {
+    blurb: "90 seconds a round. Explanations still shown.",
+    roundSeconds: 90,
+    revealReasons: true,
+    scoreMultiplier: 1.5,
+  },
+  Hard: {
+    blurb: "60 seconds a round. Verdict only, no explanations.",
+    roundSeconds: 60,
+    revealReasons: false,
+    scoreMultiplier: 2,
+  },
+};
 
 export const redFlagScenarios: RedFlagScenario[] = [
   {

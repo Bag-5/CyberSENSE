@@ -3,21 +3,40 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 
+import { redFlagDifficultyConfig, redFlagScenarios } from "@/data/redFlags";
+import type { RedFlagDifficulty, RedFlagRoundResult } from "@/types/redflags";
+
+type RoundOutcome = {
+  scenarioSlug: string;
+  result: RedFlagRoundResult;
+};
+
 type RedFlagsResultsProps = {
   score: number;
   maxScore: number;
   rating: string;
   message: string;
+  difficulty: RedFlagDifficulty;
+  history: RoundOutcome[];
   onRestart: () => void;
 };
+
+const scenarioBySlug = new Map(
+  redFlagScenarios.map((scenario) => [scenario.slug, scenario] as const),
+);
 
 export function RedFlagsResults({
   score,
   maxScore,
   rating,
   message,
+  difficulty,
+  history,
   onRestart,
 }: RedFlagsResultsProps) {
+  const percentage = maxScore > 0 ? Math.round((score / maxScore) * 100) : 0;
+  const config = redFlagDifficultyConfig[difficulty];
+
   return (
     <section className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       <motion.div
@@ -28,11 +47,15 @@ export function RedFlagsResults({
       >
         <div className="cyber-panel rounded-[2rem] p-6 sm:p-8">
           <p className="text-sm font-semibold tracking-[0.24em] text-cyan-200 uppercase">
-            Results
+            Results · {difficulty} mode
           </p>
           <h2 className="mt-3 text-4xl font-black tracking-[-0.06em] text-white">
             Final Score: {score}/{maxScore}
           </h2>
+          <p className="mt-2 text-sm text-slate-400">
+            {percentage}% of the available points · ×{config.scoreMultiplier}{" "}
+            multiplier applied
+          </p>
           <p className="mt-4 text-lg font-semibold text-fuchsia-100">{rating}</p>
           <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-300 sm:text-base">
             {message}
@@ -74,7 +97,52 @@ export function RedFlagsResults({
           </div>
         </div>
       </motion.div>
+
+      <div className="mt-6 rounded-[2rem] border border-white/10 bg-slate-950/70 p-6 backdrop-blur-xl sm:p-8">
+        <p className="text-sm font-semibold tracking-[0.24em] text-cyan-200 uppercase">
+          Every tell from this run
+        </p>
+        <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">
+          These are the signals hiding in each scenario, whether you caught them
+          or not.
+        </p>
+
+        <div className="mt-6 grid gap-4 md:grid-cols-2">
+          {history.map(({ scenarioSlug }) => {
+            const scenario = scenarioBySlug.get(scenarioSlug);
+            if (!scenario) {
+              return null;
+            }
+
+            const suspicious = scenario.elements.filter(
+              (element) => element.suspicious,
+            );
+
+            return (
+              <div
+                key={scenarioSlug}
+                className="rounded-[1.5rem] border border-white/10 bg-white/5 p-5"
+              >
+                <p className="text-sm font-semibold text-white">
+                  {scenario.title}
+                </p>
+                <ul className="mt-3 space-y-2 text-sm leading-6 text-slate-300">
+                  {suspicious.map((element) => (
+                    <li key={element.id}>
+                      <span className="font-semibold text-white">
+                        {element.label}
+                      </span>
+                      <span className="block text-xs leading-5 text-slate-400">
+                        {element.reason}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            );
+          })}
+        </div>
+      </div>
     </section>
   );
 }
-

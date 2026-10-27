@@ -3,7 +3,7 @@
 import { AnimatePresence } from "framer-motion";
 import { useMemo, useState } from "react";
 
-import { redFlagScenarios } from "@/data/redFlags";
+import { redFlagDifficultyConfig, redFlagScenarios } from "@/data/redFlags";
 import type {
   RedFlagDifficulty,
   RedFlagRoundResult,
@@ -20,15 +20,21 @@ type RoundOutcome = {
   result: RedFlagRoundResult;
 };
 
-function getRating(score: number) {
-  if (score < 120) {
+/** Base points available across every scenario, before the difficulty multiplier. */
+const BASE_MAX_SCORE = redFlagScenarios.reduce((total, scenario) => {
+  const suspicious = scenario.elements.filter((element) => element.suspicious).length;
+  return total + suspicious * 20 + 15;
+}, 0);
+
+function getRating(percentage: number) {
+  if (percentage < 35) {
     return {
       rating: "Beginner",
       message: "Ei! The hacker almost chop your account like banku 😭",
     };
   }
 
-  if (score < 240) {
+  if (percentage < 70) {
     return {
       rating: "Alert",
       message: "Solid effort. You catch most of the scam drama before it got loud.",
@@ -49,11 +55,15 @@ export function RedFlagsGame() {
   const [score, setScore] = useState(0);
   const [history, setHistory] = useState<RoundOutcome[]>([]);
 
+  const config = redFlagDifficultyConfig[difficulty];
   const currentScenario = redFlagScenarios[currentIndex];
   const isLastRound = currentIndex === redFlagScenarios.length - 1;
-  const maxScore = redFlagScenarios.length * 75;
+  const maxScore = Math.round(BASE_MAX_SCORE * config.scoreMultiplier);
 
-  const ratingState = useMemo(() => getRating(score), [score]);
+  const ratingState = useMemo(() => {
+    const percentage = maxScore > 0 ? (score / maxScore) * 100 : 0;
+    return getRating(percentage);
+  }, [score, maxScore]);
 
   function handleStart() {
     setScreen("play");
@@ -75,10 +85,13 @@ export function RedFlagsGame() {
     const incorrect = selectedIds.filter((id) => !suspiciousIds.includes(id));
     const missed = suspiciousIds.filter((id) => !selectedIds.includes(id));
 
-    const points = Math.max(
+    const basePoints = Math.max(
       0,
-      correct.length * 20 - incorrect.length * 10 + (missed.length === 0 && incorrect.length === 0 ? 15 : 0),
+      correct.length * 20 -
+        incorrect.length * 10 +
+        (missed.length === 0 && incorrect.length === 0 ? 15 : 0),
     );
+    const points = Math.round(basePoints * config.scoreMultiplier);
 
     const result: RedFlagRoundResult = {
       correct: currentScenario.elements
@@ -131,8 +144,9 @@ export function RedFlagsGame() {
 
       {screen === "play" ? (
         <RedFlagsPlay
-          key={currentScenario.slug}
+          key={`${difficulty}-${currentScenario.slug}`}
           scenario={currentScenario}
+          difficulty={difficulty}
           selectedIds={selectedIds}
           onToggleChoice={handleToggleChoice}
           onSubmit={handleSubmit}
@@ -149,6 +163,7 @@ export function RedFlagsGame() {
           result={history[history.length - 1].result}
           totalScore={score}
           isLastRound={isLastRound}
+          revealReasons={config.revealReasons}
           onNext={handleNext}
         />
       ) : null}
@@ -160,6 +175,8 @@ export function RedFlagsGame() {
           maxScore={maxScore}
           rating={ratingState.rating}
           message={ratingState.message}
+          difficulty={difficulty}
+          history={history}
           onRestart={handleRestart}
         />
       ) : null}

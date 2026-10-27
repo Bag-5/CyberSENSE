@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 
-import { redFlagDifficultyLevels } from "@/data/redFlags";
+import { redFlagDifficultyConfig, redFlagDifficultyLevels, redFlagScenarios } from "@/data/redFlags";
 import type { RedFlagDifficulty } from "@/types/redflags";
 import { cyberButtonClasses, cyberPanelClasses } from "@/components/ui/cyber";
 
@@ -54,7 +54,10 @@ export function RedFlagsLanding({
                 Start Game
               </button>
               <div className={cyberButtonClasses("ghost", "lg")}>
-                Difficulty placeholder
+                {redFlagScenarios.length} scenarios ·{" "}
+                {redFlagDifficultyConfig[difficulty].roundSeconds === null
+                  ? "no timer"
+                  : `${redFlagDifficultyConfig[difficulty].roundSeconds}s rounds`}
               </div>
             </div>
           </div>
@@ -66,6 +69,7 @@ export function RedFlagsLanding({
             <div className="mt-4 grid gap-3 sm:grid-cols-3">
               {redFlagDifficultyLevels.map((level) => {
                 const isActive = level === difficulty;
+                const config = redFlagDifficultyConfig[level];
                 return (
                   <button
                     key={level}
@@ -77,9 +81,14 @@ export function RedFlagsLanding({
                         : "border-white/10 bg-slate-950/60 text-slate-300 hover:bg-white/8 hover:text-white"
                     }`}
                   >
-                    <span className="block font-semibold">{level}</span>
-                    <span className="mt-1 block text-xs text-slate-400">
-                      Placeholder mode
+                    <span className="flex items-center justify-between gap-2 font-semibold">
+                      {level}
+                      <span className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[0.65rem] font-medium tracking-wide text-slate-300">
+                        ×{config.scoreMultiplier}
+                      </span>
+                    </span>
+                    <span className="mt-2 block text-xs leading-5 text-slate-400">
+                      {config.blurb}
                     </span>
                   </button>
                 );

@@ -9,7 +9,66 @@ type RedFlagsFeedbackProps = {
   onNext: () => void;
   isLastRound: boolean;
   totalScore: number;
+  revealReasons: boolean;
 };
+
+type FlagListProps = {
+  items: string[];
+  reasons: Map<string, string>;
+  revealReasons: boolean;
+  emptyLabel: string;
+  tone: "emerald" | "amber" | "rose";
+};
+
+const toneClasses = {
+  emerald: {
+    panel: "border-emerald-300/20 bg-emerald-400/10",
+    label: "text-emerald-100",
+    chip: "border-emerald-300/20 text-emerald-100",
+  },
+  amber: {
+    panel: "border-amber-300/20 bg-amber-400/10",
+    label: "text-amber-100",
+    chip: "border-amber-300/20 text-amber-100",
+  },
+  rose: {
+    panel: "border-rose-300/20 bg-rose-400/10",
+    label: "text-rose-100",
+    chip: "border-rose-300/20 text-rose-100",
+  },
+} as const;
+
+function FlagList({
+  items,
+  reasons,
+  revealReasons,
+  emptyLabel,
+  tone,
+}: FlagListProps) {
+  const classes = toneClasses[tone];
+
+  if (!items.length) {
+    return <p className="mt-4 text-sm text-slate-300">{emptyLabel}</p>;
+  }
+
+  return (
+    <ul className="mt-4 space-y-2">
+      {items.map((item) => (
+        <li
+          key={item}
+          className={`rounded-2xl border bg-slate-950/50 px-3 py-2 text-sm ${classes.chip}`}
+        >
+          <span className="font-semibold">{item}</span>
+          {revealReasons && reasons.get(item) ? (
+            <span className="mt-1 block text-xs leading-5 text-slate-400">
+              {reasons.get(item)}
+            </span>
+          ) : null}
+        </li>
+      ))}
+    </ul>
+  );
+}
 
 export function RedFlagsFeedback({
   scenario,
@@ -17,7 +76,12 @@ export function RedFlagsFeedback({
   onNext,
   isLastRound,
   totalScore,
+  revealReasons,
 }: RedFlagsFeedbackProps) {
+  const reasons = new Map(
+    scenario.elements.map((element) => [element.label, element.reason] as const),
+  );
+
   return (
     <section className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       <motion.div
@@ -38,65 +102,58 @@ export function RedFlagsFeedback({
           </p>
         </div>
 
+        {revealReasons ? null : (
+          <div className="rounded-[1.5rem] border border-amber-300/25 bg-amber-400/10 px-5 py-4 text-sm leading-6 text-amber-100">
+            Hard mode hides the explanations. Replay on Easy or Medium to see
+            what gave each flag away — or check the full tell list on the
+            results screen.
+          </div>
+        )}
+
         <div className="grid gap-4 lg:grid-cols-3">
-          <div className="rounded-[1.75rem] border border-emerald-300/20 bg-emerald-400/10 p-5">
-            <p className="text-xs font-semibold tracking-[0.2em] text-emerald-100 uppercase">
+          <div className={`rounded-[1.75rem] border p-5 ${toneClasses.emerald.panel}`}>
+            <p
+              className={`text-xs font-semibold tracking-[0.2em] uppercase ${toneClasses.emerald.label}`}
+            >
               Correct
             </p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              {result.correct.length ? (
-                result.correct.map((item) => (
-                  <span
-                    key={item}
-                    className="rounded-full border border-emerald-300/20 bg-slate-950/50 px-3 py-2 text-sm text-emerald-100"
-                  >
-                    {item}
-                  </span>
-                ))
-              ) : (
-                <span className="text-sm text-slate-300">No correct clicks.</span>
-              )}
-            </div>
+            <FlagList
+              items={result.correct}
+              reasons={reasons}
+              revealReasons={revealReasons}
+              emptyLabel="No correct clicks."
+              tone="emerald"
+            />
           </div>
 
-          <div className="rounded-[1.75rem] border border-amber-300/20 bg-amber-400/10 p-5">
-            <p className="text-xs font-semibold tracking-[0.2em] text-amber-100 uppercase">
+          <div className={`rounded-[1.75rem] border p-5 ${toneClasses.amber.panel}`}>
+            <p
+              className={`text-xs font-semibold tracking-[0.2em] uppercase ${toneClasses.amber.label}`}
+            >
               Missed
             </p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              {result.missed.length ? (
-                result.missed.map((item) => (
-                  <span
-                    key={item}
-                    className="rounded-full border border-amber-300/20 bg-slate-950/50 px-3 py-2 text-sm text-amber-100"
-                  >
-                    {item}
-                  </span>
-                ))
-              ) : (
-                <span className="text-sm text-slate-300">Perfect catch.</span>
-              )}
-            </div>
+            <FlagList
+              items={result.missed}
+              reasons={reasons}
+              revealReasons={revealReasons}
+              emptyLabel="Perfect catch."
+              tone="amber"
+            />
           </div>
 
-          <div className="rounded-[1.75rem] border border-rose-300/20 bg-rose-400/10 p-5">
-            <p className="text-xs font-semibold tracking-[0.2em] text-rose-100 uppercase">
+          <div className={`rounded-[1.75rem] border p-5 ${toneClasses.rose.panel}`}>
+            <p
+              className={`text-xs font-semibold tracking-[0.2em] uppercase ${toneClasses.rose.label}`}
+            >
               Incorrect
             </p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              {result.incorrect.length ? (
-                result.incorrect.map((item) => (
-                  <span
-                    key={item}
-                    className="rounded-full border border-rose-300/20 bg-slate-950/50 px-3 py-2 text-sm text-rose-100"
-                  >
-                    {item}
-                  </span>
-                ))
-              ) : (
-                <span className="text-sm text-slate-300">No false alarms.</span>
-              )}
-            </div>
+            <FlagList
+              items={result.incorrect}
+              reasons={reasons}
+              revealReasons={revealReasons}
+              emptyLabel="No false alarms."
+              tone="rose"
+            />
           </div>
         </div>
 

@@ -1,13 +1,16 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 
 import { cn } from "@/utils/cn";
-import type { RedFlagScenario } from "@/types/redflags";
+import { redFlagDifficultyConfig } from "@/data/redFlags";
+import type { RedFlagDifficulty, RedFlagScenario } from "@/types/redflags";
 import { RedFlagsScenarioPreview } from "@/components/games/redflags/redflags-scenario-preview";
 
 type RedFlagsPlayProps = {
   scenario: RedFlagScenario;
+  difficulty: RedFlagDifficulty;
   selectedIds: string[];
   onToggleChoice: (choiceId: string) => void;
   onSubmit: () => void;
@@ -18,6 +21,7 @@ type RedFlagsPlayProps = {
 
 export function RedFlagsPlay({
   scenario,
+  difficulty,
   selectedIds,
   onToggleChoice,
   onSubmit,
@@ -25,12 +29,55 @@ export function RedFlagsPlay({
   roundNumber,
   totalRounds,
 }: RedFlagsPlayProps) {
+  const config = redFlagDifficultyConfig[difficulty];
+  const timed = config.roundSeconds !== null;
+
+  const [secondsLeft, setSecondsLeft] = useState(config.roundSeconds ?? 0);
+  const submittedRef = useRef(false);
+
+  useEffect(() => {
+    if (config.roundSeconds === null) {
+      return;
+    }
+
+    const interval = window.setInterval(() => {
+      setSecondsLeft((current) => Math.max(0, current - 1));
+    }, 1000);
+
+    return () => window.clearInterval(interval);
+  }, [config.roundSeconds, scenario.slug]);
+
+  useEffect(() => {
+    if (!timed || secondsLeft > 0 || submittedRef.current) {
+      return;
+    }
+
+    submittedRef.current = true;
+    onSubmit();
+  }, [secondsLeft, timed, onSubmit]);
+
+  function handleCheck() {
+    if (submittedRef.current) {
+      return;
+    }
+
+    submittedRef.current = true;
+    onSubmit();
+  }
+
+  const timeProgress = timed ? secondsLeft / (config.roundSeconds ?? 1) : 1;
+  const isRunningOut = timed && secondsLeft <= 15;
+  const isCritical = timed && secondsLeft <= 8;
+
   return (
     <section className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-      <div className="mb-5 flex items-center justify-between gap-4 text-sm text-slate-400">
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-4 text-sm text-slate-400">
         <p>
           Round <span className="text-cyan-100">{roundNumber}</span> of{" "}
           <span className="text-cyan-100">{totalRounds}</span>
+          <span className="ml-3 rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs font-semibold tracking-wide text-slate-300">
+            {difficulty} · ×{config.scoreMultiplier} points
+          </span>
         </p>
         <button
           type="button"
@@ -40,6 +87,50 @@ export function RedFlagsPlay({
           Back to start
         </button>
       </div>
+
+      {timed ? (
+        <div
+          className={cn(
+            "mb-6 rounded-[1.5rem] border px-4 py-3 transition-colors duration-500",
+            isCritical
+              ? "border-rose-300/40 bg-rose-400/10"
+              : isRunningOut
+                ? "border-amber-300/40 bg-amber-400/10"
+                : "border-cyan-300/20 bg-cyan-400/8",
+          )}
+        >
+          <div className="flex items-center justify-between gap-4 text-sm">
+            <p className="font-semibold tracking-[0.18em] text-slate-200 uppercase">
+              Time left
+            </p>
+            <p
+              className={cn(
+                "font-mono text-lg font-bold tabular-nums",
+                isCritical
+                  ? "text-rose-100"
+                  : isRunningOut
+                    ? "text-amber-100"
+                    : "text-cyan-100",
+              )}
+            >
+              {secondsLeft}s
+            </p>
+          </div>
+          <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-slate-950/60">
+            <div
+              className={cn(
+                "h-full rounded-full transition-[width] duration-1000 ease-linear",
+                isCritical
+                  ? "bg-rose-400"
+                  : isRunningOut
+                    ? "bg-amber-300"
+                    : "bg-cyan-300",
+              )}
+              style={{ width: `${Math.max(0, timeProgress) * 100}%` }}
+            />
+          </div>
+        </div>
+      ) : null}
 
       <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
         <motion.div
@@ -115,12 +206,15 @@ export function RedFlagsPlay({
               <li>+20 points for each correct detection</li>
               <li>-10 points for each incorrect click</li>
               <li>+15 bonus for a perfect round</li>
+              <li className="text-cyan-100">
+                ×{config.scoreMultiplier} applied for {difficulty} mode
+              </li>
             </ul>
           </div>
 
           <button
             type="button"
-            onClick={onSubmit}
+            onClick={handleCheck}
             className="mt-6 inline-flex w-full items-center justify-center rounded-full bg-cyan-400 px-6 py-3 text-sm font-semibold text-slate-950 shadow-[0_0_30px_rgba(34,211,238,0.35)] transition duration-300 hover:-translate-y-0.5 hover:bg-cyan-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-200 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
           >
             Check Answer
@@ -130,4 +224,3 @@ export function RedFlagsPlay({
     </section>
   );
 }
-
