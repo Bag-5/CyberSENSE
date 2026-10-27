@@ -78,16 +78,18 @@ export function FeatureGrid() {
             <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
               <div className="max-w-2xl space-y-3">
                 <p className="text-sm font-semibold tracking-[0.24em] text-amber-100 uppercase">
-                  Gameplay-ready foundation
+                  Shipped and open
                 </p>
                 <h2 className="text-2xl font-semibold tracking-[-0.04em] text-white sm:text-3xl">
-                  Built to expand into quizzes, simulations, and story-driven
-                  challenges.
+                  Ten courses, ten quizzes, and a simulation lab you can walk
+                  into today.
                 </h2>
               </div>
               <p className="max-w-sm text-sm leading-6 text-slate-300">
-                The folders for games, simulations, hooks, data, utilities, and
-                types are ready for the next phase of development.
+                Every course runs the same four beats: read the lesson, pass the
+                quiz, survive the attack lab, then download a certificate with
+                your name on it. The labs are inert — they demonstrate how the
+                trick works without ever running it.
               </p>
             </div>
           </div>
