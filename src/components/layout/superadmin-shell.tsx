@@ -13,7 +13,7 @@ type SuperAdminShellProps = {
 
 export function SuperAdminShell({ children }: SuperAdminShellProps) {
   return (
-    <div className="relative flex min-h-screen flex-col overflow-hidden bg-[radial-gradient(circle_at_top_left,rgba(234,179,8,0.16),transparent_24%),radial-gradient(circle_at_top_right,rgba(34,211,238,0.12),transparent_24%),linear-gradient(180deg,#04050a_0%,#030408_44%,#020306_100%)] text-foreground">
+    <div className="relative flex min-h-screen flex-col overflow-x-clip bg-[radial-gradient(circle_at_top_left,rgba(234,179,8,0.16),transparent_24%),radial-gradient(circle_at_top_right,rgba(34,211,238,0.12),transparent_24%),linear-gradient(180deg,#04050a_0%,#030408_44%,#020306_100%)] text-foreground">
       <div className="pointer-events-none absolute inset-0 opacity-70 [background-image:linear-gradient(rgba(234,179,8,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(34,211,238,0.04)_1px,transparent_1px)] [background-size:88px_88px]" />
 
       <header className="relative z-10 border-b border-amber-300/10 bg-slate-950/70 backdrop-blur-xl">

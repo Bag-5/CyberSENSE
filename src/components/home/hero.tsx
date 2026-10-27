@@ -17,7 +17,7 @@ const heroItemVariants = {
     opacity: 1,
     y: 0,
     transition: {
-      duration: 0.7,
+      duration: 0.45,
       ease: [0.22, 1, 0.36, 1],
     },
   },
@@ -65,14 +65,14 @@ export function Hero({ initialAuthenticated = false }: HeroProps) {
 
       <div className="relative mx-auto grid w-full max-w-7xl gap-10 px-4 py-16 sm:px-6 sm:py-20 lg:grid-cols-[1fr_0.95fr] lg:items-center lg:px-8 lg:py-28">
         <motion.div
-          initial="hidden"
+          initial={false}
           animate="show"
           variants={{
             hidden: {},
             show: {
               transition: {
-                staggerChildren: 0.12,
-                delayChildren: 0.08,
+                staggerChildren: 0.06,
+                delayChildren: 0,
               },
             },
           }}
@@ -238,12 +238,12 @@ export function Hero({ initialAuthenticated = false }: HeroProps) {
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 14 }}
+          initial={false}
           animate={{ opacity: 1, y: 0 }}
           transition={
             prefersReducedMotion
               ? { duration: 0.01 }
-              : { duration: 0.8, delay: 0.2, ease: "easeOut" }
+              : { duration: 0.6, delay: 0.1, ease: "easeOut" }
           }
           className="relative z-10"
         >

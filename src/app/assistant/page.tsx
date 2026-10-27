@@ -4,7 +4,7 @@ import { AssistantPage } from "@/components/assistant/assistant-page";
 import { getCurrentSessionUser } from "@/lib/auth/context";
 
 export const metadata: Metadata = {
-  title: "CyberSENSE Assistant",
+  title: "Assistant",
   description:
     "An educational AI assistant for cybersecurity awareness, scam interpretation, and safe learning guidance.",
   openGraph: {

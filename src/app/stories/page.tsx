@@ -6,12 +6,11 @@ import { StoryCard } from "@/components/stories/story-card";
 import { SectionHeader, cyberPanelClasses } from "@/components/ui/cyber";
 import { stories } from "@/data/stories";
 import { threatsBySlug } from "@/data/threats";
-import { siteName } from "@/data/site";
 
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: `Story Missions | ${siteName}`,
+  title: "Story Missions",
   description:
     "Follow Ghanaian-inspired stories that make cyber lessons memorable, playful, and local.",
 };
@@ -46,7 +45,7 @@ export default function StoriesPage() {
         </div>
       </AnimatedSection>
 
-      <AnimatedSection className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8" delay={0.06}>
+      <AnimatedSection className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8" delay={0.03}>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {stories.map((story) => (
             <StoryCard key={story.slug} story={story} />
@@ -54,7 +53,7 @@ export default function StoriesPage() {
         </div>
       </AnimatedSection>
 
-      <AnimatedSection className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8" delay={0.1}>
+      <AnimatedSection className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8" delay={0.05}>
         <div className={cyberPanelClasses("border-cyan-300/15 p-6 sm:p-8")}>
           <SectionHeader
             eyebrow="Keep learning"

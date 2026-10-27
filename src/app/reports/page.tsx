@@ -10,9 +10,9 @@ import { buildQuizReportPdfInput, getUserReportContext } from "@/lib/reports/rep
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Superadmin Reports",
+  title: "Reports",
   description:
-    "Generate CyberSENSE certificates, quiz reports, and superadmin progress reports from live platform data.",
+    "Generate CyberSENSE certificates, quiz reports, and progress reports from live platform data.",
 };
 
 export default async function ReportsPage() {

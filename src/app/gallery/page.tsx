@@ -3,12 +3,11 @@ import type { Metadata } from "next";
 import { GalleryClient } from "@/components/gallery/gallery-client";
 import { SectionHeader } from "@/components/ui/cyber";
 import { galleryImages } from "@/data/gallery";
-import { siteName } from "@/data/site";
 
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: `Gallery | ${siteName}`,
+  title: "Gallery",
   description: "Photos from our campus cybersecurity awareness campaign.",
 };
 

@@ -38,7 +38,7 @@ export function FeatureGrid() {
         </div>
       </AnimatedSection>
 
-      <AnimatedSection id="training" delay={0.08}>
+      <AnimatedSection id="training" delay={0.04}>
         <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
             <article className={cyberPanelClasses("border-amber-300/15 bg-gradient-to-br from-rose-400/10 via-slate-900 to-emerald-400/10 p-8")}>
@@ -72,7 +72,7 @@ export function FeatureGrid() {
         </div>
       </AnimatedSection>
 
-      <AnimatedSection id="games" delay={0.16}>
+      <AnimatedSection id="games" delay={0.06}>
         <div className="mx-auto w-full max-w-7xl px-4 pb-10 sm:px-6 lg:px-8">
           <div className={cyberPanelClasses("border-amber-300/15 bg-white/5 px-6 py-8 sm:px-8")}>
             <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
